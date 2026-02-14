@@ -19,7 +19,8 @@ export async function saveQuote(
       const { error: updateError } = await supabase
         .from("quotes")
         .update({
-          customer_id: payload.customer_id,
+          customer_id: payload.customer_id || null,
+          lead_id: payload.lead_id || null,
           project_id: payload.project_id,
           color_inside_id: payload.color_inside_id,
           color_outside_id: payload.color_outside_id,
@@ -28,6 +29,7 @@ export async function saveQuote(
           terms_and_conditions: payload.terms_and_conditions,
           internal_notes: payload.internal_notes,
           discount_amount: payload.discount_amount,
+          deposit_due_days: payload.deposit_due_days,
           subtotal: payload.subtotal,
           total: payload.total,
         })
@@ -47,7 +49,8 @@ export async function saveQuote(
       const { data: quote, error: insertError } = await supabase
         .from("quotes")
         .insert({
-          customer_id: payload.customer_id,
+          customer_id: payload.customer_id || null,
+          lead_id: payload.lead_id || null,
           project_id: payload.project_id,
           color_inside_id: payload.color_inside_id,
           color_outside_id: payload.color_outside_id,
@@ -56,6 +59,7 @@ export async function saveQuote(
           terms_and_conditions: payload.terms_and_conditions,
           internal_notes: payload.internal_notes,
           discount_amount: payload.discount_amount,
+          deposit_due_days: payload.deposit_due_days,
           subtotal: payload.subtotal,
           total: payload.total,
         })

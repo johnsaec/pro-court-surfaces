@@ -9,6 +9,7 @@ export const DEAL_STAGE_LABELS: Record<string, string> = {
   buyer_interested: "Buyer Interested",
   won: "Won",
   lost: "Lost",
+  converted: "Converted",
 };
 
 export const DEAL_STAGE_COLORS: Record<string, string> = {
@@ -20,6 +21,7 @@ export const DEAL_STAGE_COLORS: Record<string, string> = {
   buyer_interested: "bg-purple-100 text-purple-700",
   won: "bg-green-100 text-green-700",
   lost: "bg-red-100 text-red-700",
+  converted: "bg-emerald-100 text-emerald-700",
 };
 
 export const LEAD_SOURCE_LABELS: Record<string, string> = {
@@ -91,6 +93,7 @@ export const QUOTE_STATUS_LABELS: Record<string, string> = {
   declined: "Declined",
   expired: "Expired",
   revised: "Revised",
+  deposit_paid: "Deposit Paid",
 };
 
 export const QUOTE_STATUS_COLORS: Record<string, string> = {
@@ -101,6 +104,7 @@ export const QUOTE_STATUS_COLORS: Record<string, string> = {
   declined: "bg-red-100 text-red-700",
   expired: "bg-orange-100 text-orange-700",
   revised: "bg-yellow-100 text-yellow-700",
+  deposit_paid: "bg-teal-100 text-teal-700",
 };
 
 // Package tiers

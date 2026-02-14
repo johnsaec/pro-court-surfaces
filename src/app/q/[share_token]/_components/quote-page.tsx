@@ -25,7 +25,7 @@ interface QuotePageProps {
 
 export function QuotePage({ quote, colors }: QuotePageProps) {
   const router = useRouter();
-  const isAccepted = quote.status === "accepted";
+  const isAccepted = quote.status === "accepted" || quote.status === "deposit_paid";
 
   // Default to recommended package
   const recommendedPkg = quote.quote_packages.find((p) => p.is_recommended);
@@ -238,7 +238,7 @@ export function QuotePage({ quote, colors }: QuotePageProps) {
         open={showAcceptDialog}
         onClose={() => setShowAcceptDialog(false)}
         onAccept={handleAccept}
-        defaultEmail={quote.customer?.email ?? null}
+        defaultEmail={quote.customer?.email ?? quote.lead?.email ?? null}
         total={total}
       />
     </div>

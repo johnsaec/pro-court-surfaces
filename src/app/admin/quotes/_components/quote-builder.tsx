@@ -18,6 +18,7 @@ import type { Service } from "@/lib/admin/queries/catalog-queries";
 import type { Color } from "@/lib/admin/queries/color-queries";
 import type {
   CustomerOption,
+  LeadOption,
   ProjectOption,
   QuoteDetail,
   QuoteSavePayload,
@@ -26,6 +27,7 @@ import type {
 interface QuoteBuilderProps {
   quote?: QuoteDetail;
   customers: CustomerOption[];
+  leads: LeadOption[];
   projects: ProjectOption[];
   services: Service[];
   colors: Color[];
@@ -34,6 +36,7 @@ interface QuoteBuilderProps {
 export function QuoteBuilder({
   quote,
   customers,
+  leads,
   projects: initialProjects,
   services,
   colors,
@@ -62,8 +65,12 @@ export function QuoteBuilder({
   }, []);
 
   function handleSave() {
-    if (!state.customer_id || !state.project_id) {
-      setError("Please select a customer and project.");
+    if (!state.customer_id && !state.lead_id) {
+      setError("Please select a customer or lead.");
+      return;
+    }
+    if (!state.project_id) {
+      setError("Please select or create a project.");
       return;
     }
     if (state.packages.length === 0) {
@@ -75,7 +82,8 @@ export function QuoteBuilder({
 
     const payload: QuoteSavePayload = {
       id: quote?.id,
-      customer_id: state.customer_id,
+      customer_id: state.customer_id || null,
+      lead_id: state.lead_id || null,
       project_id: state.project_id,
       packages: state.packages.map((pkg) => ({
         tier: pkg.tier,
@@ -104,6 +112,7 @@ export function QuoteBuilder({
       terms_and_conditions: state.terms_and_conditions || null,
       internal_notes: state.internal_notes || null,
       discount_amount: state.discount_amount,
+      deposit_due_days: state.deposit_due_days,
       subtotal,
       total,
     };
@@ -123,6 +132,7 @@ export function QuoteBuilder({
       <CustomerProjectSection
         state={state}
         customers={customers}
+        leads={leads}
         projects={projects}
         dispatch={dispatch}
         onProjectCreated={handleProjectCreated}

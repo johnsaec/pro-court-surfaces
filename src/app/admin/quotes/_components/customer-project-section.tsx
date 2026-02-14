@@ -12,17 +12,20 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { createProject } from "@/lib/admin/actions/project-actions";
 import { PROJECT_TYPE_LABELS } from "@/lib/constants";
 import type {
   CustomerOption,
+  LeadOption,
   ProjectOption,
   QuoteBuilderAction,
 } from "@/lib/admin/types/quote-types";
 
 interface CustomerProjectSectionProps {
-  state: { customer_id: string; project_id: string };
+  state: { customer_id: string; lead_id: string; project_id: string };
   customers: CustomerOption[];
+  leads: LeadOption[];
   projects: ProjectOption[];
   dispatch: React.Dispatch<QuoteBuilderAction>;
   onProjectCreated: (project: ProjectOption) => void;
@@ -31,6 +34,7 @@ interface CustomerProjectSectionProps {
 export function CustomerProjectSection({
   state,
   customers,
+  leads,
   projects,
   dispatch,
   onProjectCreated,
@@ -46,6 +50,9 @@ export function CustomerProjectSection({
   const [numberOfCourts, setNumberOfCourts] = useState("");
   const [city, setCity] = useState("");
 
+  // Determine active tab from state
+  const activeTab = state.lead_id ? "lead" : "customer";
+
   const filteredProjects = useMemo(
     () =>
       state.customer_id
@@ -54,13 +61,25 @@ export function CustomerProjectSection({
     [state.customer_id, projects]
   );
 
+  function handleTabChange(tab: string) {
+    if (tab === "lead") {
+      dispatch({ type: "SET_LEAD", lead_id: "" });
+    } else {
+      dispatch({ type: "SET_CUSTOMER", customer_id: "" });
+    }
+    setShowNewProject(false);
+    setError(null);
+  }
+
   function handleCreateProject() {
-    if (!state.customer_id || !projectName.trim()) return;
+    const ownerId = state.customer_id || state.lead_id;
+    if (!ownerId || !projectName.trim()) return;
     setError(null);
 
     startTransition(async () => {
       const result = await createProject({
-        customer_id: state.customer_id,
+        customer_id: state.customer_id || undefined,
+        lead_id: state.lead_id || undefined,
         name: projectName.trim(),
         project_type: projectType || undefined,
         square_feet: squareFeet ? parseFloat(squareFeet) : null,
@@ -96,78 +115,149 @@ export function CustomerProjectSection({
     <div className="space-y-4">
       <h3 className="text-lg font-semibold">Customer & Project</h3>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        {/* Customer select */}
-        <div className="space-y-1.5">
-          <Label>Customer</Label>
-          <Select
-            value={state.customer_id}
-            onValueChange={(v) =>
-              dispatch({ type: "SET_CUSTOMER", customer_id: v })
-            }
-          >
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Select customer..." />
-            </SelectTrigger>
-            <SelectContent>
-              {customers.map((c) => (
-                <SelectItem key={c.id} value={c.id}>
-                  {c.display_name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+      <Tabs value={activeTab} onValueChange={handleTabChange}>
+        <TabsList>
+          <TabsTrigger value="customer">Existing Customer</TabsTrigger>
+          <TabsTrigger value="lead">Lead</TabsTrigger>
+        </TabsList>
 
-        {/* Project select */}
-        <div className="space-y-1.5">
-          <Label>Project</Label>
-          {!showNewProject ? (
-            <div className="flex gap-2">
+        <TabsContent value="customer" className="mt-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            {/* Customer select */}
+            <div className="space-y-1.5">
+              <Label>Customer</Label>
               <Select
-                value={state.project_id}
+                value={state.customer_id}
                 onValueChange={(v) =>
-                  dispatch({ type: "SET_PROJECT", project_id: v })
+                  dispatch({ type: "SET_CUSTOMER", customer_id: v })
                 }
-                disabled={!state.customer_id}
               >
                 <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select project..." />
+                  <SelectValue placeholder="Select customer..." />
                 </SelectTrigger>
                 <SelectContent>
-                  {filteredProjects.map((p) => (
-                    <SelectItem key={p.id} value={p.id}>
-                      {p.name}
+                  {customers.map((c) => (
+                    <SelectItem key={c.id} value={c.id}>
+                      {c.display_name}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
-              <Button
-                type="button"
-                variant="outline"
-                size="icon"
-                onClick={() => setShowNewProject(true)}
-                disabled={!state.customer_id}
-                title="Create new project"
-              >
-                <Plus className="size-4" />
-              </Button>
             </div>
-          ) : (
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => setShowNewProject(false)}
-            >
-              Use Existing Project
-            </Button>
-          )}
-        </div>
-      </div>
+
+            {/* Project select */}
+            <div className="space-y-1.5">
+              <Label>Project</Label>
+              {!showNewProject ? (
+                <div className="flex gap-2">
+                  <Select
+                    value={state.project_id}
+                    onValueChange={(v) =>
+                      dispatch({ type: "SET_PROJECT", project_id: v })
+                    }
+                    disabled={!state.customer_id}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select project..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {filteredProjects.map((p) => (
+                        <SelectItem key={p.id} value={p.id}>
+                          {p.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="icon"
+                    onClick={() => setShowNewProject(true)}
+                    disabled={!state.customer_id}
+                    title="Create new project"
+                  >
+                    <Plus className="size-4" />
+                  </Button>
+                </div>
+              ) : (
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setShowNewProject(false)}
+                >
+                  Use Existing Project
+                </Button>
+              )}
+            </div>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="lead" className="mt-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            {/* Lead select */}
+            <div className="space-y-1.5">
+              <Label>Lead</Label>
+              <Select
+                value={state.lead_id}
+                onValueChange={(v) =>
+                  dispatch({ type: "SET_LEAD", lead_id: v })
+                }
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select lead..." />
+                </SelectTrigger>
+                <SelectContent>
+                  {leads.map((l) => (
+                    <SelectItem key={l.id} value={l.id}>
+                      {l.display_name}
+                      {l.email && (
+                        <span className="text-muted-foreground ml-1">
+                          ({l.email})
+                        </span>
+                      )}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Project — create new for lead */}
+            <div className="space-y-1.5">
+              <Label>Project</Label>
+              {!showNewProject ? (
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setShowNewProject(true)}
+                  disabled={!state.lead_id}
+                >
+                  <Plus className="size-4 mr-1" />
+                  Create Project
+                </Button>
+              ) : (
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setShowNewProject(false)}
+                >
+                  Cancel
+                </Button>
+              )}
+              {state.project_id && !showNewProject && (
+                <p className="text-sm text-muted-foreground mt-1">
+                  Project created
+                </p>
+              )}
+            </div>
+          </div>
+        </TabsContent>
+      </Tabs>
 
       {/* Inline new project form */}
-      {showNewProject && state.customer_id && (
+      {showNewProject && (state.customer_id || state.lead_id) && (
         <div className="rounded-md border p-4 space-y-4 bg-muted/30">
           <h4 className="font-medium text-sm">New Project</h4>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">

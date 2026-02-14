@@ -55,9 +55,13 @@ export function AcceptDialog({
       <DialogContent>
         <form onSubmit={handleSubmit}>
           <DialogHeader>
-            <DialogTitle>Accept Quote</DialogTitle>
+            <DialogTitle>Accept Quote &amp; Pay Deposit</DialogTitle>
             <DialogDescription>
-              Confirm your acceptance of this quote for{" "}
+              A 50% deposit of{" "}
+              <span className="font-semibold tabular-nums">
+                ${(total / 2).toFixed(2)}
+              </span>{" "}
+              will be invoiced to your email. Total quote value:{" "}
               <span className="font-semibold tabular-nums">
                 ${total.toFixed(2)}
               </span>
@@ -102,7 +106,7 @@ export function AcceptDialog({
               Cancel
             </Button>
             <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? "Submitting..." : "Confirm Acceptance"}
+              {isSubmitting ? "Submitting..." : "Accept & Pay Deposit (50%)"}
             </Button>
           </DialogFooter>
         </form>

@@ -39,6 +39,9 @@ export type Lead = {
   customer_id: string | null;
   converted_at: string | null;
   notion_page_id: string | null;
+  address_line1: string | null;
+  state: string | null;
+  zip: string | null;
   notes: string | null;
   created_at: string;
   updated_at: string;

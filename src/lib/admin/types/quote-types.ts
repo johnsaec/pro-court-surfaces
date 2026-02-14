@@ -8,6 +8,13 @@ export type CustomerOption = {
   display_name: string;
 };
 
+export type LeadOption = {
+  id: string;
+  display_name: string;
+  email: string | null;
+  phone: string | null;
+};
+
 export type ProjectOption = {
   id: string;
   name: string;
@@ -51,6 +58,7 @@ export type PackageState = {
 
 export type QuoteBuilderState = {
   customer_id: string;
+  lead_id: string;
   project_id: string;
   packages: PackageState[];
   color_inside_id: string;
@@ -60,12 +68,14 @@ export type QuoteBuilderState = {
   terms_and_conditions: string;
   internal_notes: string;
   discount_amount: number;
+  deposit_due_days: number;
 };
 
 // ── Reducer Actions ─────────────────────────────────────────────────
 
 export type QuoteBuilderAction =
   | { type: "SET_CUSTOMER"; customer_id: string }
+  | { type: "SET_LEAD"; lead_id: string }
   | { type: "SET_PROJECT"; project_id: string }
   | { type: "ADD_PACKAGE"; tier: string }
   | { type: "REMOVE_PACKAGE"; packageKey: string }
@@ -81,14 +91,15 @@ export type QuoteBuilderAction =
     }
   | { type: "REMOVE_LINE_ITEM"; packageKey: string; itemKey: string }
   | { type: "SET_COLOR"; field: "color_inside_id" | "color_outside_id" | "color_lines_id"; value: string }
-  | { type: "SET_FIELD"; field: "cover_note" | "terms_and_conditions" | "internal_notes" | "discount_amount"; value: string | number }
+  | { type: "SET_FIELD"; field: "cover_note" | "terms_and_conditions" | "internal_notes" | "discount_amount" | "deposit_due_days"; value: string | number }
   | { type: "LOAD_STATE"; state: QuoteBuilderState };
 
 // ── Save Payload ────────────────────────────────────────────────────
 
 export type QuoteSavePayload = {
   id?: string; // present on update
-  customer_id: string;
+  customer_id: string | null;
+  lead_id: string | null;
   project_id: string;
   packages: {
     tier: string;
@@ -117,6 +128,7 @@ export type QuoteSavePayload = {
   terms_and_conditions: string | null;
   internal_notes: string | null;
   discount_amount: number;
+  deposit_due_days: number;
   subtotal: number;
   total: number;
 };
@@ -143,6 +155,7 @@ export type QuoteListRow = {
   updated_at: string;
   customer: { display_name: string } | null;
   project: { name: string } | null;
+  lead: { display_name: string; email: string | null; phone: string | null } | null;
 };
 
 // ── Full quote with nested packages/items (for edit & preview) ──────
@@ -179,7 +192,8 @@ export type QuoteDetail = {
   share_token: string;
   version: number;
   status: string;
-  customer_id: string;
+  customer_id: string | null;
+  lead_id: string | null;
   project_id: string;
   cover_note: string | null;
   terms_and_conditions: string | null;
@@ -190,6 +204,9 @@ export type QuoteDetail = {
   subtotal: number | null;
   discount_amount: number | null;
   total: number | null;
+  deposit_due_days: number | null;
+  accepted_by_name: string | null;
+  accepted_by_email: string | null;
   sent_at: string | null;
   viewed_at: string | null;
   accepted_at: string | null;
@@ -198,6 +215,7 @@ export type QuoteDetail = {
   created_at: string;
   updated_at: string;
   customer: { display_name: string; email: string | null; phone: string | null } | null;
+  lead: { display_name: string; email: string | null; phone: string | null } | null;
   project: {
     name: string;
     address_line1: string | null;

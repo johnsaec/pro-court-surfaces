@@ -8,7 +8,8 @@ export async function getQuotes(): Promise<QuoteListRow[]> {
     .select(
       `id, quote_number, status, version, subtotal, total, created_at, updated_at,
        customer:customers(display_name),
-       project:projects!quotes_project_id_fkey(name)`
+       project:projects!quotes_project_id_fkey(name),
+       lead:leads(display_name, email, phone)`
     )
     .order("created_at", { ascending: false });
 
@@ -23,6 +24,7 @@ export async function getQuoteById(id: string): Promise<QuoteDetail | null> {
     .select(
       `*,
        customer:customers(display_name, email, phone),
+       lead:leads(display_name, email, phone),
        project:projects!quotes_project_id_fkey(name, address_line1, city, state, zip, square_feet, number_of_courts, project_type, sports),
        color_inside:color_palette!quotes_color_inside_id_fkey(name, hex_code),
        color_outside:color_palette!quotes_color_outside_id_fkey(name, hex_code),

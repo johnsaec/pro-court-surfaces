@@ -4,7 +4,8 @@ import { revalidatePath } from "next/cache";
 import { createServerClient } from "@/lib/supabase/server";
 
 export type ProjectFormData = {
-  customer_id: string;
+  customer_id?: string;
+  lead_id?: string;
   name: string;
   project_type?: string;
   sports?: string[];
@@ -28,7 +29,8 @@ export async function createProject(
   const { data: row, error } = await supabase
     .from("projects")
     .insert({
-      customer_id: data.customer_id,
+      customer_id: data.customer_id || null,
+      lead_id: data.lead_id || null,
       name: data.name,
       project_type: data.project_type || null,
       sports: data.sports?.length ? data.sports : [],

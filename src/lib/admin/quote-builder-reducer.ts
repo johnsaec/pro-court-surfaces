@@ -18,6 +18,7 @@ function nextKey() {
 export function createEmptyState(): QuoteBuilderState {
   return {
     customer_id: "",
+    lead_id: "",
     project_id: "",
     packages: [],
     color_inside_id: "",
@@ -27,12 +28,14 @@ export function createEmptyState(): QuoteBuilderState {
     terms_and_conditions: "",
     internal_notes: "",
     discount_amount: 0,
+    deposit_due_days: 7,
   };
 }
 
 export function stateFromQuote(quote: QuoteDetail): QuoteBuilderState {
   return {
-    customer_id: quote.customer_id,
+    customer_id: quote.customer_id ?? "",
+    lead_id: quote.lead_id ?? "",
     project_id: quote.project_id,
     packages: quote.quote_packages.map((pkg) => ({
       _key: nextKey(),
@@ -63,6 +66,7 @@ export function stateFromQuote(quote: QuoteDetail): QuoteBuilderState {
     terms_and_conditions: quote.terms_and_conditions ?? "",
     internal_notes: quote.internal_notes ?? "",
     discount_amount: quote.discount_amount ?? 0,
+    deposit_due_days: quote.deposit_due_days ?? 7,
   };
 }
 
@@ -129,7 +133,10 @@ export function quoteBuilderReducer(
 ): QuoteBuilderState {
   switch (action.type) {
     case "SET_CUSTOMER":
-      return { ...state, customer_id: action.customer_id, project_id: "" };
+      return { ...state, customer_id: action.customer_id, lead_id: "", project_id: "" };
+
+    case "SET_LEAD":
+      return { ...state, lead_id: action.lead_id, customer_id: "", project_id: "" };
 
     case "SET_PROJECT":
       return { ...state, project_id: action.project_id };

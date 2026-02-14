@@ -183,6 +183,22 @@ export function QuoteDetailsSection({
               placeholder="0.00"
             />
           </div>
+          <div className="space-y-1.5">
+            <Label>Deposit Due (Days)</Label>
+            <Input
+              type="number"
+              value={state.deposit_due_days}
+              onChange={(e) =>
+                dispatch({
+                  type: "SET_FIELD",
+                  field: "deposit_due_days",
+                  value: parseInt(e.target.value) || 7,
+                })
+              }
+              min={1}
+              placeholder="7"
+            />
+          </div>
         </div>
       </div>
     </div>

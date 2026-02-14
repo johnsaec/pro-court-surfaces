@@ -31,7 +31,7 @@ export function RunningTotal({
           disabled={!hasSelection}
           onClick={onAcceptClick}
         >
-          Accept &amp; Proceed
+          Accept &amp; Pay Deposit (50%)
         </Button>
       </div>
     </div>

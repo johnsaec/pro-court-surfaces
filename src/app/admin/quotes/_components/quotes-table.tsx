@@ -62,7 +62,8 @@ export function QuotesTable({ quotes }: { quotes: QuoteListRow[] }) {
                 {quote.quote_number}
               </TableCell>
               <TableCell>
-                {quote.customer?.display_name ?? "—"}
+                {quote.customer?.display_name ??
+                  (quote.lead ? `Lead: ${quote.lead.display_name}` : "—")}
               </TableCell>
               <TableCell>{quote.project?.name ?? "—"}</TableCell>
               <TableCell>
