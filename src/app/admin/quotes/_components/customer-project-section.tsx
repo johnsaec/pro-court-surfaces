@@ -50,8 +50,8 @@ export function CustomerProjectSection({
   const [numberOfCourts, setNumberOfCourts] = useState("");
   const [city, setCity] = useState("");
 
-  // Determine active tab from state
-  const activeTab = state.lead_id ? "lead" : "customer";
+  // Track active tab in local state (initialized from reducer state)
+  const [activeTab, setActiveTab] = useState(state.lead_id ? "lead" : "customer");
 
   const filteredProjects = useMemo(
     () =>
@@ -62,6 +62,7 @@ export function CustomerProjectSection({
   );
 
   function handleTabChange(tab: string) {
+    setActiveTab(tab);
     if (tab === "lead") {
       dispatch({ type: "SET_LEAD", lead_id: "" });
     } else {
