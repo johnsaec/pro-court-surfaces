@@ -3,6 +3,8 @@
 import { createServerClient } from "@/lib/supabase/server";
 import { stripe } from "@/lib/stripe";
 import { headers } from "next/headers";
+import { sendEmail } from "@/lib/email/send-email";
+import { QuoteAcceptedEmail } from "@/lib/email/templates/quote-accepted";
 import type { LineItemToggle, ColorSelections } from "./quote-calculator";
 
 type AcceptPayload = {
@@ -225,6 +227,23 @@ export async function acceptQuote(payload: AcceptPayload) {
     customer_email: payload.customer_email,
     stripe_invoice_id: stripeInvoiceId,
   });
+
+  // Send admin notification email (fire-and-forget)
+  try {
+    await sendEmail({
+      to: "patrick@procourtsurfaces.com",
+      subject: `Quote ${quote.quote_number} Accepted by ${payload.customer_name}`,
+      react: QuoteAcceptedEmail({
+        quoteNumber: quote.quote_number,
+        customerName: payload.customer_name,
+        customerEmail: payload.customer_email,
+        packageTier: payload.package_id,
+        totalPrice: payload.total_price,
+      }),
+    });
+  } catch (err) {
+    console.error("[acceptQuote] Admin email error:", err instanceof Error ? err.message : err);
+  }
 
   return { success: true };
 }

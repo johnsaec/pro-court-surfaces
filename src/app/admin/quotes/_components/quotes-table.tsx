@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import Link from "next/link";
-import { Pencil, Eye, Trash2 } from "lucide-react";
+import { Pencil, Eye, Trash2, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -14,7 +14,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { ConfirmDialog } from "@/components/admin/confirm-dialog";
-import { deleteQuote } from "@/lib/admin/actions/quote-actions";
+import { deleteQuote, sendQuote } from "@/lib/admin/actions/quote-actions";
 import {
   QUOTE_STATUS_LABELS,
   QUOTE_STATUS_COLORS,
@@ -23,6 +23,7 @@ import type { QuoteListRow } from "@/lib/admin/types/quote-types";
 
 export function QuotesTable({ quotes }: { quotes: QuoteListRow[] }) {
   const [deleteTarget, setDeleteTarget] = useState<QuoteListRow | null>(null);
+  const [sendTarget, setSendTarget] = useState<QuoteListRow | null>(null);
   const [isPending, startTransition] = useTransition();
 
   function handleDelete() {
@@ -30,6 +31,14 @@ export function QuotesTable({ quotes }: { quotes: QuoteListRow[] }) {
     startTransition(async () => {
       await deleteQuote(deleteTarget.id);
       setDeleteTarget(null);
+    });
+  }
+
+  function handleSend() {
+    if (!sendTarget) return;
+    startTransition(async () => {
+      await sendQuote(sendTarget.id);
+      setSendTarget(null);
     });
   }
 
@@ -89,6 +98,15 @@ export function QuotesTable({ quotes }: { quotes: QuoteListRow[] }) {
                       <Eye className="size-3.5" />
                     </Link>
                   </Button>
+                  {quote.status === "draft" && (
+                    <Button
+                      variant="ghost"
+                      size="icon-xs"
+                      onClick={() => setSendTarget(quote)}
+                    >
+                      <Send className="size-3.5 text-blue-600" />
+                    </Button>
+                  )}
                   <Button
                     variant="ghost"
                     size="icon-xs"
@@ -102,6 +120,17 @@ export function QuotesTable({ quotes }: { quotes: QuoteListRow[] }) {
           ))}
         </TableBody>
       </Table>
+
+      <ConfirmDialog
+        open={!!sendTarget}
+        onOpenChange={(open) => !open && setSendTarget(null)}
+        title="Send Quote"
+        description={`Send this quote to ${sendTarget?.customer?.display_name ?? sendTarget?.lead?.display_name ?? "the customer"}?`}
+        onConfirm={handleSend}
+        isPending={isPending}
+        confirmLabel="Send"
+        variant="default"
+      />
 
       <ConfirmDialog
         open={!!deleteTarget}

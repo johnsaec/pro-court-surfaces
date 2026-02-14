@@ -1,7 +1,10 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { headers } from "next/headers";
 import { createServerClient } from "@/lib/supabase/server";
+import { sendEmail } from "@/lib/email/send-email";
+import { QuoteSentEmail } from "@/lib/email/templates/quote-sent";
 import type { QuoteSavePayload } from "@/lib/admin/types/quote-types";
 
 export async function saveQuote(
@@ -124,6 +127,72 @@ export async function saveQuote(
 
     return { success: false, error: message };
   }
+}
+
+export async function sendQuote(
+  quoteId: string
+): Promise<{ success: boolean; error?: string }> {
+  const supabase = createServerClient();
+
+  const { data: quote, error: fetchError } = await supabase
+    .from("quotes")
+    .select("*, customer:customers(*), lead:leads(*)")
+    .eq("id", quoteId)
+    .single();
+
+  if (fetchError || !quote) {
+    return { success: false, error: "Quote not found" };
+  }
+
+  const recipientName =
+    quote.customer?.display_name ??
+    quote.lead?.display_name ??
+    "Customer";
+  const recipientEmail =
+    quote.customer?.email ?? quote.lead?.email;
+
+  if (!recipientEmail) {
+    return { success: false, error: "No email address found for recipient" };
+  }
+
+  // Update status to sent
+  const { error: updateError } = await supabase
+    .from("quotes")
+    .update({ status: "sent", sent_at: new Date().toISOString() })
+    .eq("id", quoteId);
+
+  if (updateError) {
+    return { success: false, error: updateError.message };
+  }
+
+  // Build quote URL
+  let origin = "http://localhost:3000";
+  try {
+    const headersList = await headers();
+    origin = headersList.get("origin") ?? origin;
+  } catch {
+    // fallback to localhost
+  }
+  const quoteUrl = `${origin}/q/${quote.share_token}`;
+
+  // Send email (fire-and-forget)
+  try {
+    await sendEmail({
+      to: recipientEmail,
+      subject: `Your Quote ${quote.quote_number} from Pro Court Surfaces`,
+      react: QuoteSentEmail({
+        customerName: recipientName,
+        quoteNumber: quote.quote_number,
+        quoteUrl,
+        coverNote: quote.cover_note,
+      }),
+    });
+  } catch (err) {
+    console.error("[sendQuote] Email error:", err instanceof Error ? err.message : err);
+  }
+
+  revalidatePath("/admin/quotes");
+  return { success: true };
 }
 
 export async function deleteQuote(
