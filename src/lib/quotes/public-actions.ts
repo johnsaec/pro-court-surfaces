@@ -16,13 +16,14 @@ type AcceptPayload = {
 };
 
 export async function acceptQuote(payload: AcceptPayload) {
+  console.log("[acceptQuote] Starting with payload:", JSON.stringify(payload, null, 2));
   const supabase = createServerClient();
 
   // 1. Fetch quote with customer, lead, project joins
   const { data: quote, error: fetchError } = await supabase
     .from("quotes")
     .select(
-      `*, customer:customers(*), lead:leads(*), project:projects(*),
+      `*, customer:customers(*), lead:leads(*), project:projects!quotes_project_id_fkey(*),
        color_inside:color_palette!quotes_color_inside_id_fkey(name),
        color_outside:color_palette!quotes_color_outside_id_fkey(name),
        color_lines:color_palette!quotes_color_lines_id_fkey(name)`
@@ -31,8 +32,10 @@ export async function acceptQuote(payload: AcceptPayload) {
     .single();
 
   if (fetchError || !quote) {
+    console.error("[acceptQuote] Quote fetch failed:", fetchError?.message);
     return { success: false, error: "Quote not found" };
   }
+  console.log("[acceptQuote] Quote fetched, status:", quote.status, "customer_id:", quote.customer_id, "lead_id:", quote.lead_id);
 
   let customerId: string | null = quote.customer_id;
   let customerEmail = payload.customer_email;
@@ -58,7 +61,8 @@ export async function acceptQuote(payload: AcceptPayload) {
       .single();
 
     if (custError || !newCustomer) {
-      return { success: false, error: "Failed to create customer from lead" };
+      console.error("[acceptQuote] Customer creation failed:", custError?.message);
+      return { success: false, error: "Failed to create customer from lead: " + custError?.message };
     }
 
     customerId = newCustomer.id;
@@ -194,7 +198,8 @@ export async function acceptQuote(payload: AcceptPayload) {
     });
 
   if (selectionError) {
-    return { success: false, error: selectionError.message };
+    console.error("[acceptQuote] Selection insert failed:", selectionError.message);
+    return { success: false, error: "Selection save failed: " + selectionError.message };
   }
 
   // 7. Update quote status to accepted
@@ -209,7 +214,8 @@ export async function acceptQuote(payload: AcceptPayload) {
     .eq("id", payload.quote_id);
 
   if (updateError) {
-    return { success: false, error: updateError.message };
+    console.error("[acceptQuote] Quote status update failed:", updateError.message);
+    return { success: false, error: "Status update failed: " + updateError.message };
   }
 
   // Log acceptance activity (fire-and-forget)

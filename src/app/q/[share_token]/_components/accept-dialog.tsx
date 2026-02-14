@@ -44,8 +44,8 @@ export function AcceptDialog({
     setIsSubmitting(true);
     try {
       await onAccept(name.trim(), email.trim());
-    } catch {
-      setError("Something went wrong. Please try again.");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
       setIsSubmitting(false);
     }
   }
