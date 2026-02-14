@@ -1,4 +1,4 @@
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { getQuoteByShareToken } from "@/lib/quotes/public-queries";
 import { getColors } from "@/lib/admin/queries/color-queries";
 import { logQuoteActivity } from "@/lib/quotes/public-actions";
@@ -18,6 +18,11 @@ export default async function PublicQuotePage({
   ]);
 
   if (!quote) notFound();
+
+  // If already accepted or deposit paid, redirect to confirmation page
+  if (quote.status === "accepted" || quote.status === "deposit_paid") {
+    redirect(`/q/${share_token}/accepted`);
+  }
 
   // Fire-and-forget: log "viewed" activity
   logQuoteActivity(quote.id, "viewed");

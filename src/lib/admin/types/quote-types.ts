@@ -207,6 +207,7 @@ export type QuoteDetail = {
   deposit_due_days: number | null;
   accepted_by_name: string | null;
   accepted_by_email: string | null;
+  stripe_invoice_id: string | null;
   sent_at: string | null;
   viewed_at: string | null;
   accepted_at: string | null;
