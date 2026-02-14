@@ -89,60 +89,68 @@ export async function acceptQuote(payload: AcceptPayload) {
     customerEmail = lead.email ?? payload.customer_email;
   }
 
-  // 3. Find/create Stripe Customer by email
-  let stripeCustomerId: string | undefined;
-  if (quote.customer?.stripe_customer_id) {
-    stripeCustomerId = quote.customer.stripe_customer_id;
-  } else {
-    const existing = await stripe.customers.list({
-      email: customerEmail,
-      limit: 1,
+  // 3. Find/create Stripe Customer + Invoice
+  let stripeInvoiceId: string | null = null;
+
+  try {
+    let stripeCustomerId: string | undefined;
+    if (quote.customer?.stripe_customer_id) {
+      stripeCustomerId = quote.customer.stripe_customer_id;
+    } else {
+      const existing = await stripe.customers.list({
+        email: customerEmail,
+        limit: 1,
+      });
+
+      if (existing.data.length > 0) {
+        stripeCustomerId = existing.data[0].id;
+      } else {
+        const stripeCustomer = await stripe.customers.create({
+          name: payload.customer_name,
+          email: customerEmail,
+        });
+        stripeCustomerId = stripeCustomer.id;
+      }
+
+      // Store stripe_customer_id on customer record
+      if (customerId) {
+        await supabase
+          .from("customers")
+          .update({ stripe_customer_id: stripeCustomerId })
+          .eq("id", customerId);
+      }
+    }
+
+    // 4. Create Stripe Invoice: 50% deposit
+    const depositAmount = Math.round(payload.total_price * 50); // cents (50% of total, total is in dollars)
+
+    const invoice = await stripe.invoices.create({
+      customer: stripeCustomerId,
+      collection_method: "send_invoice",
+      days_until_due: quote.deposit_due_days ?? 7,
+      metadata: { quote_id: payload.quote_id },
     });
 
-    if (existing.data.length > 0) {
-      stripeCustomerId = existing.data[0].id;
-    } else {
-      const stripeCustomer = await stripe.customers.create({
-        name: payload.customer_name,
-        email: customerEmail,
-      });
-      stripeCustomerId = stripeCustomer.id;
-    }
+    await stripe.invoiceItems.create({
+      customer: stripeCustomerId,
+      invoice: invoice.id,
+      amount: depositAmount,
+      currency: "usd",
+      description: `50% Deposit — Quote ${quote.quote_number}`,
+    });
 
-    // Store stripe_customer_id on customer record
-    if (customerId) {
-      await supabase
-        .from("customers")
-        .update({ stripe_customer_id: stripeCustomerId })
-        .eq("id", customerId);
-    }
+    const finalizedInvoice = await stripe.invoices.finalizeInvoice(invoice.id);
+    stripeInvoiceId = finalizedInvoice.id;
+
+    // 5. Store stripe_invoice_id on quote
+    await supabase
+      .from("quotes")
+      .update({ stripe_invoice_id: stripeInvoiceId })
+      .eq("id", payload.quote_id);
+  } catch (err) {
+    // Log but don't block acceptance — invoice can be created manually
+    console.error("[acceptQuote] Stripe error:", err instanceof Error ? err.message : err);
   }
-
-  // 4. Create Stripe Invoice: 50% deposit
-  const depositAmount = Math.round(payload.total_price * 50); // cents (50% of total, total is in dollars)
-
-  const invoice = await stripe.invoices.create({
-    customer: stripeCustomerId,
-    collection_method: "send_invoice",
-    days_until_due: quote.deposit_due_days ?? 7,
-    metadata: { quote_id: payload.quote_id },
-  });
-
-  await stripe.invoiceItems.create({
-    customer: stripeCustomerId,
-    invoice: invoice.id,
-    amount: depositAmount,
-    currency: "usd",
-    description: `50% Deposit — Quote ${quote.quote_number}`,
-  });
-
-  const finalizedInvoice = await stripe.invoices.finalizeInvoice(invoice.id);
-
-  // 5. Store stripe_invoice_id on quote
-  await supabase
-    .from("quotes")
-    .update({ stripe_invoice_id: finalizedInvoice.id })
-    .eq("id", payload.quote_id);
 
   // 6. Resolve color names from IDs for the selection snapshot
   const colorInsideName = quote.color_inside?.name ??
@@ -209,7 +217,7 @@ export async function acceptQuote(payload: AcceptPayload) {
     package_id: payload.package_id,
     customer_name: payload.customer_name,
     customer_email: payload.customer_email,
-    stripe_invoice_id: finalizedInvoice.id,
+    stripe_invoice_id: stripeInvoiceId,
   });
 
   return { success: true };
