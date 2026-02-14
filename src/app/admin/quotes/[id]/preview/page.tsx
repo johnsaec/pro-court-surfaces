@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/admin/page-header";
 import { getQuoteById } from "@/lib/admin/queries/quote-queries";
 import { QuotePreview } from "../../_components/quote-preview";
+import { DownloadPdfButton } from "../../_components/download-pdf-button";
 
 export default async function QuotePreviewPage({
   params,
@@ -29,6 +30,7 @@ export default async function QuotePreviewPage({
               Back
             </Link>
           </Button>
+          <DownloadPdfButton quoteId={id} />
           <Button asChild>
             <Link href={`/admin/quotes/${id}`}>
               <Pencil className="size-4 mr-1" />

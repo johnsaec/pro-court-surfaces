@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import Link from "next/link";
-import { Pencil, Eye, Trash2, Send } from "lucide-react";
+import { Pencil, Eye, Trash2, Send, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -97,6 +97,11 @@ export function QuotesTable({ quotes }: { quotes: QuoteListRow[] }) {
                     <Link href={`/admin/quotes/${quote.id}/preview`}>
                       <Eye className="size-3.5" />
                     </Link>
+                  </Button>
+                  <Button variant="ghost" size="icon-xs" asChild>
+                    <a href={`/api/quotes/${quote.id}/pdf`} target="_blank" rel="noopener noreferrer">
+                      <Download className="size-3.5" />
+                    </a>
                   </Button>
                   {quote.status === "draft" && (
                     <Button

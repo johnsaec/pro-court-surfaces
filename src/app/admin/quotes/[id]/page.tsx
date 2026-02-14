@@ -7,6 +7,7 @@ import { getServices } from "@/lib/admin/queries/catalog-queries";
 import { getColors } from "@/lib/admin/queries/color-queries";
 import { getLeads } from "@/lib/admin/queries/lead-queries";
 import { QuoteBuilder } from "../_components/quote-builder";
+import { DownloadPdfButton } from "../_components/download-pdf-button";
 import type { LeadOption } from "@/lib/admin/types/quote-types";
 
 export default async function EditQuotePage({
@@ -46,7 +47,9 @@ export default async function EditQuotePage({
       <PageHeader
         title={`Edit ${quote.quote_number}`}
         description="Modify quote details, packages, and line items."
-      />
+      >
+        <DownloadPdfButton quoteId={id} />
+      </PageHeader>
       <div className="mt-6">
         <QuoteBuilder
           quote={quote}
