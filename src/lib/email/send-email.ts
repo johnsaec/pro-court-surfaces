@@ -10,7 +10,7 @@ type SendEmailParams = {
 export async function sendEmail({ to, subject, react }: SendEmailParams) {
   try {
     const { data, error } = await resend.emails.send({
-      from: process.env.EMAIL_FROM ?? "quotes@procourtquotes.com",
+      from: process.env.EMAIL_FROM ?? "Pro Court Surfaces <quotes@procourtsurfaces.com>",
       to,
       subject,
       react,
