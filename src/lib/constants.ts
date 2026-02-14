@@ -81,3 +81,41 @@ export const SERVICE_CATEGORY_LABELS: Record<string, string> = {
 };
 
 export const COLOR_RECOMMENDED_OPTIONS = ["inside", "outside", "lines"] as const;
+
+// Quote status
+export const QUOTE_STATUS_LABELS: Record<string, string> = {
+  draft: "Draft",
+  sent: "Sent",
+  viewed: "Viewed",
+  accepted: "Accepted",
+  declined: "Declined",
+  expired: "Expired",
+  revised: "Revised",
+};
+
+export const QUOTE_STATUS_COLORS: Record<string, string> = {
+  draft: "bg-gray-100 text-gray-700",
+  sent: "bg-blue-100 text-blue-700",
+  viewed: "bg-indigo-100 text-indigo-700",
+  accepted: "bg-green-100 text-green-700",
+  declined: "bg-red-100 text-red-700",
+  expired: "bg-orange-100 text-orange-700",
+  revised: "bg-yellow-100 text-yellow-700",
+};
+
+// Package tiers
+export const PACKAGE_TIER_LABELS: Record<string, string> = {
+  good: "Good",
+  better: "Better",
+  best: "Best",
+};
+
+// Project status
+export const PROJECT_STATUS_LABELS: Record<string, string> = {
+  quoting: "Quoting",
+  scheduled: "Scheduled",
+  in_progress: "In Progress",
+  completed: "Completed",
+  on_hold: "On Hold",
+  cancelled: "Cancelled",
+};

@@ -8,6 +8,7 @@ import {
   UserPlus,
   Palette,
   BookOpen,
+  FileText,
   FolderKanban,
   Settings,
 } from "lucide-react";
@@ -19,6 +20,7 @@ const navItems = [
   { href: "/admin/leads", label: "Leads", icon: UserPlus },
   { href: "/admin/catalog", label: "Services", icon: BookOpen },
   { href: "/admin/colors", label: "Colors", icon: Palette },
+  { href: "/admin/quotes", label: "Quotes", icon: FileText },
   { href: "/admin/projects", label: "Projects", icon: FolderKanban },
   { href: "/admin/settings", label: "Settings", icon: Settings },
 ];

@@ -1,0 +1,190 @@
+"use client";
+
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Separator } from "@/components/ui/separator";
+import type { Color } from "@/lib/admin/queries/color-queries";
+import type { QuoteBuilderState, QuoteBuilderAction } from "@/lib/admin/types/quote-types";
+
+interface QuoteDetailsSectionProps {
+  state: QuoteBuilderState;
+  colors: Color[];
+  dispatch: React.Dispatch<QuoteBuilderAction>;
+}
+
+const NONE_VALUE = "__none__";
+
+function ColorSelect({
+  label,
+  field,
+  value,
+  colors,
+  dispatch,
+}: {
+  label: string;
+  field: "color_inside_id" | "color_outside_id" | "color_lines_id";
+  value: string;
+  colors: Color[];
+  dispatch: React.Dispatch<QuoteBuilderAction>;
+}) {
+  const activeColors = colors.filter((c) => c.is_active);
+  return (
+    <div className="space-y-1.5">
+      <Label>{label}</Label>
+      <Select
+        value={value || NONE_VALUE}
+        onValueChange={(v) =>
+          dispatch({
+            type: "SET_COLOR",
+            field,
+            value: v === NONE_VALUE ? "" : v,
+          })
+        }
+      >
+        <SelectTrigger className="w-full">
+          <SelectValue placeholder="Select color..." />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value={NONE_VALUE}>None</SelectItem>
+          {activeColors.map((c) => (
+            <SelectItem key={c.id} value={c.id}>
+              <span className="flex items-center gap-2">
+                <span
+                  className="size-3 rounded-full border shrink-0"
+                  style={{ backgroundColor: c.hex_code }}
+                />
+                {c.name}
+              </span>
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </div>
+  );
+}
+
+export function QuoteDetailsSection({
+  state,
+  colors,
+  dispatch,
+}: QuoteDetailsSectionProps) {
+  return (
+    <div className="space-y-6">
+      {/* Colors */}
+      <div className="space-y-4">
+        <h3 className="text-lg font-semibold">Colors</h3>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+          <ColorSelect
+            label="Inside Color"
+            field="color_inside_id"
+            value={state.color_inside_id}
+            colors={colors}
+            dispatch={dispatch}
+          />
+          <ColorSelect
+            label="Outside Color"
+            field="color_outside_id"
+            value={state.color_outside_id}
+            colors={colors}
+            dispatch={dispatch}
+          />
+          <ColorSelect
+            label="Lines Color"
+            field="color_lines_id"
+            value={state.color_lines_id}
+            colors={colors}
+            dispatch={dispatch}
+          />
+        </div>
+      </div>
+
+      <Separator />
+
+      {/* Messaging */}
+      <div className="space-y-4">
+        <h3 className="text-lg font-semibold">Messaging & Terms</h3>
+        <div className="grid grid-cols-1 gap-4">
+          <div className="space-y-1.5">
+            <Label>Cover Note</Label>
+            <Textarea
+              value={state.cover_note}
+              onChange={(e) =>
+                dispatch({
+                  type: "SET_FIELD",
+                  field: "cover_note",
+                  value: e.target.value,
+                })
+              }
+              rows={3}
+              placeholder="Personal message shown at the top of the quote..."
+            />
+          </div>
+          <div className="space-y-1.5">
+            <Label>Terms & Conditions</Label>
+            <Textarea
+              value={state.terms_and_conditions}
+              onChange={(e) =>
+                dispatch({
+                  type: "SET_FIELD",
+                  field: "terms_and_conditions",
+                  value: e.target.value,
+                })
+              }
+              rows={3}
+              placeholder="Payment terms, warranty info, scheduling notes..."
+            />
+          </div>
+        </div>
+      </div>
+
+      <Separator />
+
+      {/* Internal + discount */}
+      <div className="space-y-4">
+        <h3 className="text-lg font-semibold">Internal</h3>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div className="space-y-1.5">
+            <Label>Internal Notes</Label>
+            <Textarea
+              value={state.internal_notes}
+              onChange={(e) =>
+                dispatch({
+                  type: "SET_FIELD",
+                  field: "internal_notes",
+                  value: e.target.value,
+                })
+              }
+              rows={2}
+              placeholder="Notes visible only to your team..."
+            />
+          </div>
+          <div className="space-y-1.5">
+            <Label>Discount Amount ($)</Label>
+            <Input
+              type="number"
+              value={state.discount_amount || ""}
+              onChange={(e) =>
+                dispatch({
+                  type: "SET_FIELD",
+                  field: "discount_amount",
+                  value: parseFloat(e.target.value) || 0,
+                })
+              }
+              min={0}
+              step="0.01"
+              placeholder="0.00"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
