@@ -27,44 +27,69 @@ export async function POST(req: NextRequest) {
   if (event.type === "invoice.paid") {
     const invoice = event.data.object;
     const invoiceId = invoice.id;
-
     const supabase = createServerClient();
-    await supabase
+
+    // Check if this is a deposit invoice or balance invoice
+    const { data: depositQuote } = await supabase
       .from("quotes")
-      .update({ status: "deposit_paid" })
-      .eq("stripe_invoice_id", invoiceId);
+      .select("id")
+      .eq("stripe_invoice_id", invoiceId)
+      .maybeSingle();
 
-    // Send deposit-paid confirmation email (fire-and-forget)
-    try {
-      const { data: quote } = await supabase
+    const { data: balanceQuote } = await supabase
+      .from("quotes")
+      .select("id")
+      .eq("stripe_balance_invoice_id", invoiceId)
+      .maybeSingle();
+
+    if (depositQuote) {
+      // Deposit invoice paid → deposit_paid
+      await supabase
         .from("quotes")
-        .select("*, customer:customers(*), lead:leads(*)")
-        .eq("stripe_invoice_id", invoiceId)
-        .single();
+        .update({ status: "deposit_paid" })
+        .eq("id", depositQuote.id);
+    } else if (balanceQuote) {
+      // Balance invoice paid → completed
+      await supabase
+        .from("quotes")
+        .update({ status: "completed" })
+        .eq("id", balanceQuote.id);
+    }
 
-      if (quote) {
-        const recipientEmail =
-          quote.customer?.email ?? quote.lead?.email;
-        const recipientName =
-          quote.customer?.display_name ??
-          quote.lead?.display_name ??
-          "Customer";
-        const depositAmount = (invoice.amount_paid ?? 0) / 100;
+    // Send confirmation email (fire-and-forget)
+    const quoteId = depositQuote?.id ?? balanceQuote?.id;
+    if (quoteId) {
+      try {
+        const { data: quote } = await supabase
+          .from("quotes")
+          .select("*, customer:customers(*), lead:leads(*)")
+          .eq("id", quoteId)
+          .single();
 
-        if (recipientEmail) {
-          await sendEmail({
-            to: recipientEmail,
-            subject: `Payment Received — Quote ${quote.quote_number}`,
-            react: DepositPaidEmail({
-              customerName: recipientName,
-              quoteNumber: quote.quote_number,
-              depositAmount,
-            }),
-          });
+        if (quote) {
+          const recipientEmail =
+            quote.customer?.email ?? quote.lead?.email;
+          const recipientName =
+            quote.customer?.display_name ??
+            quote.lead?.display_name ??
+            "Customer";
+          const paidAmount = (invoice.amount_paid ?? 0) / 100;
+
+          if (recipientEmail) {
+            await sendEmail({
+              to: recipientEmail,
+              subject: `Payment Received — Quote ${quote.quote_number}`,
+              react: DepositPaidEmail({
+                customerName: recipientName,
+                quoteNumber: quote.quote_number,
+                depositAmount: paidAmount,
+              }),
+            });
+          }
         }
+      } catch (err) {
+        console.error("[webhook] Payment email error:", err instanceof Error ? err.message : err);
       }
-    } catch (err) {
-      console.error("[webhook] Deposit email error:", err instanceof Error ? err.message : err);
     }
   }
 

@@ -94,6 +94,7 @@ export const QUOTE_STATUS_LABELS: Record<string, string> = {
   expired: "Expired",
   revised: "Revised",
   deposit_paid: "Deposit Paid",
+  completed: "Completed",
 };
 
 export const QUOTE_STATUS_COLORS: Record<string, string> = {
@@ -105,6 +106,7 @@ export const QUOTE_STATUS_COLORS: Record<string, string> = {
   expired: "bg-orange-100 text-orange-700",
   revised: "bg-yellow-100 text-yellow-700",
   deposit_paid: "bg-teal-100 text-teal-700",
+  completed: "bg-green-100 text-green-700",
 };
 
 // Package tiers

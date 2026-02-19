@@ -3,8 +3,10 @@
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { createServerClient } from "@/lib/supabase/server";
+import { stripe } from "@/lib/stripe";
 import { sendEmail } from "@/lib/email/send-email";
 import { QuoteSentEmail } from "@/lib/email/templates/quote-sent";
+import { BalanceDueEmail } from "@/lib/email/templates/balance-due";
 import type { QuoteSavePayload } from "@/lib/admin/types/quote-types";
 
 export async function saveQuote(
@@ -204,4 +206,122 @@ export async function deleteQuote(
   if (error) return { success: false, error: error.message };
   revalidatePath("/admin/quotes");
   return { success: true };
+}
+
+export async function collectBalance(
+  quoteId: string
+): Promise<{ success: boolean; invoiceUrl?: string; error?: string }> {
+  const supabase = createServerClient();
+
+  // 1. Fetch quote with customer/lead joins
+  const { data: quote, error: fetchError } = await supabase
+    .from("quotes")
+    .select("*, customer:customers(*), lead:leads(*)")
+    .eq("id", quoteId)
+    .single();
+
+  if (fetchError || !quote) {
+    return { success: false, error: "Quote not found" };
+  }
+
+  // 2. Verify status and no existing balance invoice
+  if (quote.status !== "deposit_paid") {
+    return { success: false, error: "Quote must be in deposit_paid status" };
+  }
+
+  if (quote.stripe_balance_invoice_id) {
+    return { success: false, error: "Balance invoice already created" };
+  }
+
+  const total = quote.total ?? 0;
+  if (total <= 0) {
+    return { success: false, error: "Quote has no total amount" };
+  }
+
+  // 3. Resolve Stripe customer
+  const customerEmail = quote.customer?.email ?? quote.lead?.email;
+  const customerName =
+    quote.customer?.display_name ?? quote.lead?.display_name ?? "Customer";
+
+  if (!customerEmail) {
+    return { success: false, error: "No email address found for customer" };
+  }
+
+  let stripeCustomerId: string | undefined;
+
+  if (quote.customer?.stripe_customer_id) {
+    stripeCustomerId = quote.customer.stripe_customer_id;
+  } else {
+    const existing = await stripe.customers.list({
+      email: customerEmail,
+      limit: 1,
+    });
+    if (existing.data.length > 0) {
+      stripeCustomerId = existing.data[0].id;
+    } else {
+      const stripeCustomer = await stripe.customers.create({
+        name: customerName,
+        email: customerEmail,
+      });
+      stripeCustomerId = stripeCustomer.id;
+    }
+  }
+
+  // 4. Create Stripe invoice for remaining 50%
+  const balanceAmount = Math.round(total * 50); // cents (50% of total in dollars)
+
+  try {
+    const invoice = await stripe.invoices.create({
+      customer: stripeCustomerId,
+      collection_method: "send_invoice",
+      days_until_due: quote.deposit_due_days ?? 7,
+      metadata: { quote_id: quoteId, type: "balance" },
+    });
+
+    await stripe.invoiceItems.create({
+      customer: stripeCustomerId,
+      invoice: invoice.id,
+      amount: balanceAmount,
+      currency: "usd",
+      description: `Remaining Balance — Quote ${quote.quote_number}`,
+    });
+
+    const finalizedInvoice = await stripe.invoices.finalizeInvoice(invoice.id);
+
+    // 5. Store balance invoice ID on quote
+    await supabase
+      .from("quotes")
+      .update({ stripe_balance_invoice_id: finalizedInvoice.id })
+      .eq("id", quoteId);
+
+    // 6. Send balance-due email
+    const invoiceUrl = finalizedInvoice.hosted_invoice_url ?? "";
+
+    try {
+      await sendEmail({
+        to: customerEmail,
+        subject: `Remaining Balance Due — Quote ${quote.quote_number}`,
+        react: BalanceDueEmail({
+          customerName,
+          quoteNumber: quote.quote_number,
+          balanceAmount: balanceAmount / 100, // convert cents to dollars
+          invoiceUrl,
+        }),
+      });
+    } catch (err) {
+      console.error(
+        "[collectBalance] Email error:",
+        err instanceof Error ? err.message : err
+      );
+    }
+
+    revalidatePath(`/admin/quotes/${quoteId}/preview`);
+    revalidatePath("/admin/quotes");
+
+    return { success: true, invoiceUrl };
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Stripe error";
+    console.error("[collectBalance] Stripe error:", message);
+    return { success: false, error: message };
+  }
 }

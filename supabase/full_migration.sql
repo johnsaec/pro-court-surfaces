@@ -27,6 +27,7 @@ CREATE TYPE lead_source AS ENUM (
   'other'
 );
 
+
 -- What kind of court project
 CREATE TYPE project_type AS ENUM (
   'new_court_full_build',

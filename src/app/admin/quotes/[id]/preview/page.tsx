@@ -6,6 +6,7 @@ import { PageHeader } from "@/components/admin/page-header";
 import { getQuoteById } from "@/lib/admin/queries/quote-queries";
 import { QuotePreview } from "../../_components/quote-preview";
 import { DownloadPdfButton } from "../../_components/download-pdf-button";
+import { CollectBalanceButton } from "../../_components/collect-balance-button";
 
 export default async function QuotePreviewPage({
   params,
@@ -23,7 +24,7 @@ export default async function QuotePreviewPage({
         title={`Preview: ${quote.quote_number}`}
         description="Read-only preview of the customer-facing quote."
       >
-        <div className="flex gap-2">
+        <div className="flex gap-2 items-start">
           <Button variant="outline" asChild>
             <Link href="/admin/quotes">
               <ArrowLeft className="size-4 mr-1" />
@@ -31,6 +32,12 @@ export default async function QuotePreviewPage({
             </Link>
           </Button>
           <DownloadPdfButton quoteId={id} />
+          <CollectBalanceButton
+            quoteId={id}
+            status={quote.status}
+            stripeBalanceInvoiceId={quote.stripe_balance_invoice_id ?? null}
+            balanceAmount={Math.round((quote.total ?? 0) / 2)}
+          />
           <Button asChild>
             <Link href={`/admin/quotes/${id}`}>
               <Pencil className="size-4 mr-1" />
