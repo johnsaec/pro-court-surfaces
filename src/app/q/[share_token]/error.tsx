@@ -1,19 +1,27 @@
 "use client";
 
+import { useEffect } from "react";
+
 export default function PublicQuoteError({
+  error,
   reset,
 }: {
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  useEffect(() => {
+    console.error("Public quote error:", error);
+  }, [error]);
+
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4">
-      <div className="text-center">
+      <div className="text-center max-w-md">
         <h1 className="text-3xl font-bold text-gray-900">
           Something went wrong
         </h1>
         <p className="mt-3 text-gray-600">
-          We had trouble loading this quote. Please try again.
+          We had trouble loading this quote. Please try again or contact Pro
+          Court Surfaces if the problem persists.
         </p>
         <button
           onClick={reset}
