@@ -122,7 +122,7 @@ Each quote has 3 packages (Good, Better, Best) with different line items and tot
 7. Admin clicks **"Collect Remaining Balance"** on quote preview → creates second Stripe Invoice for remaining 50%, sends `BalanceDueEmail`
 8. Stripe webhook (`invoice.paid` for balance invoice) → updates quote status to `completed`
 
-## What's Done (Sprints 1-4)
+## What's Done (Sprints 1-5)
 - ✅ Full admin CRUD (customers, leads, projects, quotes)
 - ✅ Quote Builder with 8 phases, 3 package tiers, line items
 - ✅ Customer-facing quote page at /q/[share_token]
@@ -134,9 +134,11 @@ Each quote has 3 packages (Good, Better, Best) with different line items and tot
 - ✅ Resend email templates: quote-sent, quote-accepted (admin notification), deposit-paid, balance-due
 - ✅ PDF generation: Downloadable quote document with @react-pdf/renderer
 - ✅ "Collect Remaining Balance" button in admin preview — creates second Stripe invoice for remaining 50%, sends balance-due email
+- ✅ Dashboard with stat cards (total quotes, pipeline value, deposits, completed revenue), recent quotes table, activity timeline
+- ✅ Mobile responsive: admin sidebar drawer, mobile card layouts for leads/customers/catalog/quotes tables, responsive dashboard grid
+- ✅ Error handling: root + admin + public error boundaries, branded 404 pages, loading skeletons, Toaster on public quote pages
 
 ## What's Pending
-- ❌ **Sprint 5:** Dashboard stats, activity log, mobile responsive, error handling polish
 - ❌ **Future:** Kanban board for leads, conversational quote creation, multi-tenant support
 
 ## Development Notes
