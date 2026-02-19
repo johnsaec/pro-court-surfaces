@@ -2,6 +2,7 @@
 
 import { useReducer, useState, useTransition, useMemo, useCallback } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { CustomerProjectSection } from "./customer-project-section";
@@ -120,9 +121,12 @@ export function QuoteBuilder({
     startTransition(async () => {
       const result = await saveQuote(payload);
       if (result.success) {
+        toast.success(quote ? "Quote updated" : "Quote created");
         router.push("/admin/quotes");
       } else {
-        setError(result.error ?? "Failed to save quote");
+        const msg = result.error ?? "Failed to save quote";
+        setError(msg);
+        toast.error(msg);
       }
     });
   }
@@ -158,7 +162,7 @@ export function QuoteBuilder({
       <Separator />
 
       {/* Totals */}
-      <div className="flex items-center justify-end gap-6 text-sm">
+      <div className="flex flex-wrap items-center justify-end gap-6 text-sm">
         <div className="text-muted-foreground">
           Subtotal: <span className="font-medium text-foreground tabular-nums">${subtotal.toFixed(2)}</span>
         </div>
@@ -174,7 +178,7 @@ export function QuoteBuilder({
 
       {/* Actions */}
       {error && <p className="text-sm text-destructive">{error}</p>}
-      <div className="flex gap-3">
+      <div className="flex flex-wrap gap-3">
         <Button onClick={handleSave} disabled={isPending}>
           {isPending
             ? "Saving..."

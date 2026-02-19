@@ -48,12 +48,26 @@ export async function POST(req: NextRequest) {
         .from("quotes")
         .update({ status: "deposit_paid" })
         .eq("id", depositQuote.id);
+
+      // Log activity
+      await supabase.from("quote_activity_log").insert({
+        quote_id: depositQuote.id,
+        event_type: "deposit_paid",
+        event_data: { amount: (invoice.amount_paid ?? 0) / 100 },
+      });
     } else if (balanceQuote) {
       // Balance invoice paid → completed
       await supabase
         .from("quotes")
         .update({ status: "completed" })
         .eq("id", balanceQuote.id);
+
+      // Log activity
+      await supabase.from("quote_activity_log").insert({
+        quote_id: balanceQuote.id,
+        event_type: "completed",
+        event_data: { amount: (invoice.amount_paid ?? 0) / 100 },
+      });
     }
 
     // Send confirmation email (fire-and-forget)

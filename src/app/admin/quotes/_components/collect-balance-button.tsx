@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { DollarSign, ExternalLink, Loader2 } from "lucide-react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { collectBalance } from "@/lib/admin/actions/quote-actions";
 
@@ -47,9 +48,12 @@ export function CollectBalanceButton({
     const result = await collectBalance(quoteId);
 
     if (result.success && result.invoiceUrl) {
+      toast.success("Balance invoice created and sent");
       window.open(result.invoiceUrl, "_blank");
     } else if (!result.success) {
-      setError(result.error ?? "Something went wrong");
+      const msg = result.error ?? "Something went wrong";
+      setError(msg);
+      toast.error(msg);
     }
 
     setLoading(false);

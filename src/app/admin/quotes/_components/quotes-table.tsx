@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import Link from "next/link";
 import { Pencil, Eye, Trash2, Send, Download } from "lucide-react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -13,6 +14,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Card, CardContent } from "@/components/ui/card";
 import { ConfirmDialog } from "@/components/admin/confirm-dialog";
 import { deleteQuote, sendQuote } from "@/lib/admin/actions/quote-actions";
 import {
@@ -28,17 +30,29 @@ export function QuotesTable({ quotes }: { quotes: QuoteListRow[] }) {
 
   function handleDelete() {
     if (!deleteTarget) return;
+    const name = deleteTarget.quote_number;
     startTransition(async () => {
-      await deleteQuote(deleteTarget.id);
+      const result = await deleteQuote(deleteTarget.id);
       setDeleteTarget(null);
+      if (result.success) {
+        toast.success(`Quote ${name} deleted`);
+      } else {
+        toast.error(result.error ?? "Failed to delete quote");
+      }
     });
   }
 
   function handleSend() {
     if (!sendTarget) return;
+    const name = sendTarget.quote_number;
     startTransition(async () => {
-      await sendQuote(sendTarget.id);
+      const result = await sendQuote(sendTarget.id);
       setSendTarget(null);
+      if (result.success) {
+        toast.success(`Quote ${name} sent`);
+      } else {
+        toast.error(result.error ?? "Failed to send quote");
+      }
     });
   }
 
@@ -52,79 +66,145 @@ export function QuotesTable({ quotes }: { quotes: QuoteListRow[] }) {
 
   return (
     <>
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Quote #</TableHead>
-            <TableHead>Customer</TableHead>
-            <TableHead>Project</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead className="text-right">Total</TableHead>
-            <TableHead>Created</TableHead>
-            <TableHead className="w-28">Actions</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {quotes.map((quote) => (
-            <TableRow key={quote.id}>
-              <TableCell className="font-medium">
-                {quote.quote_number}
-              </TableCell>
-              <TableCell>
-                {quote.customer?.display_name ??
-                  (quote.lead ? `Lead: ${quote.lead.display_name}` : "—")}
-              </TableCell>
-              <TableCell>{quote.project?.name ?? "—"}</TableCell>
-              <TableCell>
-                <Badge className={QUOTE_STATUS_COLORS[quote.status]}>
-                  {QUOTE_STATUS_LABELS[quote.status] ?? quote.status}
-                </Badge>
-              </TableCell>
-              <TableCell className="text-right tabular-nums">
-                {quote.total != null ? `$${quote.total.toFixed(2)}` : "—"}
-              </TableCell>
-              <TableCell>
-                {new Date(quote.created_at).toLocaleDateString()}
-              </TableCell>
-              <TableCell>
-                <div className="flex gap-1">
-                  <Button variant="ghost" size="icon-xs" asChild>
-                    <Link href={`/admin/quotes/${quote.id}`}>
-                      <Pencil className="size-3.5" />
-                    </Link>
-                  </Button>
-                  <Button variant="ghost" size="icon-xs" asChild>
-                    <Link href={`/admin/quotes/${quote.id}/preview`}>
-                      <Eye className="size-3.5" />
-                    </Link>
-                  </Button>
-                  <Button variant="ghost" size="icon-xs" asChild>
-                    <a href={`/api/quotes/${quote.id}/pdf`} target="_blank" rel="noopener noreferrer">
-                      <Download className="size-3.5" />
-                    </a>
-                  </Button>
-                  {quote.status === "draft" && (
+      {/* Desktop table */}
+      <div className="hidden md:block">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Quote #</TableHead>
+              <TableHead>Customer</TableHead>
+              <TableHead>Project</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead className="text-right">Total</TableHead>
+              <TableHead>Created</TableHead>
+              <TableHead className="w-28">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {quotes.map((quote) => (
+              <TableRow key={quote.id}>
+                <TableCell className="font-medium">
+                  {quote.quote_number}
+                </TableCell>
+                <TableCell>
+                  {quote.customer?.display_name ??
+                    (quote.lead ? `Lead: ${quote.lead.display_name}` : "—")}
+                </TableCell>
+                <TableCell>{quote.project?.name ?? "—"}</TableCell>
+                <TableCell>
+                  <Badge className={QUOTE_STATUS_COLORS[quote.status]}>
+                    {QUOTE_STATUS_LABELS[quote.status] ?? quote.status}
+                  </Badge>
+                </TableCell>
+                <TableCell className="text-right tabular-nums">
+                  {quote.total != null ? `$${quote.total.toFixed(2)}` : "—"}
+                </TableCell>
+                <TableCell>
+                  {new Date(quote.created_at).toLocaleDateString()}
+                </TableCell>
+                <TableCell>
+                  <div className="flex gap-1">
+                    <Button variant="ghost" size="icon-xs" asChild>
+                      <Link href={`/admin/quotes/${quote.id}`}>
+                        <Pencil className="size-3.5" />
+                      </Link>
+                    </Button>
+                    <Button variant="ghost" size="icon-xs" asChild>
+                      <Link href={`/admin/quotes/${quote.id}/preview`}>
+                        <Eye className="size-3.5" />
+                      </Link>
+                    </Button>
+                    <Button variant="ghost" size="icon-xs" asChild>
+                      <a href={`/api/quotes/${quote.id}/pdf`} target="_blank" rel="noopener noreferrer">
+                        <Download className="size-3.5" />
+                      </a>
+                    </Button>
+                    {quote.status === "draft" && (
+                      <Button
+                        variant="ghost"
+                        size="icon-xs"
+                        onClick={() => setSendTarget(quote)}
+                      >
+                        <Send className="size-3.5 text-blue-600" />
+                      </Button>
+                    )}
                     <Button
                       variant="ghost"
                       size="icon-xs"
-                      onClick={() => setSendTarget(quote)}
+                      onClick={() => setDeleteTarget(quote)}
                     >
-                      <Send className="size-3.5 text-blue-600" />
+                      <Trash2 className="size-3.5 text-destructive" />
                     </Button>
-                  )}
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+
+      {/* Mobile cards */}
+      <div className="space-y-3 md:hidden">
+        {quotes.map((quote) => (
+          <Card key={quote.id}>
+            <CardContent className="p-4">
+              <div className="flex items-start justify-between gap-2">
+                <div className="min-w-0">
+                  <p className="font-medium">{quote.quote_number}</p>
+                  <p className="text-sm text-muted-foreground truncate">
+                    {quote.customer?.display_name ??
+                      (quote.lead ? `Lead: ${quote.lead.display_name}` : "—")}
+                  </p>
+                </div>
+                <Badge className={QUOTE_STATUS_COLORS[quote.status]}>
+                  {QUOTE_STATUS_LABELS[quote.status] ?? quote.status}
+                </Badge>
+              </div>
+              <div className="mt-2 flex items-center justify-between text-sm">
+                <span className="text-muted-foreground">
+                  {new Date(quote.created_at).toLocaleDateString()}
+                </span>
+                <span className="font-medium tabular-nums">
+                  {quote.total != null ? `$${quote.total.toFixed(2)}` : "—"}
+                </span>
+              </div>
+              <div className="mt-3 flex gap-1 border-t pt-3">
+                <Button variant="ghost" size="icon-xs" asChild>
+                  <Link href={`/admin/quotes/${quote.id}`}>
+                    <Pencil className="size-3.5" />
+                  </Link>
+                </Button>
+                <Button variant="ghost" size="icon-xs" asChild>
+                  <Link href={`/admin/quotes/${quote.id}/preview`}>
+                    <Eye className="size-3.5" />
+                  </Link>
+                </Button>
+                <Button variant="ghost" size="icon-xs" asChild>
+                  <a href={`/api/quotes/${quote.id}/pdf`} target="_blank" rel="noopener noreferrer">
+                    <Download className="size-3.5" />
+                  </a>
+                </Button>
+                {quote.status === "draft" && (
                   <Button
                     variant="ghost"
                     size="icon-xs"
-                    onClick={() => setDeleteTarget(quote)}
+                    onClick={() => setSendTarget(quote)}
                   >
-                    <Trash2 className="size-3.5 text-destructive" />
+                    <Send className="size-3.5 text-blue-600" />
                   </Button>
-                </div>
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+                )}
+                <Button
+                  variant="ghost"
+                  size="icon-xs"
+                  onClick={() => setDeleteTarget(quote)}
+                >
+                  <Trash2 className="size-3.5 text-destructive" />
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
 
       <ConfirmDialog
         open={!!sendTarget}

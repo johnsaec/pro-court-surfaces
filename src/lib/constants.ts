@@ -116,6 +116,29 @@ export const PACKAGE_TIER_LABELS: Record<string, string> = {
   best: "Best",
 };
 
+// Activity event types
+export const ACTIVITY_EVENT_LABELS: Record<string, string> = {
+  created: "Quote Created",
+  sent: "Quote Sent",
+  viewed: "Quote Viewed",
+  accepted: "Quote Accepted",
+  declined: "Quote Declined",
+  deposit_paid: "Deposit Paid",
+  balance_collected: "Balance Invoice Sent",
+  completed: "Payment Complete",
+};
+
+export const ACTIVITY_EVENT_COLORS: Record<string, string> = {
+  created: "bg-gray-500",
+  sent: "bg-blue-500",
+  viewed: "bg-indigo-500",
+  accepted: "bg-green-500",
+  declined: "bg-red-500",
+  deposit_paid: "bg-teal-500",
+  balance_collected: "bg-orange-500",
+  completed: "bg-emerald-500",
+};
+
 // Project status
 export const PROJECT_STATUS_LABELS: Record<string, string> = {
   quoting: "Quoting",

@@ -8,6 +8,7 @@ import { sendEmail } from "@/lib/email/send-email";
 import { QuoteSentEmail } from "@/lib/email/templates/quote-sent";
 import { BalanceDueEmail } from "@/lib/email/templates/balance-due";
 import type { QuoteSavePayload } from "@/lib/admin/types/quote-types";
+import { logAdminQuoteActivity } from "./activity-actions";
 
 export async function saveQuote(
   payload: QuoteSavePayload
@@ -177,6 +178,9 @@ export async function sendQuote(
   }
   const quoteUrl = `${origin}/q/${quote.share_token}`;
 
+  // Log activity
+  await logAdminQuoteActivity(quoteId, "sent");
+
   // Send email (fire-and-forget)
   try {
     await sendEmail({
@@ -314,6 +318,12 @@ export async function collectBalance(
         err instanceof Error ? err.message : err
       );
     }
+
+    // Log activity
+    await logAdminQuoteActivity(quoteId, "balance_collected", {
+      invoice_id: finalizedInvoice.id,
+      amount: balanceAmount / 100,
+    });
 
     revalidatePath(`/admin/quotes/${quoteId}/preview`);
     revalidatePath("/admin/quotes");

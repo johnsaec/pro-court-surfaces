@@ -1,5 +1,6 @@
 import { SidebarNav } from "@/components/admin/sidebar-nav";
 import { MobileSidebar } from "@/components/admin/mobile-sidebar";
+import { Toaster } from "sonner";
 
 export default function AdminLayout({
   children,
@@ -30,6 +31,7 @@ export default function AdminLayout({
 
         <main className="flex-1 overflow-y-auto p-4 md:p-6">{children}</main>
       </div>
+      <Toaster richColors position="top-right" />
     </div>
   );
 }
