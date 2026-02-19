@@ -133,6 +133,21 @@ export async function updateLead(
   return { success: true };
 }
 
+export async function updateLeadStage(
+  id: string,
+  deal_stage: string
+): Promise<{ success: boolean; error?: string }> {
+  const supabase = createServerClient();
+  const { error } = await supabase
+    .from("leads")
+    .update({ deal_stage })
+    .eq("id", id);
+
+  if (error) return { success: false, error: error.message };
+  revalidatePath("/admin/leads");
+  return { success: true };
+}
+
 export async function deleteLead(
   id: string
 ): Promise<{ success: boolean; error?: string }> {
