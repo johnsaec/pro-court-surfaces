@@ -137,9 +137,10 @@ Each quote has 3 packages (Good, Better, Best) with different line items and tot
 - ✅ Dashboard with stat cards (total quotes, pipeline value, deposits, completed revenue), recent quotes table, activity timeline
 - ✅ Mobile responsive: admin sidebar drawer, mobile card layouts for leads/customers/catalog/quotes tables, responsive dashboard grid
 - ✅ Error handling: root + admin + public error boundaries, branded 404 pages, loading skeletons, Toaster on public quote pages
+- ✅ Kanban board for leads: drag-and-drop pipeline view with @dnd-kit, list/board view toggle, optimistic stage updates
 
 ## What's Pending
-- ❌ **Future:** Kanban board for leads, conversational quote creation, multi-tenant support
+- ❌ **Future:** Conversational quote creation, multi-tenant support
 
 ## Development Notes
 - **Stripe CLI for webhooks:** Run `stripe listen --forward-to localhost:3000/api/stripe/webhook` in a separate terminal alongside `npm run dev`
