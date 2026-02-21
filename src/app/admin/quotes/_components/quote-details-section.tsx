@@ -21,6 +21,7 @@ interface QuoteDetailsSectionProps {
 }
 
 const NONE_VALUE = "__none__";
+const LINE_COLOR_NAMES = new Set(["white", "black", "gray", "yellow"]);
 
 function ColorSelect({
   label,
@@ -30,7 +31,7 @@ function ColorSelect({
   dispatch,
 }: {
   label: string;
-  field: "color_inside_id" | "color_outside_id" | "color_lines_id";
+  field: "color_inside_id" | "color_outside_id" | "color_lines_id" | "color_nvz_id";
   value: string;
   colors: Color[];
   dispatch: React.Dispatch<QuoteBuilderAction>;
@@ -81,7 +82,7 @@ export function QuoteDetailsSection({
       {/* Colors */}
       <div className="space-y-4">
         <h3 className="text-lg font-semibold">Colors</h3>
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <ColorSelect
             label="Inside Color"
             field="color_inside_id"
@@ -97,10 +98,17 @@ export function QuoteDetailsSection({
             dispatch={dispatch}
           />
           <ColorSelect
+            label="NVZ (Kitchen) Color"
+            field="color_nvz_id"
+            value={state.color_nvz_id}
+            colors={colors}
+            dispatch={dispatch}
+          />
+          <ColorSelect
             label="Lines Color"
             field="color_lines_id"
             value={state.color_lines_id}
-            colors={colors}
+            colors={colors.filter((c) => LINE_COLOR_NAMES.has(c.name.toLowerCase()))}
             dispatch={dispatch}
           />
         </div>

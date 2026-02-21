@@ -10,6 +10,7 @@ export type ColorSelections = {
   inside_id: string | null;
   outside_id: string | null;
   lines_id: string | null;
+  nvz_id: string | null;
 };
 
 export function computePackageTotal(
@@ -38,6 +39,7 @@ export function computePackageTotal(
     colorSelections.inside_id,
     colorSelections.outside_id,
     colorSelections.lines_id,
+    colorSelections.nvz_id,
   ];
 
   for (const colorId of selectedColorIds) {

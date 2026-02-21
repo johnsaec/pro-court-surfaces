@@ -64,6 +64,7 @@ export type QuoteBuilderState = {
   color_inside_id: string;
   color_outside_id: string;
   color_lines_id: string;
+  color_nvz_id: string;
   cover_note: string;
   terms_and_conditions: string;
   internal_notes: string;
@@ -90,7 +91,7 @@ export type QuoteBuilderAction =
       value: string | number | boolean;
     }
   | { type: "REMOVE_LINE_ITEM"; packageKey: string; itemKey: string }
-  | { type: "SET_COLOR"; field: "color_inside_id" | "color_outside_id" | "color_lines_id"; value: string }
+  | { type: "SET_COLOR"; field: "color_inside_id" | "color_outside_id" | "color_lines_id" | "color_nvz_id"; value: string }
   | { type: "SET_FIELD"; field: "cover_note" | "terms_and_conditions" | "internal_notes" | "discount_amount" | "deposit_due_days"; value: string | number }
   | { type: "LOAD_STATE"; state: QuoteBuilderState };
 
@@ -124,6 +125,7 @@ export type QuoteSavePayload = {
   color_inside_id: string | null;
   color_outside_id: string | null;
   color_lines_id: string | null;
+  color_nvz_id: string | null;
   cover_note: string | null;
   terms_and_conditions: string | null;
   internal_notes: string | null;
@@ -201,6 +203,7 @@ export type QuoteDetail = {
   color_inside_id: string | null;
   color_outside_id: string | null;
   color_lines_id: string | null;
+  color_nvz_id: string | null;
   subtotal: number | null;
   discount_amount: number | null;
   total: number | null;
@@ -232,5 +235,6 @@ export type QuoteDetail = {
   color_inside: { name: string; hex_code: string } | null;
   color_outside: { name: string; hex_code: string } | null;
   color_lines: { name: string; hex_code: string } | null;
+  color_nvz: { name: string; hex_code: string } | null;
   quote_packages: QuotePackageRow[];
 };

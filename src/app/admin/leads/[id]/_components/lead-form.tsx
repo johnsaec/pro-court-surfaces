@@ -107,6 +107,7 @@ export function LeadForm({ lead }: { lead: Lead }) {
       concrete_pour_date: fd.get("concrete_pour_date") as string,
       color_inside: fd.get("color_inside") as string,
       color_outside: fd.get("color_outside") as string,
+      color_nvz: fd.get("color_nvz") as string,
       color_lines: fd.get("color_lines") as string,
       wants_basketball_lines: wantsBasketball,
       wants_volleyball_lines: wantsVolleyball,
@@ -333,7 +334,7 @@ export function LeadForm({ lead }: { lead: Lead }) {
 
       {/* Section 6: Color Preferences */}
       <SectionHeading title="Color Preferences" />
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <FormField
           label="Inside Color"
           name="color_inside"
@@ -345,6 +346,12 @@ export function LeadForm({ lead }: { lead: Lead }) {
           name="color_outside"
           defaultValue={lead.color_outside ?? ""}
           placeholder="e.g. Championship Green"
+        />
+        <FormField
+          label="NVZ (Kitchen) Color"
+          name="color_nvz"
+          defaultValue={lead.color_nvz ?? ""}
+          placeholder="e.g. Competition Blue"
         />
         <FormField
           label="Lines Color"

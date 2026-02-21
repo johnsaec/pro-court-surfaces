@@ -375,7 +375,7 @@ export function QuotePdfDocument({ quote, selectedPackageId }: QuotePdfDocumentP
         ))}
 
         {/* Court Colors */}
-        {(quote.color_inside || quote.color_outside || quote.color_lines) && (
+        {(quote.color_inside || quote.color_outside || quote.color_nvz || quote.color_lines) && (
           <>
             <Text style={s.sectionTitle}>Court Colors</Text>
             <View style={s.colorRow}>
@@ -394,6 +394,15 @@ export function QuotePdfDocument({ quote, selectedPackageId }: QuotePdfDocumentP
                   <View>
                     <Text style={s.swatchLabel}>Inside</Text>
                     <Text style={s.swatchName}>{quote.color_inside.name}</Text>
+                  </View>
+                </View>
+              )}
+              {quote.color_nvz && (
+                <View style={s.colorSwatch}>
+                  <View style={[s.swatch, { backgroundColor: quote.color_nvz.hex_code }]} />
+                  <View>
+                    <Text style={s.swatchLabel}>NVZ</Text>
+                    <Text style={s.swatchName}>{quote.color_nvz.name}</Text>
                   </View>
                 </View>
               )}

@@ -10,11 +10,12 @@ import {
 } from "@/components/ui/sheet";
 import type { Color } from "@/lib/admin/queries/color-queries";
 
-type CourtZone = "outside" | "inside" | "lines";
+type CourtZone = "outside" | "inside" | "lines" | "nvz";
 
 const ZONE_LABELS: Record<CourtZone, string> = {
   outside: "Outside Court Color",
   inside: "Inside Court Color",
+  nvz: "Non-Volley Zone (Kitchen) Color",
   lines: "Line Color",
 };
 

@@ -16,7 +16,7 @@ import type { QuoteDetail } from "@/lib/admin/types/quote-types";
 import type { Color } from "@/lib/admin/queries/color-queries";
 import { QUOTE_STATUS_LABELS, QUOTE_STATUS_COLORS } from "@/lib/constants";
 
-type CourtZone = "outside" | "inside" | "lines";
+type CourtZone = "outside" | "inside" | "lines" | "nvz";
 
 interface QuotePageProps {
   quote: QuoteDetail;
@@ -52,6 +52,7 @@ export function QuotePage({ quote, colors }: QuotePageProps) {
     inside_id: quote.color_inside_id,
     outside_id: quote.color_outside_id,
     lines_id: quote.color_lines_id,
+    nvz_id: quote.color_nvz_id,
   });
 
   const [showAcceptDialog, setShowAcceptDialog] = useState(false);
@@ -109,7 +110,9 @@ export function QuotePage({ quote, colors }: QuotePageProps) {
           ? "inside_id"
           : zone === "outside"
             ? "outside_id"
-            : "lines_id";
+            : zone === "nvz"
+              ? "nvz_id"
+              : "lines_id";
       return { ...prev, [key]: colorId };
     });
   }, []);

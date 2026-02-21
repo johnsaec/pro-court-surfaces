@@ -28,7 +28,8 @@ export async function acceptQuote(payload: AcceptPayload) {
       `*, customer:customers(*), lead:leads(*), project:projects!quotes_project_id_fkey(*),
        color_inside:color_palette!quotes_color_inside_id_fkey(name),
        color_outside:color_palette!quotes_color_outside_id_fkey(name),
-       color_lines:color_palette!quotes_color_lines_id_fkey(name)`
+       color_lines:color_palette!quotes_color_lines_id_fkey(name),
+       color_nvz:color_palette!quotes_color_nvz_id_fkey(name)`
     )
     .eq("id", payload.quote_id)
     .single();
@@ -165,11 +166,15 @@ export async function acceptQuote(payload: AcceptPayload) {
     (payload.color_selections.outside_id ? "Custom" : null);
   const colorLinesName = quote.color_lines?.name ??
     (payload.color_selections.lines_id ? "Custom" : null);
+  const colorNvzName = (quote as Record<string, unknown>).color_nvz
+    ? ((quote as Record<string, unknown>).color_nvz as { name: string }).name
+    : (payload.color_selections.nvz_id ? "Custom" : null);
 
   // If customer changed color selections, resolve the new ones
   let finalInsideName = colorInsideName;
   let finalOutsideName = colorOutsideName;
   let finalLinesName = colorLinesName;
+  let finalNvzName = colorNvzName;
 
   if (payload.color_selections.inside_id && payload.color_selections.inside_id !== quote.color_inside_id) {
     const { data: c } = await supabase.from("color_palette").select("name").eq("id", payload.color_selections.inside_id).single();
@@ -182,6 +187,10 @@ export async function acceptQuote(payload: AcceptPayload) {
   if (payload.color_selections.lines_id && payload.color_selections.lines_id !== quote.color_lines_id) {
     const { data: c } = await supabase.from("color_palette").select("name").eq("id", payload.color_selections.lines_id).single();
     if (c) finalLinesName = c.name;
+  }
+  if (payload.color_selections.nvz_id && payload.color_selections.nvz_id !== (quote as Record<string, unknown>).color_nvz_id) {
+    const { data: c } = await supabase.from("color_palette").select("name").eq("id", payload.color_selections.nvz_id).single();
+    if (c) finalNvzName = c.name;
   }
 
   // Insert quote_selections with correct column names
@@ -196,6 +205,7 @@ export async function acceptQuote(payload: AcceptPayload) {
       color_inside: finalInsideName,
       color_outside: finalOutsideName,
       color_lines: finalLinesName,
+      color_nvz: finalNvzName,
       final_total: payload.total_price,
     });
 

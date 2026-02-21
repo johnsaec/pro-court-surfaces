@@ -7,7 +7,9 @@ import { ColorPickerSheet } from "./color-picker-sheet";
 import type { Color } from "@/lib/admin/queries/color-queries";
 import type { ColorSelections } from "@/lib/quotes/quote-calculator";
 
-type CourtZone = "outside" | "inside" | "lines";
+type CourtZone = "outside" | "inside" | "lines" | "nvz";
+
+const LINE_COLOR_NAMES = new Set(["white", "black", "gray", "yellow"]);
 
 interface ColorSelectorProps {
   courtType: "pickleball" | "tennis";
@@ -29,6 +31,7 @@ export function ColorSelector({
 
   const insideColor = colors.find((c) => c.id === colorSelections.inside_id);
   const outsideColor = colors.find((c) => c.id === colorSelections.outside_id);
+  const nvzColor = colors.find((c) => c.id === colorSelections.nvz_id);
   const linesColor = colors.find((c) => c.id === colorSelections.lines_id);
 
   function handleZoneClick(zone: CourtZone) {
@@ -48,7 +51,14 @@ export function ColorSelector({
       ? colorSelections.inside_id
       : activeZone === "outside"
         ? colorSelections.outside_id
-        : colorSelections.lines_id;
+        : activeZone === "nvz"
+          ? colorSelections.nvz_id
+          : colorSelections.lines_id;
+
+  // Filter colors for lines zone to only show white/black/gray/yellow
+  const sheetColors = activeZone === "lines"
+    ? colors.filter((c) => LINE_COLOR_NAMES.has(c.name.toLowerCase()))
+    : colors;
 
   return (
     <Card>
@@ -60,15 +70,17 @@ export function ColorSelector({
           courtType={courtType}
           outsideColor={outsideColor?.hex_code ?? "#8B9467"}
           insideColor={insideColor?.hex_code ?? "#4A7C59"}
+          nvzColor={nvzColor?.hex_code ?? "#3B82F6"}
           linesColor={linesColor?.hex_code ?? "#FFFFFF"}
           activeZone={activeZone}
           onZoneClick={handleZoneClick}
         />
 
         {/* Current color labels */}
-        <div className="grid grid-cols-3 gap-4 text-center text-sm">
+        <div className="grid grid-cols-4 gap-4 text-center text-sm">
           <ColorLabel label="Outside" color={outsideColor} onClick={() => handleZoneClick("outside")} />
           <ColorLabel label="Inside" color={insideColor} onClick={() => handleZoneClick("inside")} />
+          <ColorLabel label="NVZ" color={nvzColor} onClick={() => handleZoneClick("nvz")} />
           <ColorLabel label="Lines" color={linesColor} onClick={() => handleZoneClick("lines")} />
         </div>
 
@@ -81,7 +93,7 @@ export function ColorSelector({
         <ColorPickerSheet
           open={sheetOpen}
           zone={activeZone}
-          colors={colors}
+          colors={sheetColors}
           selectedColorId={currentSelectedId}
           onSelect={handleColorSelect}
           onClose={() => setSheetOpen(false)}

@@ -29,6 +29,7 @@ export async function getQuoteById(id: string): Promise<QuoteDetail | null> {
        color_inside:color_palette!quotes_color_inside_id_fkey(name, hex_code),
        color_outside:color_palette!quotes_color_outside_id_fkey(name, hex_code),
        color_lines:color_palette!quotes_color_lines_id_fkey(name, hex_code),
+       color_nvz:color_palette!quotes_color_nvz_id_fkey(name, hex_code),
        quote_packages(
          id, tier, name, description, subtotal, is_recommended, sort_order,
          quote_line_items(

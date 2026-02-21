@@ -113,10 +113,11 @@ export function QuotePreview({ quote }: { quote: QuoteDetail }) {
       )}
 
       {/* Colors */}
-      {(quote.color_inside || quote.color_outside || quote.color_lines) && (
+      {(quote.color_inside || quote.color_outside || quote.color_nvz || quote.color_lines) && (
         <div className="flex flex-wrap gap-4">
           <ColorSwatch label="Inside" color={quote.color_inside} />
           <ColorSwatch label="Outside" color={quote.color_outside} />
+          <ColorSwatch label="NVZ" color={quote.color_nvz} />
           <ColorSwatch label="Lines" color={quote.color_lines} />
         </div>
       )}

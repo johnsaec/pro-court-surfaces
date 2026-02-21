@@ -10,6 +10,7 @@ type SelectionData = {
   accepted_by_email: string | null;
   color_inside: string | null;
   color_outside: string | null;
+  color_nvz: string | null;
   color_lines: string | null;
   selected_package: {
     name: string;
@@ -163,10 +164,10 @@ export function AcceptedPage({
               </div>
 
               {/* Colors */}
-              {(selection.color_inside || selection.color_outside || selection.color_lines) && (
+              {(selection.color_inside || selection.color_outside || selection.color_nvz || selection.color_lines) && (
                 <>
                   <Separator />
-                  <div className="grid grid-cols-3 gap-4 text-sm">
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-sm">
                     {selection.color_inside && (
                       <div>
                         <p className="text-muted-foreground">Inside</p>
@@ -177,6 +178,12 @@ export function AcceptedPage({
                       <div>
                         <p className="text-muted-foreground">Outside</p>
                         <p className="font-medium">{selection.color_outside}</p>
+                      </div>
+                    )}
+                    {selection.color_nvz && (
+                      <div>
+                        <p className="text-muted-foreground">NVZ</p>
+                        <p className="font-medium">{selection.color_nvz}</p>
                       </div>
                     )}
                     {selection.color_lines && (

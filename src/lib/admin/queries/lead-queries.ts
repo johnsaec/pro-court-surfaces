@@ -27,6 +27,7 @@ export type Lead = {
   concrete_pour_date: string | null;
   color_inside: string | null;
   color_outside: string | null;
+  color_nvz: string | null;
   color_lines: string | null;
   wants_basketball_lines: boolean;
   wants_volleyball_lines: boolean;

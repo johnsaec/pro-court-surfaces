@@ -109,6 +109,7 @@ export function QuoteBuilder({
       color_inside_id: state.color_inside_id || null,
       color_outside_id: state.color_outside_id || null,
       color_lines_id: state.color_lines_id || null,
+      color_nvz_id: state.color_nvz_id || null,
       cover_note: state.cover_note || null,
       terms_and_conditions: state.terms_and_conditions || null,
       internal_notes: state.internal_notes || null,

@@ -1,11 +1,12 @@
 "use client";
 
-type CourtZone = "outside" | "inside" | "lines";
+type CourtZone = "outside" | "inside" | "lines" | "nvz";
 
 interface CourtDiagramProps {
   courtType: "pickleball" | "tennis";
   outsideColor: string;
   insideColor: string;
+  nvzColor: string;
   linesColor: string;
   activeZone: CourtZone | null;
   onZoneClick: (zone: CourtZone) => void;
@@ -17,6 +18,7 @@ export function CourtDiagram({
   courtType,
   outsideColor,
   insideColor,
+  nvzColor,
   linesColor,
   activeZone,
   onZoneClick,
@@ -26,6 +28,7 @@ export function CourtDiagram({
       <PickleballCourt
         outsideColor={outsideColor}
         insideColor={insideColor}
+        nvzColor={nvzColor}
         linesColor={linesColor}
         activeZone={activeZone}
         onZoneClick={onZoneClick}
@@ -37,6 +40,7 @@ export function CourtDiagram({
     <TennisCourt
       outsideColor={outsideColor}
       insideColor={insideColor}
+      nvzColor={nvzColor}
       linesColor={linesColor}
       activeZone={activeZone}
       onZoneClick={onZoneClick}
@@ -49,6 +53,7 @@ type CourtProps = Omit<CourtDiagramProps, "courtType">;
 function PickleballCourt({
   outsideColor,
   insideColor,
+  nvzColor,
   linesColor,
   activeZone,
   onZoneClick,
@@ -59,6 +64,8 @@ function PickleballCourt({
   const h = 400;
   const vw = w + pad * 2;
   const vh = h + pad * 2;
+  // NVZ is 7' from net each side = 140px
+  const nvzWidth = 140;
 
   return (
     <svg
@@ -91,6 +98,28 @@ function PickleballCourt({
         onClick={() => onZoneClick("inside")}
       />
 
+      {/* NVZ (kitchen) zones — rendered on top of inside area */}
+      <rect
+        x={pad + w / 2 - nvzWidth}
+        y={pad}
+        width={nvzWidth}
+        height={h}
+        fill={nvzColor}
+        className="cursor-pointer"
+        style={activeZone === "nvz" ? { filter: ZONE_HIGHLIGHT } : undefined}
+        onClick={() => onZoneClick("nvz")}
+      />
+      <rect
+        x={pad + w / 2}
+        y={pad}
+        width={nvzWidth}
+        height={h}
+        fill={nvzColor}
+        className="cursor-pointer"
+        style={activeZone === "nvz" ? { filter: ZONE_HIGHLIGHT } : undefined}
+        onClick={() => onZoneClick("nvz")}
+      />
+
       {/* Lines group */}
       <g
         className="cursor-pointer"
@@ -118,17 +147,17 @@ function PickleballCourt({
         />
         {/* Non-Volley Zone (kitchen) lines — 7' from net each side = 140px */}
         <line
-          x1={pad + w / 2 - 140}
+          x1={pad + w / 2 - nvzWidth}
           y1={pad}
-          x2={pad + w / 2 - 140}
+          x2={pad + w / 2 - nvzWidth}
           y2={pad + h}
           stroke={linesColor}
           strokeWidth={3}
         />
         <line
-          x1={pad + w / 2 + 140}
+          x1={pad + w / 2 + nvzWidth}
           y1={pad}
-          x2={pad + w / 2 + 140}
+          x2={pad + w / 2 + nvzWidth}
           y2={pad + h}
           stroke={linesColor}
           strokeWidth={3}
@@ -137,13 +166,13 @@ function PickleballCourt({
         <line
           x1={pad}
           y1={pad + h / 2}
-          x2={pad + w / 2 - 140}
+          x2={pad + w / 2 - nvzWidth}
           y2={pad + h / 2}
           stroke={linesColor}
           strokeWidth={3}
         />
         <line
-          x1={pad + w / 2 + 140}
+          x1={pad + w / 2 + nvzWidth}
           y1={pad + h / 2}
           x2={pad + w}
           y2={pad + h / 2}
@@ -158,6 +187,7 @@ function PickleballCourt({
 function TennisCourt({
   outsideColor,
   insideColor,
+  // nvzColor not used for tennis courts
   linesColor,
   activeZone,
   onZoneClick,

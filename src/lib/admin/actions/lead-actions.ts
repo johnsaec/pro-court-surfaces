@@ -48,6 +48,7 @@ export type LeadFormData = {
   // Color preferences
   color_inside?: string;
   color_outside?: string;
+  color_nvz?: string;
   color_lines?: string;
 
   // Add-on interest
@@ -116,6 +117,7 @@ export async function updateLead(
       concrete_pour_date: data.concrete_pour_date || null,
       color_inside: data.color_inside || null,
       color_outside: data.color_outside || null,
+      color_nvz: data.color_nvz || null,
       color_lines: data.color_lines || null,
       wants_basketball_lines: data.wants_basketball_lines ?? false,
       wants_volleyball_lines: data.wants_volleyball_lines ?? false,
