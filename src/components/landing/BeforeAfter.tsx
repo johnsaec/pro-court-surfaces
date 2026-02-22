@@ -1,4 +1,7 @@
+"use client";
+
 import Image from "next/image";
+import { useScrollReveal } from "./useScrollReveal";
 
 const transformations = [
   {
@@ -28,25 +31,42 @@ const transformations = [
 ];
 
 export function BeforeAfter() {
-  return (
-    <section id="before-after" aria-label="Before and after project showcase" className="py-24 sm:py-32 bg-[#FAFAF8]">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 className="text-3xl sm:text-4xl font-bold text-[#1A1A1A] text-center">
-          See the Difference
-        </h2>
-        <p className="mt-4 text-center text-[#1A1A1A]/60 max-w-xl mx-auto">
-          Real projects. Real transformations. No stock photos.
-        </p>
+  const ref = useScrollReveal();
 
-        <div className="mt-16 space-y-20">
-          {transformations.map((project) => (
-            <article key={project.id} className="space-y-4">
-              <h3 className="text-lg font-semibold text-[#1A1A1A] text-center">
+  return (
+    <section
+      id="before-after"
+      aria-label="Before and after project showcase"
+      className="py-24 sm:py-36 bg-brand-bg-alt relative"
+    >
+      <div ref={ref} className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center max-w-2xl mx-auto mb-16">
+          <span className="inline-flex items-center gap-3 text-[0.7rem] font-semibold uppercase tracking-[0.2em] text-brand-blue mb-4">
+            <span className="w-6 h-px bg-brand-blue" />
+            Transformations
+            <span className="w-6 h-px bg-brand-blue" />
+          </span>
+          <h2 className="text-3xl sm:text-5xl font-bold text-brand-text leading-tight">
+            See the Difference
+          </h2>
+          <p className="mt-4 text-brand-text-muted text-lg">
+            Real projects. Real transformations. No stock photos.
+          </p>
+        </div>
+
+        <div className="space-y-16 sm:space-y-24">
+          {transformations.map((project, i) => (
+            <article
+              key={project.id}
+              className="reveal-item"
+              style={{ transitionDelay: `${i * 200}ms` }}
+            >
+              <h3 className="text-sm font-semibold text-brand-blue uppercase tracking-wider mb-5 text-center">
                 {project.label}
               </h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
-                <div className="relative">
-                  <div className="absolute top-4 left-4 z-10 bg-black/60 text-white text-xs font-semibold px-3 py-1 rounded-full">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                <div className="relative group overflow-hidden rounded-2xl">
+                  <div className="absolute top-4 left-4 z-10 bg-black/70 backdrop-blur-sm text-white text-[0.7rem] font-bold px-3 py-1.5 rounded-full uppercase tracking-wider">
                     Before
                   </div>
                   <Image
@@ -54,11 +74,13 @@ export function BeforeAfter() {
                     alt={project.before.alt}
                     width={800}
                     height={600}
-                    className="rounded-xl w-full h-auto object-cover aspect-[4/3]"
+                    className="w-full h-full object-cover aspect-[4/3] group-hover:scale-105 transition-transform duration-700"
                   />
+                  {/* Desaturated overlay to emphasize "old" */}
+                  <div className="absolute inset-0 bg-black/5 mix-blend-saturation pointer-events-none" />
                 </div>
-                <div className="relative">
-                  <div className="absolute top-4 left-4 z-10 bg-brand-blue text-white text-xs font-semibold px-3 py-1 rounded-full">
+                <div className="relative group overflow-hidden rounded-2xl">
+                  <div className="absolute top-4 left-4 z-10 bg-brand-blue backdrop-blur-sm text-white text-[0.7rem] font-bold px-3 py-1.5 rounded-full uppercase tracking-wider">
                     After
                   </div>
                   <Image
@@ -66,7 +88,7 @@ export function BeforeAfter() {
                     alt={project.after.alt}
                     width={800}
                     height={600}
-                    className="rounded-xl w-full h-auto object-cover aspect-[4/3]"
+                    className="w-full h-full object-cover aspect-[4/3] group-hover:scale-105 transition-transform duration-700"
                   />
                 </div>
               </div>
