@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { PaintBucket, Layers, Palette } from "lucide-react";
 import { useScrollReveal } from "./useScrollReveal";
 
@@ -57,7 +58,10 @@ export function Services() {
           </h2>
           <p className="mt-4 text-brand-text-muted text-lg max-w-xl">
             Pro Court Surfaces specializes in pickleball and tennis court
-            resurfacing across Greater Austin and Central Texas.
+            resurfacing across Greater Austin and Central Texas.{" "}
+            <Link href="/commercial" className="text-brand-blue hover:underline">
+              Working with a GC? See our subcontractor page
+            </Link>.
           </p>
         </div>
 

@@ -9,6 +9,8 @@ const NAV_LINKS = [
   { label: "Services", href: "#services" },
   { label: "Our Work", href: "#portfolio" },
   { label: "About", href: "#why-us" },
+  { label: "For GCs", href: "/commercial" },
+  { label: "Blog", href: "/blog" },
   { label: "Contact", href: "#contact" },
 ];
 
@@ -50,19 +52,33 @@ export function Navbar() {
 
           {/* Desktop links */}
           <div className="hidden md:flex items-center gap-8">
-            {NAV_LINKS.map((link) => (
-              <a
-                key={link.href}
-                href={link.href}
-                className={`text-sm font-medium transition-colors ${
-                  scrolled
-                    ? "text-[#1A1A1A] hover:text-brand-blue"
-                    : "text-white/90 hover:text-white"
-                }`}
-              >
-                {link.label}
-              </a>
-            ))}
+            {NAV_LINKS.map((link) =>
+              link.href.startsWith("/") ? (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className={`text-sm font-medium transition-colors ${
+                    scrolled
+                      ? "text-brand-text hover:text-brand-blue"
+                      : "text-white/90 hover:text-white"
+                  }`}
+                >
+                  {link.label}
+                </Link>
+              ) : (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  className={`text-sm font-medium transition-colors ${
+                    scrolled
+                      ? "text-brand-text hover:text-brand-blue"
+                      : "text-white/90 hover:text-white"
+                  }`}
+                >
+                  {link.label}
+                </a>
+              )
+            )}
             <a
               href="#contact"
               className="inline-flex items-center px-5 py-2.5 rounded-lg bg-brand-blue text-white text-sm font-semibold hover:bg-brand-blue/90 transition-colors"
@@ -78,9 +94,9 @@ export function Navbar() {
             aria-label="Toggle menu"
           >
             {mobileOpen ? (
-              <X className={`h-6 w-6 ${scrolled ? "text-[#1A1A1A]" : "text-white"}`} />
+              <X className={`h-6 w-6 ${scrolled ? "text-brand-text" : "text-white"}`} />
             ) : (
-              <Menu className={`h-6 w-6 ${scrolled ? "text-[#1A1A1A]" : "text-white"}`} />
+              <Menu className={`h-6 w-6 ${scrolled ? "text-brand-text" : "text-white"}`} />
             )}
           </button>
         </div>
@@ -90,16 +106,27 @@ export function Navbar() {
       {mobileOpen && (
         <div className="md:hidden bg-white border-t shadow-lg">
           <div className="px-4 py-4 space-y-3">
-            {NAV_LINKS.map((link) => (
-              <a
-                key={link.href}
-                href={link.href}
-                onClick={() => setMobileOpen(false)}
-                className="block text-[#1A1A1A] text-sm font-medium py-2"
-              >
-                {link.label}
-              </a>
-            ))}
+            {NAV_LINKS.map((link) =>
+              link.href.startsWith("/") ? (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  onClick={() => setMobileOpen(false)}
+                  className="block text-brand-text text-sm font-medium py-2"
+                >
+                  {link.label}
+                </Link>
+              ) : (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  onClick={() => setMobileOpen(false)}
+                  className="block text-brand-text text-sm font-medium py-2"
+                >
+                  {link.label}
+                </a>
+              )
+            )}
             <a
               href="#contact"
               onClick={() => setMobileOpen(false)}

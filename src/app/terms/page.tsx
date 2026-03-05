@@ -1,9 +1,19 @@
+import type { Metadata } from "next";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { Navbar } from "@/components/landing/Navbar";
+import { Footer } from "@/components/landing/Footer";
+
+export const metadata: Metadata = {
+  title: "Terms & Conditions | Pro Court Surfaces",
+  description:
+    "Terms and conditions for Pro Court Surfaces court resurfacing projects. Covers scope of work, payment terms, warranty, scheduling, and cancellation policies.",
+  alternates: { canonical: "https://www.procourtsurfaces.com/terms" },
+};
 
 const sections = [
   {
@@ -52,31 +62,35 @@ const sections = [
 
 export default function TermsPage() {
   return (
-    <div className="min-h-screen bg-muted/30">
-      <header className="border-b bg-background">
-        <div className="max-w-3xl mx-auto px-4 py-4">
-          <p className="text-lg font-semibold">Pro Court Surfaces</p>
-          <p className="text-sm text-muted-foreground">Terms & Conditions</p>
-        </div>
-      </header>
+    <>
+      <Navbar />
+      <div className="min-h-screen bg-brand-bg-alt pt-24">
+        <header className="border-b bg-white">
+          <div className="max-w-3xl mx-auto px-4 py-4">
+            <p className="text-lg font-semibold text-brand-blue">Pro Court Surfaces</p>
+            <p className="text-sm text-brand-text-muted">Terms & Conditions</p>
+          </div>
+        </header>
 
-      <main className="max-w-3xl mx-auto px-4 py-8">
-        <Accordion
-          type="multiple"
-          defaultValue={sections.map((s) => s.id)}
-        >
-          {sections.map((section) => (
-            <AccordionItem key={section.id} value={section.id}>
-              <AccordionTrigger>{section.title}</AccordionTrigger>
-              <AccordionContent>
-                <p className="text-sm text-muted-foreground leading-relaxed">
-                  {section.content}
-                </p>
-              </AccordionContent>
-            </AccordionItem>
-          ))}
-        </Accordion>
-      </main>
-    </div>
+        <main className="max-w-3xl mx-auto px-4 py-8">
+          <Accordion
+            type="multiple"
+            defaultValue={sections.map((s) => s.id)}
+          >
+            {sections.map((section) => (
+              <AccordionItem key={section.id} value={section.id}>
+                <AccordionTrigger>{section.title}</AccordionTrigger>
+                <AccordionContent>
+                  <p className="text-sm text-muted-foreground leading-relaxed">
+                    {section.content}
+                  </p>
+                </AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
+        </main>
+      </div>
+      <Footer />
+    </>
   );
 }

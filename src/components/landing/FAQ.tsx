@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import {
   Accordion,
   AccordionContent,
@@ -72,6 +73,22 @@ export function FAQ() {
               <AccordionContent>
                 <p className="text-brand-text-muted leading-relaxed">
                   {faq.answer}
+                  {faq.id === "cost" && (
+                    <>
+                      {" "}
+                      <Link href="/blog/court-construction-costs" className="text-brand-blue hover:underline">
+                        See our full cost breakdown for Texas GCs
+                      </Link>.
+                    </>
+                  )}
+                  {faq.id === "materials" && (
+                    <>
+                      {" "}
+                      <Link href="/blog/court-surface-types" className="text-brand-blue hover:underline">
+                        Compare court surface types
+                      </Link>.
+                    </>
+                  )}
                 </p>
               </AccordionContent>
             </AccordionItem>
