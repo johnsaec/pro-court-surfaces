@@ -5,6 +5,8 @@ import { PageHeader } from "@/components/admin/page-header";
 import { getQuotes } from "@/lib/admin/queries/quote-queries";
 import { QuotesTable } from "./_components/quotes-table";
 
+export const dynamic = "force-dynamic";
+
 export default async function QuotesPage() {
   const quotes = await getQuotes();
 

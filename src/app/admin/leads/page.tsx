@@ -6,6 +6,8 @@ import { LeadsBoard } from "./_components/leads-board";
 import { LeadCreateButton } from "./_components/lead-create-button";
 import { ViewToggle } from "./_components/view-toggle";
 
+export const dynamic = "force-dynamic";
+
 export default async function LeadsPage({
   searchParams,
 }: {

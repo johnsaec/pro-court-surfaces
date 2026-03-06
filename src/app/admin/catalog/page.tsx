@@ -3,6 +3,8 @@ import { PageHeader } from "@/components/admin/page-header";
 import { CatalogTable } from "./_components/catalog-table";
 import { ServiceCreateButton } from "./_components/service-create-button";
 
+export const dynamic = "force-dynamic";
+
 export default async function CatalogPage() {
   const services = await getServices();
 

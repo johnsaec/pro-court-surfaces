@@ -11,6 +11,8 @@ import { DownloadPdfButton } from "../../_components/download-pdf-button";
 import { CollectBalanceButton } from "../../_components/collect-balance-button";
 import { ActivityTimeline } from "../../_components/activity-timeline";
 
+export const dynamic = "force-dynamic";
+
 export default async function QuotePreviewPage({
   params,
 }: {

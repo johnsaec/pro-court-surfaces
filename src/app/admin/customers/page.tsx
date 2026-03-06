@@ -3,6 +3,8 @@ import { PageHeader } from "@/components/admin/page-header";
 import { CustomersTable } from "./_components/customers-table";
 import { CustomerCreateButton } from "./_components/customer-create-button";
 
+export const dynamic = "force-dynamic";
+
 export default async function CustomersPage() {
   const customers = await getCustomers();
 

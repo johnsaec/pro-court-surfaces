@@ -10,6 +10,8 @@ import { QuoteBuilder } from "../_components/quote-builder";
 import { DownloadPdfButton } from "../_components/download-pdf-button";
 import type { LeadOption } from "@/lib/admin/types/quote-types";
 
+export const dynamic = "force-dynamic";
+
 export default async function EditQuotePage({
   params,
 }: {

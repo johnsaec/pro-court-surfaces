@@ -2,6 +2,8 @@ import { Suspense } from "react";
 import { PageHeader } from "@/components/admin/page-header";
 import { DashboardContent } from "./_components/dashboard-content";
 
+export const dynamic = "force-dynamic";
+
 function DashboardSkeleton() {
   return (
     <>

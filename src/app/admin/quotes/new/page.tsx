@@ -7,6 +7,8 @@ import { getLeads } from "@/lib/admin/queries/lead-queries";
 import { QuoteBuilder } from "../_components/quote-builder";
 import type { LeadOption } from "@/lib/admin/types/quote-types";
 
+export const dynamic = "force-dynamic";
+
 export default async function NewQuotePage() {
   const [customers, projects, services, colors, allLeads] = await Promise.all([
     getCustomers(),

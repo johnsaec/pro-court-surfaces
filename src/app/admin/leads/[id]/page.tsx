@@ -3,6 +3,8 @@ import { getLeadById } from "@/lib/admin/queries/lead-queries";
 import { PageHeader } from "@/components/admin/page-header";
 import { LeadForm } from "./_components/lead-form";
 
+export const dynamic = "force-dynamic";
+
 export default async function LeadDetailPage({
   params,
 }: {
