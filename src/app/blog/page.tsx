@@ -18,6 +18,22 @@ const breadcrumbSchema = {
 
 const posts = [
   {
+    slug: "pickleball-court-installation",
+    title: "Pickleball Court Installation & Surfacing in Central Texas",
+    description: "Dimensions, concrete specs, ATS Acrytech surface details, cost ranges, and FAQ — everything GCs need to bid pickleball court projects.",
+    date: "Mar 5, 2026",
+    readTime: "14 min read",
+    category: "Installation Guide",
+  },
+  {
+    slug: "court-resurfacing",
+    title: "Tennis & Pickleball Court Resurfacing in Central Texas",
+    description: "Resurfacing process, cost guide, court types we handle, and FAQ for GC estimators scoping court resurfacing projects.",
+    date: "Mar 5, 2026",
+    readTime: "8 min read",
+    category: "Resurfacing Guide",
+  },
+  {
     slug: "court-construction-costs",
     title: "Court Construction Costs in Texas: What GCs Need to Budget (2026)",
     description: "Real cost data for estimators building bids on tennis, pickleball, and multi-sport court projects in Central Texas.",
@@ -32,6 +48,22 @@ const posts = [
     date: "Feb 21, 2026",
     readTime: "10 min read",
     category: "Court Surfacing Guide",
+  },
+  {
+    slug: "austin-court-surfacing",
+    title: "Sport Court Surfacing in Austin, TX",
+    description: "Tennis court resurfacing, pickleball court installation, and sport court surfacing for GCs across the Austin metro.",
+    date: "Mar 5, 2026",
+    readTime: "6 min read",
+    category: "Service Area",
+  },
+  {
+    slug: "san-antonio-court-surfacing",
+    title: "Sport Court Surfacing in San Antonio, TX",
+    description: "Tennis court resurfacing and pickleball court installation for general contractors across the San Antonio metro and I-35 corridor.",
+    date: "Mar 5, 2026",
+    readTime: "7 min read",
+    category: "Service Area",
   },
 ];
 
