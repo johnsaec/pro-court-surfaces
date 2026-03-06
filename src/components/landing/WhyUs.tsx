@@ -67,9 +67,7 @@ export function WhyUs() {
               Why Pro Court
             </span>
             <h2 className="text-3xl sm:text-5xl font-bold text-brand-text leading-tight">
-              Why Pro Court
-              <br />
-              Surfaces
+              What makes Pro Court Surfaces different?
             </h2>
             <p className="mt-4 text-brand-text-muted text-lg">
               An owner-operated court resurfacing company based in Austin,

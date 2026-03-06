@@ -35,9 +35,7 @@ export function Contact() {
               Get Started
             </span>
             <h2 className="text-3xl sm:text-5xl font-bold leading-tight">
-              Ready to transform
-              <br />
-              your court?
+              How do I get a court resurfacing estimate?
             </h2>
             <p className="mt-5 text-white/60 text-lg max-w-md">
               Get a free, no-obligation estimate. We typically respond within 24

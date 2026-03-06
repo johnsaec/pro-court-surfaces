@@ -36,9 +36,7 @@ export function ServiceArea() {
           <span className="w-6 h-px bg-brand-blue" />
         </span>
         <h2 className="text-3xl sm:text-5xl font-bold text-brand-text leading-tight">
-          Serving Greater
-          <br />
-          Central Texas
+          What areas does Pro Court Surfaces serve?
         </h2>
         <p className="mt-6 text-lg text-brand-text-muted leading-relaxed max-w-xl mx-auto">
           Proudly resurfacing courts across the Austin metro and Central Texas

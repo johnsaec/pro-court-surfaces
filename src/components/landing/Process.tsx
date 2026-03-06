@@ -52,7 +52,7 @@ export function Process() {
             <span className="w-6 h-px bg-brand-blue" />
           </span>
           <h2 className="text-3xl sm:text-5xl font-bold text-brand-text leading-tight">
-            How It Works
+            How does the court resurfacing process work?
           </h2>
           <p className="mt-4 text-brand-text-muted text-lg">
             Most resurfacing projects are completed in 3 to 5 working days.

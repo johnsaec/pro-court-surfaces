@@ -87,7 +87,7 @@ export default function CourtSurfaceTypesPage() {
 
         {/* Why Surface Choice Matters */}
         <section>
-          <h2 className="text-3xl font-bold text-brand-text mt-12 mb-4">Why Surface Choice Matters for Amenity Centers</h2>
+          <h2 className="text-3xl font-bold text-brand-text mt-12 mb-4">Why does court surface choice matter for amenity centers?</h2>
           <p className="text-brand-text-muted leading-relaxed mb-4">When you are building amenity courts for a multi-family development, the surface system you spec has direct consequences for your project {"\u2014"} and your reputation. Pick the wrong one and you are fielding callback calls within a year. Pick the right one and the courts disappear from your punch list permanently.</p>
           <p className="text-brand-text-muted leading-relaxed mb-4">Here is what most GC estimators do not realize: <strong className="text-brand-text">not all court surfaces are created equal</strong>, and the cheapest option almost never survives the Central Texas climate and the daily abuse from hundreds of residents.</p>
           <p className="text-brand-text-muted leading-relaxed mb-4">This guide breaks down the four main sport court surfacing systems, compares them head-to-head, and tells you what we would spec for amenity center courts based on our experience as a <Link href="/" className="text-brand-blue hover:underline">surfacing subcontractor in Central Texas</Link>.</p>
@@ -95,7 +95,7 @@ export default function CourtSurfaceTypesPage() {
 
         {/* Acrylic Court Surfaces */}
         <section>
-          <h2 className="text-3xl font-bold text-brand-text mt-12 mb-4">Acrylic Court Surfaces</h2>
+          <h2 className="text-3xl font-bold text-brand-text mt-12 mb-4">What are acrylic court surfaces?</h2>
           <p className="text-brand-text-muted leading-relaxed mb-4">Acrylic court surfacing is the industry standard for tennis and pickleball courts {"\u2014"} and the system used on virtually every professional and collegiate court in the country. It is a multi-layer coating applied directly over a concrete or asphalt substrate.</p>
           <p className="text-brand-text-muted leading-relaxed mb-4">The typical acrylic system consists of:</p>
           <ul className="space-y-2 mb-6 pl-5 list-disc">
@@ -142,7 +142,7 @@ export default function CourtSurfaceTypesPage() {
 
         {/* Modular Tile Systems */}
         <section>
-          <h2 className="text-3xl font-bold text-brand-text mt-12 mb-4">Modular Tile Systems</h2>
+          <h2 className="text-3xl font-bold text-brand-text mt-12 mb-4">What are modular tile court systems?</h2>
           <p className="text-brand-text-muted leading-relaxed mb-4">Modular tile systems {"\u2014"} like Sport Court, SnapSports, and similar brands {"\u2014"} use interlocking plastic tiles that snap together over a hard surface. They are popular in the residential market and for backyard courts.</p>
           <ProsCons
             pros={[
@@ -165,7 +165,7 @@ export default function CourtSurfaceTypesPage() {
 
         {/* Cushioned Systems */}
         <section>
-          <h2 className="text-3xl font-bold text-brand-text mt-12 mb-4">Cushioned Systems</h2>
+          <h2 className="text-3xl font-bold text-brand-text mt-12 mb-4">What are cushioned court surfaces?</h2>
           <p className="text-brand-text-muted leading-relaxed mb-4">Cushioned court surfaces add rubber or acrylic cushion layers underneath the standard acrylic color coats. The result is a surface with more give, which reduces joint stress and player fatigue. These systems typically add 3-9 layers of cushion material.</p>
           <ProsCons
             pros={[
@@ -186,7 +186,7 @@ export default function CourtSurfaceTypesPage() {
 
         {/* Synthetic Turf */}
         <section>
-          <h2 className="text-3xl font-bold text-brand-text mt-12 mb-4">Synthetic Turf Courts</h2>
+          <h2 className="text-3xl font-bold text-brand-text mt-12 mb-4">What are synthetic turf courts?</h2>
           <p className="text-brand-text-muted leading-relaxed mb-4">Synthetic turf is an emerging option for sport courts, especially for multi-use areas. The turf is infilled with sand or rubber and installed over a compacted aggregate or concrete base.</p>
           <ProsCons
             pros={[
@@ -208,7 +208,7 @@ export default function CourtSurfaceTypesPage() {
 
         {/* Comparison Table */}
         <section>
-          <h2 className="text-3xl font-bold text-brand-text mt-12 mb-4">Surface Comparison for Amenity Centers</h2>
+          <h2 className="text-3xl font-bold text-brand-text mt-12 mb-4">How do court surface types compare?</h2>
           <p className="text-brand-text-muted leading-relaxed mb-4">Here is the head-to-head breakdown for GC estimators comparing surface options for multi-family amenity center courts.</p>
           <ComparisonTable
             headers={["Factor", "Acrylic (Acrytech)", "Modular Tile", "Cushioned", "Synthetic Turf"]}
@@ -228,7 +228,7 @@ export default function CourtSurfaceTypesPage() {
 
         {/* What GCs Should Spec */}
         <section>
-          <h2 className="text-3xl font-bold text-brand-text mt-12 mb-4">What GCs Should Spec for Amenity Centers</h2>
+          <h2 className="text-3xl font-bold text-brand-text mt-12 mb-4">What court surface should a GC spec for an amenity center?</h2>
           <p className="text-brand-text-muted leading-relaxed mb-4">If you are estimating a multi-family amenity center with tennis courts, pickleball courts, or multi-sport courts, here is the short answer: <strong className="text-brand-text">spec acrylic court surfacing</strong>.</p>
           <p className="text-brand-text-muted leading-relaxed mb-4">Specifically, we recommend <strong className="text-brand-text">ATS Sports Acrytech</strong> for amenity center projects because it checks every box a GC cares about:</p>
           <ul className="space-y-2 mb-6 pl-5 list-disc">

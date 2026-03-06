@@ -237,7 +237,7 @@ export default function CommercialSections() {
               Straight Talk
             </span>
             <h2 className="text-3xl sm:text-5xl font-bold text-brand-text leading-tight">
-              We Know What You&apos;re Thinking
+              What do GCs worry about with court surfacing subs?
             </h2>
             <p className="mt-4 text-brand-text-muted text-lg max-w-xl">
               You&apos;ve been burned by subs before. Here&apos;s how we&apos;re different.
@@ -283,9 +283,7 @@ export default function CommercialSections() {
               Scope of Work
             </span>
             <h2 className="text-3xl sm:text-5xl font-bold text-brand-text leading-tight">
-              Sport Court Surfacing for
-              <br className="hidden sm:block" />
-              Multi-Family Amenity Centers
+              What does a court surfacing subcontractor handle?
             </h2>
             <p className="mt-4 text-brand-text-muted text-lg max-w-xl">
               We do one thing and we do it well. Zero scope overlap with your
@@ -352,9 +350,7 @@ export default function CommercialSections() {
               Why GCs Choose Us
             </span>
             <h2 className="text-3xl sm:text-5xl font-bold text-brand-text leading-tight">
-              Built for How Contractors
-              <br className="hidden sm:block" />
-              Actually Work
+              Why do GCs choose Pro Court Surfaces?
             </h2>
             <p className="mt-4 text-brand-text-muted text-lg max-w-xl">
               We&apos;ve worked inside GC timelines on multi-family projects. We
@@ -433,9 +429,7 @@ export default function CommercialSections() {
               ROI Calculator
             </span>
             <h2 className="text-3xl sm:text-5xl font-bold text-brand-text leading-tight">
-              See the True Cost Before
-              <br className="hidden sm:block" />
-              You Award the Bid
+              How much does a cheap court surfacing sub actually cost?
             </h2>
             <p className="mt-4 text-brand-text-muted text-lg max-w-xl">
               The cheapest bid isn&apos;t the cheapest project. Plug in your numbers
@@ -465,9 +459,7 @@ export default function CommercialSections() {
                 Request a Bid
               </span>
               <h2 className="text-3xl sm:text-5xl font-bold leading-tight">
-                Let&apos;s Get You
-                <br />
-                a Number
+                How do I request a court surfacing bid?
               </h2>
               <p className="mt-5 text-white/60 text-lg max-w-md">
                 Send us the basics and we&apos;ll have a detailed bid back to you

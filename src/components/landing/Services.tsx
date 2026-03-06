@@ -54,7 +54,7 @@ export function Services() {
             Services
           </span>
           <h2 className="text-3xl sm:text-5xl font-bold text-brand-text leading-tight">
-            What We Do
+            What court surfacing services does Pro Court Surfaces offer?
           </h2>
           <p className="mt-4 text-brand-text-muted text-lg max-w-xl">
             Pro Court Surfaces specializes in pickleball and tennis court

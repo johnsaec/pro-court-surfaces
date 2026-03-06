@@ -59,7 +59,7 @@ export function Portfolio() {
             <span className="w-6 h-px bg-brand-blue" />
           </span>
           <h2 className="text-3xl sm:text-5xl font-bold text-brand-text leading-tight">
-            Our Work
+            What courts has Pro Court Surfaces resurfaced?
           </h2>
           <p className="mt-4 text-brand-text-muted text-lg">
             Every court tells a story. Here are some of our favorites.

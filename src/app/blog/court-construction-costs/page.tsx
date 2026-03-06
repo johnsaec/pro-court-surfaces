@@ -58,13 +58,13 @@ const breadcrumbSchema = {
 };
 
 const tocItems = [
-  { href: "#why-cost-clarity", label: "Why Cost Clarity Matters for GC Estimates" },
-  { href: "#tennis-costs", label: "Tennis Court Construction Costs" },
-  { href: "#pickleball-costs", label: "Pickleball Court Construction Costs" },
-  { href: "#multi-sport-costs", label: "Multi-Sport Court Costs" },
-  { href: "#cost-variance", label: "What Drives Cost Variance" },
-  { href: "#hidden-costs", label: "The Hidden Costs GCs Miss" },
-  { href: "#accurate-bid", label: "Getting an Accurate Surfacing Bid" },
+  { href: "#why-cost-clarity", label: "Why do GCs need accurate court construction cost data?" },
+  { href: "#tennis-costs", label: "How much does tennis court construction cost in Texas?" },
+  { href: "#pickleball-costs", label: "How much does it cost to build a pickleball court in Texas?" },
+  { href: "#multi-sport-costs", label: "How much do multi-sport courts cost to build?" },
+  { href: "#cost-variance", label: "What factors affect court construction costs?" },
+  { href: "#hidden-costs", label: "What hidden costs do GCs miss on court projects?" },
+  { href: "#accurate-bid", label: "How do I get an accurate court surfacing bid?" },
 ];
 
 export default function CourtConstructionCostsPage() {
@@ -99,14 +99,14 @@ export default function CourtConstructionCostsPage() {
         </nav>
 
         <section id="why-cost-clarity">
-          <h2 className="text-3xl font-bold text-brand-text mt-12 mb-4">Why Cost Clarity Matters for Your Estimate</h2>
+          <h2 className="text-3xl font-bold text-brand-text mt-12 mb-4">Why do GCs need accurate court construction cost data?</h2>
           <p className="text-brand-text-muted leading-relaxed mb-4">If you are building an estimate for an amenity center with sport courts, you already know the problem: surfacing numbers are all over the map. One sub bids $5,000 per court, another bids $12,000, and neither one breaks down what is actually included. You are left guessing which number to carry, and guessing on a bid is how you end up eating costs or losing the job.</p>
           <p className="text-brand-text-muted leading-relaxed mb-4">This guide is built for GC estimators working on multi-family and amenity center projects in Central Texas. We are going to break down real cost ranges by court type, walk through what drives price variance, and flag the hidden costs that blow up budgets after the contract is signed.</p>
           <p className="text-brand-text-muted leading-relaxed mb-4">The goal is simple: give you numbers you can actually use when you are building your next bid.</p>
         </section>
 
         <section id="tennis-costs">
-          <h2 className="text-3xl font-bold text-brand-text mt-12 mb-4">Tennis Court Construction Costs</h2>
+          <h2 className="text-3xl font-bold text-brand-text mt-12 mb-4">How much does tennis court construction cost in Texas?</h2>
           <p className="text-brand-text-muted leading-relaxed mb-4">{"A standard tennis court is 60' x 120' (including overruns). Full construction from bare site to playable surface involves multiple trades and scopes. Here is what each component typically costs in Central Texas as of 2026."}</p>
           <CostTable title="Tennis Court Cost Breakdown (Per Court)" headers={["Component", "Cost Range"]} rows={[
             { label: "Site Prep & Grading", value: "$5,000 \u2013 $15,000" },
@@ -124,7 +124,7 @@ export default function CourtConstructionCostsPage() {
         </section>
 
         <section id="pickleball-costs">
-          <h2 className="text-3xl font-bold text-brand-text mt-12 mb-4">Pickleball Court Construction Costs</h2>
+          <h2 className="text-3xl font-bold text-brand-text mt-12 mb-4">How much does it cost to build a pickleball court in Texas?</h2>
           <p className="text-brand-text-muted leading-relaxed mb-4">{"A standard pickleball court is 30' x 60' (including overruns) \u2014 roughly one-quarter the footprint of a tennis court. Smaller footprint means lower cost per court, which is why developers are adding 4\u20138 pickleball courts to amenity packages."}</p>
           <CostTable title="Pickleball Court Cost Breakdown (Per Court)" headers={["Component", "Cost Range"]} rows={[
             { label: "Site Prep & Grading", value: "$2,500 \u2013 $7,000" },
@@ -142,7 +142,7 @@ export default function CourtConstructionCostsPage() {
         </section>
 
         <section id="multi-sport-costs">
-          <h2 className="text-3xl font-bold text-brand-text mt-12 mb-4">Multi-Sport Court Costs</h2>
+          <h2 className="text-3xl font-bold text-brand-text mt-12 mb-4">How much do multi-sport courts cost to build?</h2>
           <p className="text-brand-text-muted leading-relaxed mb-4">Multi-sport courts {"\u2014"} typically a tennis court with pickleball lines overlaid, or a dedicated pad with dual-line striping {"\u2014"} are increasingly common on amenity center projects.</p>
           <h3 className="text-xl font-semibold text-brand-text mt-8 mb-3">Dual-Line Courts</h3>
           <p className="text-brand-text-muted leading-relaxed mb-4">The most cost-effective approach: a full-size tennis court with pickleball lines added. Striping dual lines adds <strong className="text-brand-text">$500 {"\u2013"} $1,500 per court</strong> over single-sport striping.</p>
@@ -156,7 +156,7 @@ export default function CourtConstructionCostsPage() {
         </section>
 
         <section id="cost-variance">
-          <h2 className="text-3xl font-bold text-brand-text mt-12 mb-4">What Drives Cost Variance</h2>
+          <h2 className="text-3xl font-bold text-brand-text mt-12 mb-4">What factors affect court construction costs?</h2>
           <p className="text-brand-text-muted leading-relaxed mb-4">You have seen the ranges. Here is what pushes a project toward the high end or the low end.</p>
           <h3 className="text-xl font-semibold text-brand-text mt-8 mb-3">Site Conditions</h3>
           <p className="text-brand-text-muted leading-relaxed mb-4">Rocky or expansive clay soils (common in Central Texas) increase grading and prep costs. Sites with significant slope require more cut-and-fill work. If your geotech report shows problem soils, build in a contingency on the site prep line item.</p>
@@ -171,7 +171,7 @@ export default function CourtConstructionCostsPage() {
         </section>
 
         <section id="hidden-costs">
-          <h2 className="text-3xl font-bold text-brand-text mt-12 mb-4">The Hidden Costs GCs Miss</h2>
+          <h2 className="text-3xl font-bold text-brand-text mt-12 mb-4">What hidden costs do GCs miss on court projects?</h2>
           <p className="text-brand-text-muted leading-relaxed mb-4">The bid number on the page is not the real cost. Here are the line items that never make it into the original estimate but show up during construction or within the first few years.</p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 my-8">
             <HiddenCostCard costLabel="Avg. $5,000 / Court" title="Callbacks from Cheap Subs" description={"Cheap surface systems peel, blister, and crack within 1\u20132 years. The callback rate on bargain installs runs 35\u201340%."} />
@@ -185,7 +185,7 @@ export default function CourtConstructionCostsPage() {
         </section>
 
         <section id="accurate-bid">
-          <h2 className="text-3xl font-bold text-brand-text mt-12 mb-4">Getting an Accurate Surfacing Bid</h2>
+          <h2 className="text-3xl font-bold text-brand-text mt-12 mb-4">How do I get an accurate court surfacing bid?</h2>
           <p className="text-brand-text-muted leading-relaxed mb-4">If you are carrying court surfacing on your next estimate, here is how to get a number you can stand behind.</p>
           <h3 className="text-xl font-semibold text-brand-text mt-8 mb-3">What We Need From You</h3>
           <ul className="space-y-2 mb-6 pl-5 list-disc">
