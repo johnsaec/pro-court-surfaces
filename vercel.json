@@ -1,3 +1,16 @@
 {
-  "framework": "nextjs"
+  "framework": "nextjs",
+  "redirects": [
+    {
+      "source": "/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "procourtsurfaces.com"
+        }
+      ],
+      "destination": "https://www.procourtsurfaces.com/:path*",
+      "permanent": true
+    }
+  ]
 }
