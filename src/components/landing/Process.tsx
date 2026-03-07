@@ -1,6 +1,7 @@
 "use client";
 
 import { ClipboardCheck, FileText, HardHat, Trophy } from "lucide-react";
+import { SectionCTA } from "./SectionCTA";
 import { useScrollReveal } from "./useScrollReveal";
 
 const steps = [
@@ -88,6 +89,7 @@ export function Process() {
             </div>
           ))}
         </div>
+        <SectionCTA />
       </div>
     </section>
   );

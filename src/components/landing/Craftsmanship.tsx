@@ -1,6 +1,7 @@
 "use client";
 
 import { CheckCircle } from "lucide-react";
+import { SectionCTA } from "./SectionCTA";
 import { useScrollReveal } from "./useScrollReveal";
 
 const features = [
@@ -69,6 +70,7 @@ export function Craftsmanship() {
             </div>
           ))}
         </div>
+        <SectionCTA dark />
       </div>
     </section>
   );

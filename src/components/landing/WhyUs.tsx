@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { User, ShieldCheck, FileCheck, MapPin } from "lucide-react";
+import { SectionCTA } from "./SectionCTA";
 import { useScrollReveal } from "./useScrollReveal";
 
 const differentiators = [
@@ -97,6 +98,7 @@ export function WhyUs() {
             </div>
           </div>
         </div>
+        <SectionCTA />
       </div>
     </section>
   );

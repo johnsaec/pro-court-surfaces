@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { SectionCTA } from "./SectionCTA";
 import { useScrollReveal } from "./useScrollReveal";
 
 const projects = [
@@ -88,6 +89,7 @@ export function Portfolio() {
             </div>
           ))}
         </div>
+        <SectionCTA />
       </div>
     </section>
   );

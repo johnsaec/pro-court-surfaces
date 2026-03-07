@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { SectionCTA } from "./SectionCTA";
 import { useScrollReveal } from "./useScrollReveal";
 
 const transformations = [
@@ -95,6 +96,7 @@ export function BeforeAfter() {
             </article>
           ))}
         </div>
+        <SectionCTA />
       </div>
     </section>
   );

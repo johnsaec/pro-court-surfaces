@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { SectionCTA } from "./SectionCTA";
 import { useScrollReveal } from "./useScrollReveal";
 
 export function Results() {
@@ -66,6 +67,7 @@ export function Results() {
             </div>
           </div>
         </div>
+        <SectionCTA />
       </div>
     </section>
   );

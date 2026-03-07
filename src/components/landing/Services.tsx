@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { PaintBucket, Layers, Palette } from "lucide-react";
+import { SectionCTA } from "./SectionCTA";
 import { useScrollReveal } from "./useScrollReveal";
 
 const services = [
@@ -89,6 +90,7 @@ export function Services() {
             </div>
           ))}
         </div>
+        <SectionCTA />
       </div>
     </section>
   );
