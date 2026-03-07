@@ -18,7 +18,7 @@ export function Hero() {
         loop
         playsInline
         poster="https://res.cloudinary.com/dwyd4f7lz/image/upload/f_auto,q_auto,w_1600/v1769365125/DJI_0054_rgzy6p.jpg"
-        className="absolute inset-0 w-full h-full object-cover scale-105"
+        className="absolute inset-0 w-full h-full object-cover object-bottom scale-105"
       >
         <source
           src="https://res.cloudinary.com/dwyd4f7lz/video/upload/q_auto/Website_Video_gnp5ib.mp4"
