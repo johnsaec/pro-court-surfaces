@@ -3,6 +3,7 @@ import Link from "next/link";
 import { BlogHero } from "../_components/BlogHero";
 import { BlogFAQ } from "../_components/BlogFAQ";
 import { BlogCTA } from "../_components/BlogCTA";
+import { CTABanner } from "@/components/landing/CTABanner";
 
 export const metadata: Metadata = {
   title: "Sport Court Surfacing in Austin, TX | Pro Court Surfaces",
@@ -265,6 +266,8 @@ export default function AustinCourtSurfacingPage() {
 
         <BlogCTA title="Need a Court Surfacing Bid in Austin?" description="Send us your court specs and project timeline. You will have a detailed, line-item bid back within 48 hours. No travel markups anywhere in the Austin metro." />
       </article>
+
+      <CTABanner />
     </>
   );
 }

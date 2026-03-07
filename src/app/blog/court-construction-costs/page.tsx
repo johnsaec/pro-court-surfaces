@@ -5,6 +5,7 @@ import { CostTable } from "../_components/CostTable";
 import { CalloutBox } from "../_components/CalloutBox";
 import { HiddenCostCard } from "../_components/HiddenCostCard";
 import { BlogCTA } from "../_components/BlogCTA";
+import { CTABanner } from "@/components/landing/CTABanner";
 
 export const metadata: Metadata = {
   title: "Court Construction Costs in Texas: What GCs Need to Budget (2026) | Pro Court Surfaces",
@@ -217,6 +218,8 @@ export default function CourtConstructionCostsPage() {
 
         <BlogCTA title="Need Surfacing Numbers for Your Next Bid?" description="Send us your court specs and project timeline. You will have a detailed, line-item bid back within 48 hours." />
       </article>
+
+      <CTABanner />
     </>
   );
 }

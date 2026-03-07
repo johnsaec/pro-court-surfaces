@@ -4,6 +4,7 @@ import { BlogHero } from "../_components/BlogHero";
 import { CalloutBox } from "../_components/CalloutBox";
 import { BlogFAQ } from "../_components/BlogFAQ";
 import { BlogCTA } from "../_components/BlogCTA";
+import { CTABanner } from "@/components/landing/CTABanner";
 
 export const metadata: Metadata = {
   title: "Sport Court Surfacing in San Antonio, TX | Pro Court Surfaces",
@@ -340,6 +341,8 @@ export default function SanAntonioCourtSurfacingPage() {
 
         <BlogCTA title="Need a Surfacing Bid for Your San Antonio Project?" description="Send us your court specs and project timeline. You will have a detailed, line-item bid back within 48 hours. San Antonio metro, I-35 corridor, and surrounding areas." />
       </article>
+
+      <CTABanner />
     </>
   );
 }

@@ -17,8 +17,8 @@ export function Footer() {
             />
             <p className="text-sm">Austin, TX</p>
             <div className="flex gap-4 text-sm">
-              <a href="tel:+15125551234" className="hover:text-white transition-colors">
-                (512) 555-1234
+              <a href="tel:+15128930466" className="hover:text-white transition-colors">
+                (512) 893-0466
               </a>
               <span className="text-white/30">|</span>
               <a href="mailto:patrick@procourtsurfaces.com" className="hover:text-white transition-colors">

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { GuidebookForm } from "./_components/GuidebookForm";
+import { CTABanner } from "@/components/landing/CTABanner";
 
 export const metadata: Metadata = {
   title: "The GC's Guide to Pickleball Court Construction | Pro Court Surfaces",
@@ -101,6 +102,8 @@ export default function GuidebookPage() {
           </div>
         </div>
       </section>
+
+      <CTABanner />
     </>
   );
 }

@@ -5,6 +5,7 @@ import { ProsCons } from "../_components/ProsCons";
 import { ComparisonTable } from "../_components/ComparisonTable";
 import { BlogFAQ } from "../_components/BlogFAQ";
 import { BlogCTA } from "../_components/BlogCTA";
+import { CTABanner } from "@/components/landing/CTABanner";
 
 export const metadata: Metadata = {
   title: "Tennis Court Surface Types: What GCs Need to Know | Pro Court Surfaces",
@@ -259,6 +260,8 @@ export default function CourtSurfaceTypesPage() {
 
         <BlogCTA title="Need Help Specifying Court Surfaces?" description="We're the surfacing sub GCs in Central Texas call when the courts have to be right. Send us your project details and we'll have a detailed bid back within 48 hours." />
       </article>
+
+      <CTABanner />
     </>
   );
 }

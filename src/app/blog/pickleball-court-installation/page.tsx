@@ -4,6 +4,7 @@ import { BlogHero } from "../_components/BlogHero";
 import { CostTable } from "../_components/CostTable";
 import { CalloutBox } from "../_components/CalloutBox";
 import { BlogCTA } from "../_components/BlogCTA";
+import { CTABanner } from "@/components/landing/CTABanner";
 import { BlogFAQ } from "../_components/BlogFAQ";
 
 export const metadata: Metadata = {
@@ -285,6 +286,8 @@ export default function PickleballCourtInstallationPage() {
 
         <BlogCTA title="Need a Pickleball Court Surfacing Bid?" description="Send us your court count, slab status, and project timeline. You will have a detailed, line-item bid back within 48 hours." />
       </article>
+
+      <CTABanner />
     </>
   );
 }

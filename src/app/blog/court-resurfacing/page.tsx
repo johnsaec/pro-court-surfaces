@@ -5,6 +5,7 @@ import { CostTable } from "../_components/CostTable";
 import { CalloutBox } from "../_components/CalloutBox";
 import { BlogFAQ } from "../_components/BlogFAQ";
 import { BlogCTA } from "../_components/BlogCTA";
+import { CTABanner } from "@/components/landing/CTABanner";
 
 export const metadata: Metadata = {
   title: "Tennis & Pickleball Court Resurfacing | Central Texas | Pro Court Surfaces",
@@ -305,6 +306,8 @@ export default function CourtResurfacingPage() {
 
         <BlogCTA title="Need a Resurfacing Bid?" description="Send us your court details and timeline. You will have a detailed, line-item bid back within 48 hours." />
       </article>
+
+      <CTABanner />
     </>
   );
 }
