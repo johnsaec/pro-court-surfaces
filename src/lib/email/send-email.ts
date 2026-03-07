@@ -4,33 +4,43 @@ import type { ReactElement } from "react";
 type SendEmailParams = {
   to: string;
   subject: string;
+  from?: string;
   react?: ReactElement;
   text?: string;
 };
 
-export async function sendEmail({ to, subject, react, text }: SendEmailParams) {
+export async function sendEmail({ to, subject, from, react, text }: SendEmailParams) {
   try {
-    const payload: Record<string, unknown> = {
-      from: process.env.EMAIL_FROM ?? "Pro Court Surfaces <quotes@procourtsurfaces.com>",
-      to,
-      subject,
-    };
+    const sender = from ?? process.env.EMAIL_FROM ?? "Pro Court Surfaces <quotes@procourtsurfaces.com>";
 
-    if (text) {
-      payload.text = text;
+    let result;
+
+    if (text && !react) {
+      // Pure plain text — no HTML at all
+      result = await resend.emails.send({
+        from: sender,
+        to,
+        subject,
+        text,
+      });
     } else if (react) {
-      payload.react = react;
+      result = await resend.emails.send({
+        from: sender,
+        to,
+        subject,
+        react,
+      });
+    } else {
+      throw new Error("Either text or react must be provided");
     }
 
-    const { data, error } = await resend.emails.send(payload as Parameters<typeof resend.emails.send>[0]);
-
-    if (error) {
-      console.error("[sendEmail] Resend error:", error.message);
-      return { success: false, error: error.message };
+    if (result.error) {
+      console.error("[sendEmail] Resend error:", result.error.message);
+      return { success: false, error: result.error.message };
     }
 
-    console.log("[sendEmail] Sent:", data?.id, "to:", to);
-    return { success: true, id: data?.id };
+    console.log("[sendEmail] Sent:", result.data?.id, "to:", to);
+    return { success: true, id: result.data?.id };
   } catch (err) {
     console.error("[sendEmail] Unexpected error:", err instanceof Error ? err.message : err);
     return { success: false, error: "Failed to send email" };

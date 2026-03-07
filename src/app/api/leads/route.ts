@@ -80,7 +80,8 @@ export async function POST(req: NextRequest) {
     const assessmentUrl = `https://www.procourtsurfaces.com/assessment/${lead.id}`;
     sendEmail({
       to: email,
-      subject: `Thanks for reaching out, ${firstName} - Pro Court Surfaces`,
+      from: "Patrick Johnson <quotes@procourtsurfaces.com>",
+      subject: `Thanks for reaching out, ${firstName}`,
       text: `Hey ${firstName},
 
 Thanks for reaching out to Pro Court Surfaces! I got your info and will follow up personally within 24 hours.
