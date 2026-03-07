@@ -77,6 +77,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Send plain text welcome email (don't block response on failure)
+    const assessmentUrl = `https://www.procourtsurfaces.com/assessment/${lead.id}`;
     sendEmail({
       to: email,
       from: "Patrick Johnson <patrick@procourtsurfaces.com>",
@@ -84,6 +85,9 @@ export async function POST(req: NextRequest) {
       text: `Hey ${firstName},
 
 Got your info — I'll follow up within 24 hours with next steps.
+
+If you have 2 minutes, this helps me prep a better estimate for you:
+${assessmentUrl}
 
 If it's urgent, call me directly at (512) 893-0466.
 
