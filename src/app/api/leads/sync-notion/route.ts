@@ -8,7 +8,8 @@ export const dynamic = "force-dynamic";
 // Call manually or via cron: GET /api/leads/sync-notion?key=YOUR_KEY
 export async function GET(req: NextRequest) {
   const key = req.nextUrl.searchParams.get("key");
-  if (key !== process.env.SUPABASE_SERVICE_ROLE_KEY?.slice(-12)) {
+  const validKey = (process.env.NOTION_API_KEY || "").slice(-8);
+  if (!key || key !== validKey) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
