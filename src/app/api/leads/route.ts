@@ -112,7 +112,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Send plain text welcome email (don't block response on failure)
+    // Send plain text welcome email to lead
     const assessmentUrl = `https://www.procourtsurfaces.com/assessment/${lead.id}`;
     sendEmail({
       to: email,
@@ -131,6 +131,24 @@ Talk soon,
 Patrick`,
     }).catch((err) =>
       console.error("[leads/route] Welcome email failed:", err)
+    );
+
+    // Notify Patrick of new lead
+    const projectLabel = projectType ? projectType.replace(/_/g, " ") : "Not specified";
+    const sportsLabel = sports?.length ? sports.join(", ") : "Not specified";
+    sendEmail({
+      to: "patrick@procourtsurfaces.com",
+      from: "Pro Court Surfaces <quotes@procourtsurfaces.com>",
+      subject: `New Lead: ${name.trim()}`,
+      text: `- Name: ${name.trim()}
+- Email: ${email}
+- Phone: ${phone || "Not provided"}
+- City: ${city || "Not provided"}
+- Project Type: ${projectLabel}
+- Sports: ${sportsLabel}
+- Notes: ${message || "None"}`,
+    }).catch((err) =>
+      console.error("[leads/route] Admin notification failed:", err)
     );
 
     // Sync to Notion Pipeline (fire-and-forget)
