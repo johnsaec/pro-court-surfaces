@@ -1,33 +1,37 @@
 "use client";
 
-import { ClipboardCheck, FileText, HardHat, Trophy } from "lucide-react";
+import { Phone, Eye, FileText, HardHat } from "lucide-react";
 import { SectionCTA } from "./SectionCTA";
 import { useScrollReveal } from "./useScrollReveal";
 
 const steps = [
   {
-    icon: ClipboardCheck,
-    number: "01",
-    title: "Assess",
-    description: "We inspect your court and discuss your vision.",
+    icon: Phone,
+    number: "1",
+    title: "You Call or Fill Out the Form",
+    description:
+      "You talk to Patrick directly (not a sales rep). We schedule a free on-site visit within the week.",
+  },
+  {
+    icon: Eye,
+    number: "2",
+    title: "Patrick Walks the Court With You",
+    description:
+      "I'll show you what's happening — cracks, drainage issues, surface wear — and explain exactly how we'll fix it. No pressure, no sales pitch.",
   },
   {
     icon: FileText,
-    number: "02",
-    title: "Quote",
-    description: "You get a detailed, transparent quote within 48 hours.",
+    number: "3",
+    title: "You Get a Detailed Quote in 48 Hours",
+    description:
+      "Clear pricing, timeline, and scope. No hidden fees. No surprises.",
   },
   {
     icon: HardHat,
-    number: "03",
-    title: "Surface",
-    description: "Our crew transforms your court in 3 to 5 days.",
-  },
-  {
-    icon: Trophy,
-    number: "04",
-    title: "Play",
-    description: "Step onto a court that looks and plays brand new.",
+    number: "4",
+    title: "We Transform Your Court in 3–5 Days",
+    description:
+      "Grinding, crack repair, ASBA drainage test, filling, coating, striping. Your court looks and plays brand new.",
   },
 ];
 
@@ -40,7 +44,6 @@ export function Process() {
       aria-label="Our process"
       className="py-24 sm:py-36 bg-brand-bg-alt relative overflow-hidden"
     >
-      {/* Large decorative number */}
       <div className="absolute -right-12 top-1/2 -translate-y-1/2 text-[20rem] font-bold text-brand-blue/[0.03] leading-none select-none pointer-events-none hidden lg:block">
         4
       </div>
@@ -49,25 +52,21 @@ export function Process() {
         <div className="text-center max-w-2xl mx-auto mb-16">
           <span className="inline-flex items-center gap-3 text-[0.7rem] font-semibold uppercase tracking-[0.2em] text-brand-blue mb-4">
             <span className="w-6 h-px bg-brand-blue" />
-            Process
+            How It Works
             <span className="w-6 h-px bg-brand-blue" />
           </span>
           <h2 className="text-3xl sm:text-5xl font-bold text-brand-text leading-tight">
-            How does the court resurfacing process work?
+            We Handle Everything
           </h2>
-          <p className="mt-4 text-brand-text-muted text-lg">
-            Most resurfacing projects are completed in 3 to 5 working days.
-          </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           {steps.map((step, i) => (
             <div
               key={step.number}
               className="reveal-item relative"
               style={{ transitionDelay: `${i * 120}ms` }}
             >
-              {/* Connector line — hidden on mobile and last item */}
               {i < steps.length - 1 && (
                 <div className="hidden lg:block absolute top-7 left-[calc(50%+28px)] w-[calc(100%-56px)] h-px bg-gray-300" />
               )}
@@ -75,14 +74,14 @@ export function Process() {
               <div className="text-center">
                 <div className="relative inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-brand-blue text-white mb-5">
                   <step.icon className="h-6 w-6" strokeWidth={1.5} />
-                  <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-brand-green text-brand-navy text-[0.6rem] font-bold flex items-center justify-center">
+                  <span className="absolute -top-1 -right-1 w-6 h-6 rounded-full bg-brand-green text-brand-navy text-xs font-bold flex items-center justify-center">
                     {step.number}
                   </span>
                 </div>
-                <h3 className="text-xl font-bold text-brand-text">
+                <h3 className="text-lg font-bold text-brand-text mb-2">
                   {step.title}
                 </h3>
-                <p className="mt-2 text-brand-text-muted leading-relaxed">
+                <p className="text-sm text-brand-text-muted leading-relaxed">
                   {step.description}
                 </p>
               </div>
