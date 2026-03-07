@@ -3,6 +3,8 @@ import { createServerClient } from "@/lib/supabase/server";
 import { sendEmail } from "@/lib/email/send-email";
 
 export async function POST(req: NextRequest) {
+  let leadId: string | null = null;
+
   try {
     const body = await req.json();
     const { name, email, phone, city, projectType, sports, message } = body;
@@ -14,14 +16,13 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Split name into first/last
     const nameParts = name.trim().split(/\s+/);
     const firstName = nameParts[0];
     const lastName = nameParts.length > 1 ? nameParts.slice(1).join(" ") : "";
 
     const supabase = createServerClient();
 
-    // Check for duplicate by email
+    // ── Step 1: Save to Supabase (critical) ──────────────────────────
     const { data: existing } = await supabase
       .from("leads")
       .select("id")
@@ -29,7 +30,6 @@ export async function POST(req: NextRequest) {
       .maybeSingle();
 
     if (existing) {
-      // Update existing lead with new info rather than creating a dupe
       await supabase
         .from("leads")
         .update({
@@ -46,7 +46,6 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: true, id: existing.id, updated: true });
     }
 
-    // Create new lead — this is the critical path
     const { data: lead, error } = await supabase
       .from("leads")
       .insert({
@@ -75,13 +74,14 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Send emails — awaited so they complete before Vercel kills the function
+    leadId = lead.id;
+
+    // ── Step 2: Send emails (critical, awaited) ──────────────────────
     const assessmentUrl = `https://www.procourtsurfaces.com/assessment/${lead.id}`;
     const projectLabel = projectType ? projectType.replace(/_/g, " ") : "Not specified";
     const sportsLabel = sports?.length ? sports.join(", ") : "Not specified";
 
-    await Promise.allSettled([
-      // Welcome email to lead
+    const [welcomeResult, notifyResult] = await Promise.allSettled([
       sendEmail({
         to: email,
         from: "Patrick Johnson <patrick@procourtsurfaces.com>",
@@ -98,7 +98,6 @@ If it's urgent, call me directly at (512) 893-0466.
 Talk soon,
 Patrick`,
       }),
-      // Notify Patrick of new lead
       sendEmail({
         to: "patrick@procourtsurfaces.com",
         from: "Pro Court Surfaces <quotes@procourtsurfaces.com>",
@@ -113,12 +112,22 @@ Patrick`,
       }),
     ]);
 
-    // Notion sync is handled separately via /api/leads/sync-notion
-    // Lead is safe in Supabase — Notion is non-critical
+    if (welcomeResult.status === "rejected") {
+      console.error("[leads/route] Welcome email failed:", welcomeResult.reason);
+    }
+    if (notifyResult.status === "rejected") {
+      console.error("[leads/route] Admin notification failed:", notifyResult.reason);
+    }
 
+    // Lead saved + emails sent. Notion handled by cron.
     return NextResponse.json({ success: true, id: lead.id });
   } catch (err) {
     console.error("[leads/route] Unexpected error:", err);
+    // If we saved the lead but crashed on emails, it's still in Supabase
+    if (leadId) {
+      console.error("[leads/route] Lead was saved (id:", leadId, ") but post-save steps failed");
+      return NextResponse.json({ success: true, id: leadId, partial: true });
+    }
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

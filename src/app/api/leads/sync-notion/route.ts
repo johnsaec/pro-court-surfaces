@@ -6,8 +6,9 @@ import { sendEmail } from "@/lib/email/send-email";
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
 
-// Cron job: syncs unprocessed leads to Notion + sends welcome emails.
-// Runs every 30 min via Vercel cron, or manually via GET ?key=pcs-sync-2026
+// Cron job: syncs unprocessed leads to Notion (every 30 min).
+// Only emails Patrick if leads were actually synced.
+// Manual: GET /api/leads/sync-notion?key=pcs-sync-2026
 export async function GET(req: NextRequest) {
   const key = req.nextUrl.searchParams.get("key");
   const authHeader = req.headers.get("authorization");
