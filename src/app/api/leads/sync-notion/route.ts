@@ -1,18 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@/lib/supabase/server";
-import { createNotionPipelineLead } from "@/lib/notion";
+import { createNotionPipelineLead, updateNotionPipelineLead } from "@/lib/notion";
 
 export const dynamic = "force-dynamic";
 
-// Catch-up endpoint: syncs any leads missing from Notion
-// Call manually or via cron: GET /api/leads/sync-notion?key=YOUR_KEY
+// Syncs leads missing from Notion. Safe to call multiple times.
+// GET /api/leads/sync-notion?key=pcs-sync-2026
 export async function GET(req: NextRequest) {
   const key = req.nextUrl.searchParams.get("key");
-  // Use CRON_SECRET if set, otherwise last 8 chars of any available secret
-  const validKey = process.env.CRON_SECRET
-    || (process.env.SUPABASE_SERVICE_ROLE_KEY || "").slice(-12)
-    || (process.env.NOTION_API_KEY || "").slice(-8);
-  if (!key || key !== validKey) {
+  if (key !== "pcs-sync-2026") {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@/lib/supabase/server";
 import { sendEmail } from "@/lib/email/send-email";
-import { createNotionPipelineLead, updateNotionPipelineLead } from "@/lib/notion";
 
 export async function POST(req: NextRequest) {
   try {
@@ -25,7 +24,7 @@ export async function POST(req: NextRequest) {
     // Check for duplicate by email
     const { data: existing } = await supabase
       .from("leads")
-      .select("id, notion_page_id")
+      .select("id")
       .eq("email", email)
       .maybeSingle();
 
@@ -44,43 +43,10 @@ export async function POST(req: NextRequest) {
         })
         .eq("id", existing.id);
 
-      // Sync to Notion (awaited — must complete before response)
-      const notionFields = {
-        phone: phone || undefined,
-        city: city || undefined,
-        projectType: projectType && projectType !== "" ? projectType : undefined,
-        sports: sports?.length ? sports : undefined,
-        message: message && message !== "" ? `Website form (updated): ${message}` : undefined,
-      };
-
-      try {
-        if (existing.notion_page_id) {
-          await updateNotionPipelineLead(existing.notion_page_id, notionFields);
-        } else {
-          const notionPageId = await createNotionPipelineLead({
-            name: name.trim(),
-            firstName,
-            lastName: lastName || undefined,
-            email,
-            ...notionFields,
-            supabaseId: existing.id,
-          });
-          if (notionPageId) {
-            await supabase
-              .from("leads")
-              .update({ notion_page_id: notionPageId })
-              .eq("id", existing.id);
-            console.log("[leads/route] Notion sync (dedup) OK:", notionPageId);
-          }
-        }
-      } catch (err) {
-        console.error("[leads/route] Notion sync (dedup) failed:", err);
-      }
-
       return NextResponse.json({ success: true, id: existing.id, updated: true });
     }
 
-    // Create new lead
+    // Create new lead — this is the critical path
     const { data: lead, error } = await supabase
       .from("leads")
       .insert({
@@ -109,12 +75,12 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Run emails + Notion sync in parallel, all awaited before response
+    // Send emails — awaited so they complete before Vercel kills the function
     const assessmentUrl = `https://www.procourtsurfaces.com/assessment/${lead.id}`;
     const projectLabel = projectType ? projectType.replace(/_/g, " ") : "Not specified";
     const sportsLabel = sports?.length ? sports.join(", ") : "Not specified";
 
-    const [, , notionResult] = await Promise.allSettled([
+    await Promise.allSettled([
       // Welcome email to lead
       sendEmail({
         to: email,
@@ -145,31 +111,10 @@ Patrick`,
 - Sports: ${sportsLabel}
 - Notes: ${message || "None"}`,
       }),
-      // Sync to Notion Pipeline (awaited — not fire-and-forget)
-      createNotionPipelineLead({
-        name: name.trim(),
-        firstName,
-        lastName: lastName || undefined,
-        email,
-        phone: phone || undefined,
-        city: city || undefined,
-        projectType: projectType || undefined,
-        sports: sports?.length ? sports : undefined,
-        message: message || undefined,
-        supabaseId: lead.id,
-      }),
     ]);
 
-    // Save Notion page ID back to Supabase
-    if (notionResult.status === "fulfilled" && notionResult.value) {
-      await supabase
-        .from("leads")
-        .update({ notion_page_id: notionResult.value })
-        .eq("id", lead.id);
-      console.log("[leads/route] Notion sync OK:", notionResult.value);
-    } else if (notionResult.status === "rejected") {
-      console.error("[leads/route] Notion sync failed:", notionResult.reason);
-    }
+    // Notion sync is handled separately via /api/leads/sync-notion
+    // Lead is safe in Supabase — Notion is non-critical
 
     return NextResponse.json({ success: true, id: lead.id });
   } catch (err) {
