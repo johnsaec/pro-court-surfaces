@@ -77,30 +77,18 @@ export async function POST(req: NextRequest) {
     }
 
     // Send plain text welcome email (don't block response on failure)
-    const assessmentUrl = `https://www.procourtsurfaces.com/assessment/${lead.id}`;
     sendEmail({
       to: email,
-      from: "Patrick Johnson <quotes@procourtsurfaces.com>",
-      subject: `Thanks for reaching out, ${firstName}`,
+      from: "Patrick Johnson <patrick@procourtsurfaces.com>",
+      subject: "Quick follow up",
       text: `Hey ${firstName},
 
-Thanks for reaching out to Pro Court Surfaces! I got your info and will follow up personally within 24 hours.
+Got your info — I'll follow up within 24 hours with next steps.
 
-For immediate or urgent quotes, give me a call anytime: (512) 893-0466
+If it's urgent, call me directly at (512) 893-0466.
 
-Want to speed things up? Fill out a quick court assessment so I can give you a more accurate estimate right away:
-${assessmentUrl}
-
-Totally optional — I can gather everything when we talk. But if you have 2 minutes, it helps me prep a better quote for you.
-
-In the meantime, check out some of our recent work:
-https://www.procourtsurfaces.com/#portfolio
-
-Patrick Johnson
-Pro Court Surfaces - Founder
-Austin, TX 78704
-(512) 893-0466 | patrick@procourtsurfaces.com
-www.procourtsurfaces.com`,
+Talk soon,
+Patrick`,
     }).catch((err) =>
       console.error("[leads/route] Welcome email failed:", err)
     );
