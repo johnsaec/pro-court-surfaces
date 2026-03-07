@@ -7,15 +7,24 @@ type SendEmailParams = {
   from?: string;
   react?: ReactElement;
   text?: string;
+  html?: string;
 };
 
-export async function sendEmail({ to, subject, from, react, text }: SendEmailParams) {
+export async function sendEmail({ to, subject, from, react, text, html }: SendEmailParams) {
   try {
     const sender = from ?? process.env.EMAIL_FROM ?? "Pro Court Surfaces <quotes@procourtsurfaces.com>";
 
     let result;
 
-    if (text && !react) {
+    if (html) {
+      // Minimal HTML (e.g. plain text with hyperlinks)
+      result = await resend.emails.send({
+        from: sender,
+        to,
+        subject,
+        html,
+      });
+    } else if (text && !react) {
       // Pure plain text — no HTML at all
       result = await resend.emails.send({
         from: sender,
@@ -31,7 +40,7 @@ export async function sendEmail({ to, subject, from, react, text }: SendEmailPar
         react,
       });
     } else {
-      throw new Error("Either text or react must be provided");
+      throw new Error("Either text, html, or react must be provided");
     }
 
     if (result.error) {

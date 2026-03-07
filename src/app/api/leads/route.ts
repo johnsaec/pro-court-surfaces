@@ -86,17 +86,7 @@ export async function POST(req: NextRequest) {
         to: email,
         from: "Patrick Johnson <patrick@procourtsurfaces.com>",
         subject: "Quick follow up",
-        text: `Hey ${firstName},
-
-Got your info — I'll follow up within 24 hours with next steps.
-
-If you have 2 minutes, this helps me prep a better estimate for you:
-${assessmentUrl}
-
-If it's urgent, call me directly at (512) 893-0466.
-
-Talk soon,
-Patrick`,
+        html: `Hey ${firstName},<br><br>Got your info — I'll follow up within 24 hours with next steps.<br><br>If you have 2 minutes, this helps me prep a better estimate for you:<br><a href="${assessmentUrl}">Complete your court assessment</a><br><br>If it's urgent, call me directly at (512) 893-0466.<br><br>Talk soon,<br>Patrick`,
       }),
       sendEmail({
         to: "patrick@procourtsurfaces.com",
