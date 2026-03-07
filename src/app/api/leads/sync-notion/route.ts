@@ -64,26 +64,6 @@ export async function GET(req: NextRequest) {
         .update({ notion_page_id: notionPageId })
         .eq("id", lead.id);
 
-      // 3. Send welcome email to lead
-      const firstName = lead.first_name || lead.display_name?.split(" ")[0] || "there";
-      const assessmentUrl = `https://www.procourtsurfaces.com/assessment/${lead.id}`;
-      await sendEmail({
-        to: lead.email,
-        from: "Patrick Johnson <patrick@procourtsurfaces.com>",
-        subject: "Quick follow up",
-        text: `Hey ${firstName},
-
-Got your info — I'll follow up within 24 hours with next steps.
-
-If you have 2 minutes, this helps me prep a better estimate for you:
-${assessmentUrl}
-
-If it's urgent, call me directly at (512) 893-0466.
-
-Talk soon,
-Patrick`,
-      });
-
       results.push({ name: lead.display_name, email: lead.email, status: "ok" });
     } catch (err) {
       results.push({
