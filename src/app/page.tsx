@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Navbar } from "@/components/landing/Navbar";
 import { Hero } from "@/components/landing/Hero";
 import { Results } from "@/components/landing/Results";
+import { Craftsmanship } from "@/components/landing/Craftsmanship";
 import { Services } from "@/components/landing/Services";
 import { BeforeAfter } from "@/components/landing/BeforeAfter";
 import { Portfolio } from "@/components/landing/Portfolio";
@@ -238,6 +239,7 @@ export default function Home() {
       <main>
         <Hero />
         <Results />
+        <Craftsmanship />
         <Services />
         <BeforeAfter />
         <Portfolio />
