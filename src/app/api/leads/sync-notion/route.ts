@@ -1,19 +1,25 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@/lib/supabase/server";
-import { createNotionPipelineLead, updateNotionPipelineLead } from "@/lib/notion";
+import { createNotionPipelineLead } from "@/lib/notion";
+import { sendEmail } from "@/lib/email/send-email";
 
 export const dynamic = "force-dynamic";
+export const maxDuration = 60;
 
-// Syncs leads missing from Notion. Safe to call multiple times.
-// GET /api/leads/sync-notion?key=pcs-sync-2026
+// Cron job: syncs unprocessed leads to Notion + sends welcome emails.
+// Runs every 30 min via Vercel cron, or manually via GET ?key=pcs-sync-2026
 export async function GET(req: NextRequest) {
   const key = req.nextUrl.searchParams.get("key");
-  if (key !== "pcs-sync-2026") {
+  const authHeader = req.headers.get("authorization");
+  const isVercelCron = authHeader === `Bearer ${process.env.CRON_SECRET}`;
+
+  if (!isVercelCron && key !== "pcs-sync-2026") {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   const supabase = createServerClient();
 
+  // Find leads not yet synced to Notion
   const { data: leads, error } = await supabase
     .from("leads")
     .select("id, display_name, first_name, last_name, email, phone, city, project_type, sports, notes")
@@ -29,10 +35,11 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ message: "All leads synced", synced: 0 });
   }
 
-  const results: { name: string; status: string; notionId?: string }[] = [];
+  const results: { name: string; email: string; status: string }[] = [];
 
   for (const lead of leads) {
     try {
+      // 1. Sync to Notion
       const notionPageId = await createNotionPipelineLead({
         name: lead.display_name || `${lead.first_name} ${lead.last_name}`.trim(),
         firstName: lead.first_name || undefined,
@@ -46,22 +53,66 @@ export async function GET(req: NextRequest) {
         supabaseId: lead.id,
       });
 
-      if (notionPageId) {
-        await supabase
-          .from("leads")
-          .update({ notion_page_id: notionPageId })
-          .eq("id", lead.id);
-        results.push({ name: lead.display_name, status: "ok", notionId: notionPageId });
-      } else {
-        results.push({ name: lead.display_name, status: "failed" });
+      if (!notionPageId) {
+        results.push({ name: lead.display_name, email: lead.email, status: "notion_failed" });
+        continue;
       }
+
+      // 2. Save Notion page ID
+      await supabase
+        .from("leads")
+        .update({ notion_page_id: notionPageId })
+        .eq("id", lead.id);
+
+      // 3. Send welcome email to lead
+      const firstName = lead.first_name || lead.display_name?.split(" ")[0] || "there";
+      const assessmentUrl = `https://www.procourtsurfaces.com/assessment/${lead.id}`;
+      await sendEmail({
+        to: lead.email,
+        from: "Patrick Johnson <patrick@procourtsurfaces.com>",
+        subject: "Quick follow up",
+        text: `Hey ${firstName},
+
+Got your info — I'll follow up within 24 hours with next steps.
+
+If you have 2 minutes, this helps me prep a better estimate for you:
+${assessmentUrl}
+
+If it's urgent, call me directly at (512) 893-0466.
+
+Talk soon,
+Patrick`,
+      });
+
+      results.push({ name: lead.display_name, email: lead.email, status: "ok" });
     } catch (err) {
       results.push({
         name: lead.display_name,
+        email: lead.email,
         status: `error: ${err instanceof Error ? err.message : String(err)}`,
       });
     }
   }
 
-  return NextResponse.json({ synced: results.filter((r) => r.status === "ok").length, total: leads.length, results });
+  const synced = results.filter((r) => r.status === "ok");
+
+  // 4. Email Patrick a summary
+  if (synced.length > 0) {
+    const summary = synced
+      .map((r) => `- ${r.name} (${r.email})`)
+      .join("\n");
+
+    await sendEmail({
+      to: "patrick@procourtsurfaces.com",
+      from: "Pro Court Surfaces <quotes@procourtsurfaces.com>",
+      subject: `${synced.length} new lead${synced.length > 1 ? "s" : ""} synced to Notion`,
+      text: `The following lead${synced.length > 1 ? "s were" : " was"} synced to your Notion pipeline:\n\n${summary}\n\nView pipeline: https://www.notion.so/2706eb69ce9180b0800dcc3e3660fbb5`,
+    });
+  }
+
+  return NextResponse.json({
+    synced: synced.length,
+    total: leads.length,
+    results,
+  });
 }
