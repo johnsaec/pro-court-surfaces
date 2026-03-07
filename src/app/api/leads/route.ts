@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@/lib/supabase/server";
 import { sendEmail } from "@/lib/email/send-email";
-import { createNotionPipelineLead } from "@/lib/notion";
+import { createNotionPipelineLead, updateNotionPipelineLead } from "@/lib/notion";
 
 export async function POST(req: NextRequest) {
   try {
@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
     // Check for duplicate by email
     const { data: existing } = await supabase
       .from("leads")
-      .select("id")
+      .select("id, notion_page_id")
       .eq("email", email)
       .maybeSingle();
 
@@ -43,6 +43,42 @@ export async function POST(req: NextRequest) {
             : undefined,
         })
         .eq("id", existing.id);
+
+      // Sync to Notion (update existing or create new)
+      const notionFields = {
+        phone: phone || undefined,
+        city: city || undefined,
+        projectType: projectType && projectType !== "" ? projectType : undefined,
+        sports: sports?.length ? sports : undefined,
+        message: message && message !== "" ? `Website form (updated): ${message}` : undefined,
+      };
+
+      if (existing.notion_page_id) {
+        updateNotionPipelineLead(existing.notion_page_id, notionFields).catch((err) =>
+          console.error("[leads/route] Notion update failed:", err)
+        );
+      } else {
+        createNotionPipelineLead({
+          name: name.trim(),
+          firstName,
+          lastName: lastName || undefined,
+          email,
+          ...notionFields,
+          supabaseId: existing.id,
+        })
+          .then(async (notionPageId) => {
+            if (notionPageId) {
+              await supabase
+                .from("leads")
+                .update({ notion_page_id: notionPageId })
+                .eq("id", existing.id);
+              console.log("[leads/route] Notion sync (dedup) OK:", notionPageId);
+            }
+          })
+          .catch((err) =>
+            console.error("[leads/route] Notion sync (dedup) failed:", err)
+          );
+      }
 
       return NextResponse.json({ success: true, id: existing.id, updated: true });
     }

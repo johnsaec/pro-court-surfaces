@@ -98,3 +98,71 @@ export async function createNotionPipelineLead(lead: {
   const data = await response.json();
   return data.id as string;
 }
+
+export async function updateNotionPipelineLead(
+  notionPageId: string,
+  fields: {
+    phone?: string;
+    city?: string;
+    projectType?: string;
+    sports?: string[];
+    message?: string;
+  }
+): Promise<boolean> {
+  if (!NOTION_API_KEY) {
+    console.warn("[notion] NOTION_API_KEY not set, skipping Notion update");
+    return false;
+  }
+
+  const properties: Record<string, unknown> = {};
+
+  if (fields.phone) {
+    properties["Phone Number"] = { phone_number: fields.phone };
+  }
+  if (fields.city) {
+    properties["City"] = {
+      rich_text: [{ text: { content: fields.city } }],
+    };
+  }
+  if (fields.projectType) {
+    properties["Project Type"] = {
+      rich_text: [{ text: { content: fields.projectType } }],
+    };
+  }
+  if (fields.sports?.length) {
+    properties["Sports"] = {
+      multi_select: fields.sports.map((s) => ({
+        name: s.charAt(0).toUpperCase() + s.slice(1),
+      })),
+    };
+  }
+  if (fields.message) {
+    properties["Notes"] = {
+      rich_text: [{ text: { content: fields.message } }],
+    };
+  }
+
+  properties["Lead Updated At"] = {
+    date: { start: new Date().toISOString().split("T")[0] },
+  };
+
+  if (Object.keys(properties).length === 1) return true; // only date, nothing to update
+
+  const response = await fetch(`https://api.notion.com/v1/pages/${notionPageId}`, {
+    method: "PATCH",
+    headers: {
+      Authorization: `Bearer ${NOTION_API_KEY}`,
+      "Content-Type": "application/json",
+      "Notion-Version": "2022-06-28",
+    },
+    body: JSON.stringify({ properties }),
+  });
+
+  if (!response.ok) {
+    const err = await response.text();
+    console.error("[notion] Failed to update Pipeline lead:", err);
+    return false;
+  }
+
+  return true;
+}
