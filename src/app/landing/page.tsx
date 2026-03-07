@@ -594,7 +594,7 @@ function LandingBeforeAfter() {
               <h3 className="text-sm font-semibold text-brand-blue uppercase tracking-wider mb-4 text-center">
                 {project.label}
               </h3>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="relative overflow-hidden rounded-xl">
                   <div className="absolute top-3 left-3 z-10 bg-black/70 text-white text-[0.65rem] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">
                     Before
