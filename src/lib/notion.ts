@@ -1,6 +1,36 @@
 const NOTION_API_KEY = process.env.NOTION_API_KEY;
 const PIPELINE_DB_ID = "2706eb69ce9180b0800dcc3e3660fbb5";
 
+async function fetchWithRetry(
+  url: string,
+  options: RequestInit,
+  maxRetries = 2
+): Promise<Response> {
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    try {
+      const response = await fetch(url, options);
+      // Retry on 5xx or 429 (rate limit)
+      if ((response.status >= 500 || response.status === 429) && attempt < maxRetries) {
+        const delay = Math.pow(2, attempt) * 500; // 500ms, 1000ms
+        console.warn(`[notion] Retry ${attempt + 1}/${maxRetries} after ${response.status}, waiting ${delay}ms`);
+        await new Promise((r) => setTimeout(r, delay));
+        continue;
+      }
+      return response;
+    } catch (err) {
+      if (attempt < maxRetries) {
+        const delay = Math.pow(2, attempt) * 500;
+        console.warn(`[notion] Retry ${attempt + 1}/${maxRetries} after fetch error, waiting ${delay}ms`);
+        await new Promise((r) => setTimeout(r, delay));
+        continue;
+      }
+      throw err;
+    }
+  }
+  // Unreachable, but TypeScript needs it
+  throw new Error("[notion] Max retries exceeded");
+}
+
 export async function createNotionPipelineLead(lead: {
   name: string;
   firstName?: string;
@@ -76,7 +106,7 @@ export async function createNotionPipelineLead(lead: {
     date: { start: new Date().toISOString().split("T")[0] },
   };
 
-  const response = await fetch("https://api.notion.com/v1/pages", {
+  const response = await fetchWithRetry("https://api.notion.com/v1/pages", {
     method: "POST",
     headers: {
       Authorization: `Bearer ${NOTION_API_KEY}`,
@@ -148,7 +178,7 @@ export async function updateNotionPipelineLead(
 
   if (Object.keys(properties).length === 1) return true; // only date, nothing to update
 
-  const response = await fetch(`https://api.notion.com/v1/pages/${notionPageId}`, {
+  const response = await fetchWithRetry(`https://api.notion.com/v1/pages/${notionPageId}`, {
     method: "PATCH",
     headers: {
       Authorization: `Bearer ${NOTION_API_KEY}`,

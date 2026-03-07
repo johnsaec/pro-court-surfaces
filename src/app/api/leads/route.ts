@@ -44,7 +44,7 @@ export async function POST(req: NextRequest) {
         })
         .eq("id", existing.id);
 
-      // Sync to Notion (update existing or create new)
+      // Sync to Notion (awaited — must complete before response)
       const notionFields = {
         phone: phone || undefined,
         city: city || undefined,
@@ -53,31 +53,28 @@ export async function POST(req: NextRequest) {
         message: message && message !== "" ? `Website form (updated): ${message}` : undefined,
       };
 
-      if (existing.notion_page_id) {
-        updateNotionPipelineLead(existing.notion_page_id, notionFields).catch((err) =>
-          console.error("[leads/route] Notion update failed:", err)
-        );
-      } else {
-        createNotionPipelineLead({
-          name: name.trim(),
-          firstName,
-          lastName: lastName || undefined,
-          email,
-          ...notionFields,
-          supabaseId: existing.id,
-        })
-          .then(async (notionPageId) => {
-            if (notionPageId) {
-              await supabase
-                .from("leads")
-                .update({ notion_page_id: notionPageId })
-                .eq("id", existing.id);
-              console.log("[leads/route] Notion sync (dedup) OK:", notionPageId);
-            }
-          })
-          .catch((err) =>
-            console.error("[leads/route] Notion sync (dedup) failed:", err)
-          );
+      try {
+        if (existing.notion_page_id) {
+          await updateNotionPipelineLead(existing.notion_page_id, notionFields);
+        } else {
+          const notionPageId = await createNotionPipelineLead({
+            name: name.trim(),
+            firstName,
+            lastName: lastName || undefined,
+            email,
+            ...notionFields,
+            supabaseId: existing.id,
+          });
+          if (notionPageId) {
+            await supabase
+              .from("leads")
+              .update({ notion_page_id: notionPageId })
+              .eq("id", existing.id);
+            console.log("[leads/route] Notion sync (dedup) OK:", notionPageId);
+          }
+        }
+      } catch (err) {
+        console.error("[leads/route] Notion sync (dedup) failed:", err);
       }
 
       return NextResponse.json({ success: true, id: existing.id, updated: true });
@@ -112,13 +109,18 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Send plain text welcome email to lead
+    // Run emails + Notion sync in parallel, all awaited before response
     const assessmentUrl = `https://www.procourtsurfaces.com/assessment/${lead.id}`;
-    sendEmail({
-      to: email,
-      from: "Patrick Johnson <patrick@procourtsurfaces.com>",
-      subject: "Quick follow up",
-      text: `Hey ${firstName},
+    const projectLabel = projectType ? projectType.replace(/_/g, " ") : "Not specified";
+    const sportsLabel = sports?.length ? sports.join(", ") : "Not specified";
+
+    const [, , notionResult] = await Promise.allSettled([
+      // Welcome email to lead
+      sendEmail({
+        to: email,
+        from: "Patrick Johnson <patrick@procourtsurfaces.com>",
+        subject: "Quick follow up",
+        text: `Hey ${firstName},
 
 Got your info — I'll follow up within 24 hours with next steps.
 
@@ -129,53 +131,45 @@ If it's urgent, call me directly at (512) 893-0466.
 
 Talk soon,
 Patrick`,
-    }).catch((err) =>
-      console.error("[leads/route] Welcome email failed:", err)
-    );
-
-    // Notify Patrick of new lead
-    const projectLabel = projectType ? projectType.replace(/_/g, " ") : "Not specified";
-    const sportsLabel = sports?.length ? sports.join(", ") : "Not specified";
-    sendEmail({
-      to: "patrick@procourtsurfaces.com",
-      from: "Pro Court Surfaces <quotes@procourtsurfaces.com>",
-      subject: `New Lead: ${name.trim()}`,
-      text: `- Name: ${name.trim()}
+      }),
+      // Notify Patrick of new lead
+      sendEmail({
+        to: "patrick@procourtsurfaces.com",
+        from: "Pro Court Surfaces <quotes@procourtsurfaces.com>",
+        subject: `New Lead: ${name.trim()}`,
+        text: `- Name: ${name.trim()}
 - Email: ${email}
 - Phone: ${phone || "Not provided"}
 - City: ${city || "Not provided"}
 - Project Type: ${projectLabel}
 - Sports: ${sportsLabel}
 - Notes: ${message || "None"}`,
-    }).catch((err) =>
-      console.error("[leads/route] Admin notification failed:", err)
-    );
+      }),
+      // Sync to Notion Pipeline (awaited — not fire-and-forget)
+      createNotionPipelineLead({
+        name: name.trim(),
+        firstName,
+        lastName: lastName || undefined,
+        email,
+        phone: phone || undefined,
+        city: city || undefined,
+        projectType: projectType || undefined,
+        sports: sports?.length ? sports : undefined,
+        message: message || undefined,
+        supabaseId: lead.id,
+      }),
+    ]);
 
-    // Sync to Notion Pipeline (fire-and-forget)
-    createNotionPipelineLead({
-      name: name.trim(),
-      firstName,
-      lastName: lastName || undefined,
-      email,
-      phone: phone || undefined,
-      city: city || undefined,
-      projectType: projectType || undefined,
-      sports: sports?.length ? sports : undefined,
-      message: message || undefined,
-      supabaseId: lead.id,
-    })
-      .then(async (notionPageId) => {
-        if (notionPageId) {
-          await supabase
-            .from("leads")
-            .update({ notion_page_id: notionPageId })
-            .eq("id", lead.id);
-          console.log("[leads/route] Notion sync OK:", notionPageId);
-        }
-      })
-      .catch((err) =>
-        console.error("[leads/route] Notion sync failed:", err)
-      );
+    // Save Notion page ID back to Supabase
+    if (notionResult.status === "fulfilled" && notionResult.value) {
+      await supabase
+        .from("leads")
+        .update({ notion_page_id: notionResult.value })
+        .eq("id", lead.id);
+      console.log("[leads/route] Notion sync OK:", notionResult.value);
+    } else if (notionResult.status === "rejected") {
+      console.error("[leads/route] Notion sync failed:", notionResult.reason);
+    }
 
     return NextResponse.json({ success: true, id: lead.id });
   } catch (err) {
