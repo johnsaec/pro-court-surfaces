@@ -37,9 +37,9 @@ export async function POST(req: NextRequest) {
         .update({
           phone: phone || undefined,
           city: city || undefined,
-          project_type: projectType || undefined,
+          project_type: projectType && projectType !== "" ? projectType : undefined,
           sports: sports?.length ? sports : undefined,
-          notes: message
+          notes: message && message !== ""
             ? `Website form (updated): ${message}`
             : undefined,
         })
@@ -61,10 +61,10 @@ export async function POST(req: NextRequest) {
         deal_stage: "new_lead",
         lead_source: "website",
         lead_source_detail: "contact form",
-        project_type: projectType || null,
+        project_type: projectType && projectType !== "" ? projectType : null,
         sports: sports?.length ? sports : [],
         form_type: "step1",
-        notes: message ? `Website form: ${message}` : null,
+        notes: message && message !== "" ? `Website form: ${message}` : null,
       })
       .select("id")
       .single();
@@ -72,7 +72,7 @@ export async function POST(req: NextRequest) {
     if (error) {
       console.error("[leads/route] Supabase insert error:", JSON.stringify(error));
       return NextResponse.json(
-        { error: "Failed to save lead" },
+        { error: "Failed to save lead", detail: error.message },
         { status: 500 }
       );
     }
