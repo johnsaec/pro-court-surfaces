@@ -1,14 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
-
 export function Hero() {
-  const [loaded, setLoaded] = useState(false);
-
-  useEffect(() => {
-    setLoaded(true);
-  }, []);
-
   return (
     <section className="relative h-[100svh] w-full overflow-hidden">
       {/* Video background */}
@@ -30,47 +22,29 @@ export function Hero() {
       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/10" />
       <div className="absolute inset-0 bg-gradient-to-r from-black/40 to-transparent" />
 
-      {/* Content */}
-      <div className="relative z-10 flex flex-col justify-end h-full max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 pb-16 sm:pb-24">
+      {/* Content — centered on mobile, bottom-aligned on desktop */}
+      <div className="relative z-10 flex flex-col justify-center sm:justify-end h-full max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 pb-8 sm:pb-24">
         {/* Eyebrow */}
-        <div
-          className={`transition-all duration-700 delay-300 ${
-            loaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
-          }`}
-        >
-          <span className="inline-flex items-center gap-3 text-[0.7rem] font-semibold uppercase tracking-[0.2em] text-brand-green">
-            <span className="w-8 h-px bg-brand-green" />
-            Austin, TX &bull; Court Resurfacing
-          </span>
-        </div>
+        <span className="inline-flex items-center gap-3 text-[0.7rem] font-semibold uppercase tracking-[0.2em] text-brand-green">
+          <span className="w-8 h-px bg-brand-green" />
+          Austin, TX &bull; Court Resurfacing
+        </span>
 
         {/* Headline */}
-        <h1
-          className={`mt-5 text-[clamp(2.5rem,7vw,5.5rem)] font-bold text-white leading-[1.05] tracking-tight max-w-4xl transition-all duration-700 delay-500 ${
-            loaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-          }`}
-        >
+        <h1 className="mt-5 text-[clamp(2.5rem,7vw,5.5rem)] font-bold text-white leading-[1.05] tracking-tight max-w-4xl">
           Courts that play
           <br />
           <span className="text-brand-green">as good</span> as they look.
         </h1>
 
         {/* Subhead */}
-        <p
-          className={`mt-5 text-lg sm:text-xl text-white/70 font-light max-w-xl leading-relaxed transition-all duration-700 delay-700 ${
-            loaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
-          }`}
-        >
+        <p className="mt-5 text-lg sm:text-xl text-white/70 font-light max-w-xl leading-relaxed">
           Premium pickleball &amp; tennis court resurfacing across Greater Austin
           and Central Texas.
         </p>
 
         {/* CTA row */}
-        <div
-          className={`mt-8 flex flex-col sm:flex-row items-start gap-4 transition-all duration-700 delay-[900ms] ${
-            loaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
-          }`}
-        >
+        <div className="mt-8 flex flex-col sm:flex-row items-start gap-4">
           <a
             href="#contact"
             className="group inline-flex items-center gap-2 px-7 py-4 rounded-lg bg-brand-blue text-white font-semibold text-sm hover:bg-brand-blue/90 transition-all shadow-xl shadow-brand-blue/20"
@@ -95,11 +69,7 @@ export function Hero() {
         </div>
 
         {/* Stats ribbon */}
-        <div
-          className={`mt-12 flex flex-wrap gap-8 sm:gap-12 transition-all duration-700 delay-[1100ms] ${
-            loaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
-          }`}
-        >
+        <div className="mt-12 flex flex-wrap gap-8 sm:gap-12">
           {[
             { value: "100+", label: "Courts Resurfaced" },
             { value: "3–5", label: "Day Turnaround" },
