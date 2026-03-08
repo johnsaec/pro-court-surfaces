@@ -633,7 +633,7 @@ function LandingBeforeAfter() {
 }
 
 /* ================================================================== */
-/*  CONTACT FORM (simplified: name + phone + zip)                      */
+/*  CONTACT FORM (simplified: name + email + phone)                    */
 /* ================================================================== */
 function LandingContact() {
   const [submitted, setSubmitted] = useState(false);
@@ -654,8 +654,8 @@ function LandingContact() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name: fd.get("name"),
+          email: fd.get("email"),
           phone: fd.get("phone"),
-          city: fd.get("zip"),
           message: "Landing page lead",
         }),
       });
@@ -744,34 +744,33 @@ function LandingContact() {
               </div>
               <div>
                 <label
+                  htmlFor="email"
+                  className="block text-xs font-semibold text-white/50 uppercase tracking-wider mb-1.5"
+                >
+                  Email *
+                </label>
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  required
+                  className="w-full rounded-lg border border-white/15 bg-white/10 px-4 py-3.5 text-white placeholder:text-white/30 text-base focus:outline-none focus:border-brand-green/50 focus:ring-1 focus:ring-brand-green/30 transition-colors"
+                  placeholder="you@email.com"
+                />
+              </div>
+              <div>
+                <label
                   htmlFor="phone"
                   className="block text-xs font-semibold text-white/50 uppercase tracking-wider mb-1.5"
                 >
-                  Phone *
+                  Phone
                 </label>
                 <input
                   type="tel"
                   id="phone"
                   name="phone"
-                  required
                   className="w-full rounded-lg border border-white/15 bg-white/10 px-4 py-3.5 text-white placeholder:text-white/30 text-base focus:outline-none focus:border-brand-green/50 focus:ring-1 focus:ring-brand-green/30 transition-colors"
                   placeholder="(512) 555-0000"
-                />
-              </div>
-              <div>
-                <label
-                  htmlFor="zip"
-                  className="block text-xs font-semibold text-white/50 uppercase tracking-wider mb-1.5"
-                >
-                  Zip Code
-                </label>
-                <input
-                  type="text"
-                  id="zip"
-                  name="zip"
-                  inputMode="numeric"
-                  className="w-full rounded-lg border border-white/15 bg-white/10 px-4 py-3.5 text-white placeholder:text-white/30 text-base focus:outline-none focus:border-brand-green/50 focus:ring-1 focus:ring-brand-green/30 transition-colors"
-                  placeholder="78746"
                 />
               </div>
 

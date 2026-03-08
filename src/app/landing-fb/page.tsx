@@ -620,8 +620,8 @@ function Contact() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name: fd.get("name"),
+          email: fd.get("email"),
           phone: fd.get("phone"),
-          city: fd.get("zip"),
           message: "FB landing page lead",
         }),
       });
@@ -693,25 +693,24 @@ function Contact() {
               </div>
               <div>
                 <label className="block text-[0.65rem] font-semibold text-white/30 uppercase tracking-widest mb-1.5">
-                  Phone *
+                  Email *
                 </label>
                 <input
-                  type="tel"
-                  name="phone"
+                  type="email"
+                  name="email"
                   required
-                  placeholder="(512) 555-0000"
+                  placeholder="you@email.com"
                   className="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-3.5 text-white placeholder:text-white/20 text-base focus:outline-none focus:border-brand-green/40 focus:ring-1 focus:ring-brand-green/20 transition-colors"
                 />
               </div>
               <div>
                 <label className="block text-[0.65rem] font-semibold text-white/30 uppercase tracking-widest mb-1.5">
-                  Zip Code
+                  Phone
                 </label>
                 <input
-                  type="text"
-                  name="zip"
-                  inputMode="numeric"
-                  placeholder="78746"
+                  type="tel"
+                  name="phone"
+                  placeholder="(512) 555-0000"
                   className="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-3.5 text-white placeholder:text-white/20 text-base focus:outline-none focus:border-brand-green/40 focus:ring-1 focus:ring-brand-green/20 transition-colors"
                 />
               </div>
