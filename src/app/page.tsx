@@ -66,7 +66,7 @@ const localBusinessSchema = {
   logo: "https://res.cloudinary.com/dwyd4f7lz/image/upload/v1767487583/pro_court_logo_full_color_no_bg_2_owjtqf.png",
   image:
     "https://res.cloudinary.com/dwyd4f7lz/image/upload/f_auto,q_auto/v1769365125/DJI_0054_rgzy6p.jpg",
-  telephone: "+15125551234",
+  telephone: "+15128930466",
   email: "patrick@procourtsurfaces.com",
   address: {
     "@type": "PostalAddress",

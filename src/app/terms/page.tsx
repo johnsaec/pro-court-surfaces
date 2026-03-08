@@ -12,6 +12,12 @@ export const metadata: Metadata = {
   title: "Terms & Conditions | Pro Court Surfaces",
   description:
     "Terms and conditions for Pro Court Surfaces court resurfacing projects. Covers scope of work, payment terms, warranty, scheduling, and cancellation policies.",
+  openGraph: {
+    title: "Terms & Conditions | Pro Court Surfaces",
+    description: "Terms and conditions for Pro Court Surfaces court resurfacing projects.",
+    type: "website",
+    url: "https://www.procourtsurfaces.com/terms",
+  },
   alternates: { canonical: "https://www.procourtsurfaces.com/terms" },
 };
 

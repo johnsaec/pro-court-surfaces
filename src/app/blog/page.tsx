@@ -4,6 +4,12 @@ import Link from "next/link";
 export const metadata: Metadata = {
   title: "Court Surfacing Guides & Cost Breakdowns | Pro Court Surfaces",
   description: "Court construction guides, cost breakdowns, and surfacing insights for homeowners and contractors in Central Texas.",
+  openGraph: {
+    title: "Court Surfacing Guides & Cost Breakdowns | Pro Court Surfaces",
+    description: "Court construction guides, cost breakdowns, and surfacing insights for homeowners and contractors in Central Texas.",
+    type: "website",
+    url: "https://www.procourtsurfaces.com/blog",
+  },
   alternates: { canonical: "https://www.procourtsurfaces.com/blog" },
 };
 
