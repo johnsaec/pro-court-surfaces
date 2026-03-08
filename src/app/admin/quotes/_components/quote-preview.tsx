@@ -84,19 +84,21 @@ export function QuotePreview({ quote }: { quote: QuoteDetail }) {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="font-medium">
-              {quote.project?.name ?? "Unknown"}
-            </p>
-            {quote.project?.project_type && (
-              <p className="text-sm text-muted-foreground">
-                {PROJECT_TYPE_LABELS[quote.project.project_type] ??
-                  quote.project.project_type}
+            {quote.project_type && (
+              <p className="font-medium">
+                {PROJECT_TYPE_LABELS[quote.project_type] ?? quote.project_type}
               </p>
             )}
-            {quote.project?.city && (
+            {quote.city && (
               <p className="text-sm text-muted-foreground">
-                {quote.project.city}
-                {quote.project.state ? `, ${quote.project.state}` : ""}
+                {quote.city}
+                {quote.state ? `, ${quote.state}` : ""}
+              </p>
+            )}
+            {quote.square_feet && (
+              <p className="text-sm text-muted-foreground">
+                {quote.square_feet.toLocaleString()} sq ft
+                {quote.number_of_courts ? ` · ${quote.number_of_courts} court${quote.number_of_courts > 1 ? "s" : ""}` : ""}
               </p>
             )}
           </CardContent>

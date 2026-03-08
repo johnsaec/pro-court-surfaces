@@ -1,6 +1,5 @@
 import { PageHeader } from "@/components/admin/page-header";
 import { getCustomers } from "@/lib/admin/queries/customer-queries";
-import { getProjectOptions } from "@/lib/admin/queries/project-queries";
 import { getServices } from "@/lib/admin/queries/catalog-queries";
 import { getColors } from "@/lib/admin/queries/color-queries";
 import { getLeads } from "@/lib/admin/queries/lead-queries";
@@ -10,9 +9,8 @@ import type { LeadOption } from "@/lib/admin/types/quote-types";
 export const dynamic = "force-dynamic";
 
 export default async function NewQuotePage() {
-  const [customers, projects, services, colors, allLeads] = await Promise.all([
+  const [customers, services, colors, allLeads] = await Promise.all([
     getCustomers(),
-    getProjectOptions(),
     getServices(),
     getColors(),
     getLeads(),
@@ -54,7 +52,6 @@ export default async function NewQuotePage() {
         <QuoteBuilder
           customers={customerOptions}
           leads={leadOptions}
-          projects={projects}
           services={services}
           colors={colors}
         />

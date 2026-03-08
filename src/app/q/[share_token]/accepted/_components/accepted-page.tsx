@@ -52,8 +52,7 @@ export function AcceptedPage({
             Quote {quote.quote_number}
           </p>
           <p className="text-sm text-muted-foreground">
-            {quote.project?.name}
-            {quote.project?.city && ` — ${quote.project.city}, ${quote.project.state}`}
+            {quote.city && `${quote.city}${quote.state ? `, ${quote.state}` : ""}`}
           </p>
         </div>
       </header>

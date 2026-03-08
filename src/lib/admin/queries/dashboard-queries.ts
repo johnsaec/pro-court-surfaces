@@ -46,9 +46,8 @@ export async function getRecentQuotes(limit = 5): Promise<QuoteListRow[]> {
   const { data, error } = await supabase
     .from("quotes")
     .select(
-      `id, quote_number, status, version, subtotal, total, created_at, updated_at,
+      `id, quote_number, status, version, subtotal, total, project_type, city, created_at, updated_at,
        customer:customers(display_name),
-       project:projects!quotes_project_id_fkey(name),
        lead:leads(display_name, email, phone)`
     )
     .order("created_at", { ascending: false })

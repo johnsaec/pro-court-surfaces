@@ -14,20 +14,20 @@ import {
 import { PackageEditor } from "./package-editor";
 import { PACKAGE_TIER_LABELS } from "@/lib/constants";
 import type { Service } from "@/lib/admin/queries/catalog-queries";
-import type { QuoteBuilderState, ProjectOption, QuoteBuilderAction } from "@/lib/admin/types/quote-types";
+import type { QuoteBuilderState, ProjectData, QuoteBuilderAction } from "@/lib/admin/types/quote-types";
 import { useState } from "react";
 
 interface PackageBuilderSectionProps {
   state: QuoteBuilderState;
   services: Service[];
-  project: ProjectOption | null;
+  projectData: ProjectData;
   dispatch: React.Dispatch<QuoteBuilderAction>;
 }
 
 export function PackageBuilderSection({
   state,
   services,
-  project,
+  projectData,
   dispatch,
 }: PackageBuilderSectionProps) {
   const [addTier, setAddTier] = useState("");
@@ -147,7 +147,7 @@ export function PackageBuilderSection({
             <PackageEditor
               pkg={pkg}
               services={services}
-              project={project}
+              projectData={projectData}
               dispatch={dispatch}
             />
           </TabsContent>

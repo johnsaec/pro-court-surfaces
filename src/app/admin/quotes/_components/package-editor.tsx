@@ -18,19 +18,19 @@ import { LineItemRow } from "./line-item-row";
 import { ServicePickerDialog } from "./service-picker-dialog";
 import { createEmptyLineItem, computePackageSubtotal } from "@/lib/admin/quote-builder-reducer";
 import type { Service } from "@/lib/admin/queries/catalog-queries";
-import type { PackageState, ProjectOption, QuoteBuilderAction } from "@/lib/admin/types/quote-types";
+import type { PackageState, ProjectData, QuoteBuilderAction } from "@/lib/admin/types/quote-types";
 
 interface PackageEditorProps {
   pkg: PackageState;
   services: Service[];
-  project: ProjectOption | null;
+  projectData: ProjectData;
   dispatch: React.Dispatch<QuoteBuilderAction>;
 }
 
 export function PackageEditor({
   pkg,
   services,
-  project,
+  projectData,
   dispatch,
 }: PackageEditorProps) {
   const [pickerOpen, setPickerOpen] = useState(false);
@@ -155,7 +155,7 @@ export function PackageEditor({
         onOpenChange={setPickerOpen}
         services={services}
         packageKey={pkg._key}
-        project={project}
+        projectData={projectData}
         dispatch={dispatch}
       />
     </div>

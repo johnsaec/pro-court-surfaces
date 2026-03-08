@@ -28,10 +28,7 @@ export type LeadOption = {
   bird_bath_area_sqft: number | null;
 };
 
-export type ProjectOption = {
-  id: string;
-  name: string;
-  customer_id: string;
+export type ProjectData = {
   square_feet: number | null;
   number_of_courts: number | null;
   crack_length_ft: number | null;
@@ -72,7 +69,16 @@ export type PackageState = {
 export type QuoteBuilderState = {
   customer_id: string;
   lead_id: string;
-  project_id: string;
+  // Project fields (inline on quote)
+  project_type: string;
+  square_feet: string;
+  number_of_courts: string;
+  city: string;
+  address_line1: string;
+  state: string;
+  crack_length_ft: string;
+  bird_bath_count: string;
+  // Packages & colors
   packages: PackageState[];
   color_inside_id: string;
   color_outside_id: string;
@@ -87,10 +93,20 @@ export type QuoteBuilderState = {
 
 // ── Reducer Actions ─────────────────────────────────────────────────
 
+export type ProjectFieldKey =
+  | "project_type"
+  | "square_feet"
+  | "number_of_courts"
+  | "city"
+  | "address_line1"
+  | "state"
+  | "crack_length_ft"
+  | "bird_bath_count";
+
 export type QuoteBuilderAction =
   | { type: "SET_CUSTOMER"; customer_id: string }
   | { type: "SET_LEAD"; lead_id: string }
-  | { type: "SET_PROJECT"; project_id: string }
+  | { type: "SET_PROJECT_FIELD"; field: ProjectFieldKey; value: string }
   | { type: "ADD_PACKAGE"; tier: string }
   | { type: "REMOVE_PACKAGE"; packageKey: string }
   | { type: "UPDATE_PACKAGE"; packageKey: string; field: string; value: string }
@@ -114,7 +130,14 @@ export type QuoteSavePayload = {
   id?: string; // present on update
   customer_id: string | null;
   lead_id: string | null;
-  project_id: string;
+  project_type: string | null;
+  square_feet: number | null;
+  number_of_courts: number | null;
+  city: string | null;
+  address_line1: string | null;
+  state: string | null;
+  crack_length_ft: number | null;
+  bird_bath_count: number | null;
   packages: {
     tier: string;
     name: string;
@@ -152,7 +175,6 @@ export type QuoteSavePayload = {
 
 export type QuoteReferenceData = {
   customers: CustomerOption[];
-  projects: ProjectOption[];
   services: Service[];
   colors: Color[];
 };
@@ -166,10 +188,11 @@ export type QuoteListRow = {
   version: number;
   subtotal: number | null;
   total: number | null;
+  project_type: string | null;
+  city: string | null;
   created_at: string;
   updated_at: string;
   customer: { display_name: string } | null;
-  project: { name: string } | null;
   lead: { display_name: string; email: string | null; phone: string | null } | null;
 };
 
@@ -209,7 +232,14 @@ export type QuoteDetail = {
   status: string;
   customer_id: string | null;
   lead_id: string | null;
-  project_id: string;
+  project_type: string | null;
+  square_feet: number | null;
+  number_of_courts: number | null;
+  city: string | null;
+  address_line1: string | null;
+  state: string | null;
+  zip: string | null;
+  sports: string[] | null;
   cover_note: string | null;
   terms_and_conditions: string | null;
   internal_notes: string | null;
@@ -234,17 +264,6 @@ export type QuoteDetail = {
   updated_at: string;
   customer: { display_name: string; email: string | null; phone: string | null } | null;
   lead: { display_name: string; email: string | null; phone: string | null } | null;
-  project: {
-    name: string;
-    address_line1: string | null;
-    city: string | null;
-    state: string | null;
-    zip: string | null;
-    square_feet: number | null;
-    number_of_courts: number | null;
-    project_type: string | null;
-    sports: string[] | null;
-  } | null;
   color_inside: { name: string; hex_code: string } | null;
   color_outside: { name: string; hex_code: string } | null;
   color_lines: { name: string; hex_code: string } | null;

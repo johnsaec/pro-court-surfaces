@@ -1,6 +1,6 @@
 "use client";
 
-import { useReducer, useState, useTransition, useMemo, useCallback } from "react";
+import { useReducer, useState, useTransition, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -20,7 +20,7 @@ import type { Color } from "@/lib/admin/queries/color-queries";
 import type {
   CustomerOption,
   LeadOption,
-  ProjectOption,
+  ProjectData,
   QuoteDetail,
   QuoteSavePayload,
 } from "@/lib/admin/types/quote-types";
@@ -29,7 +29,6 @@ interface QuoteBuilderProps {
   quote?: QuoteDetail;
   customers: CustomerOption[];
   leads: LeadOption[];
-  projects: ProjectOption[];
   services: Service[];
   colors: Color[];
 }
@@ -38,14 +37,12 @@ export function QuoteBuilder({
   quote,
   customers,
   leads,
-  projects: initialProjects,
   services,
   colors,
 }: QuoteBuilderProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
-  const [projects, setProjects] = useState(initialProjects);
 
   const [state, dispatch] = useReducer(
     quoteBuilderReducer,
@@ -53,25 +50,23 @@ export function QuoteBuilder({
     (q) => (q ? stateFromQuote(q) : createEmptyState())
   );
 
-  const selectedProject = useMemo(
-    () => projects.find((p) => p.id === state.project_id) ?? null,
-    [projects, state.project_id]
+  // Derive project data for the service picker
+  const projectData: ProjectData = useMemo(
+    () => ({
+      square_feet: state.square_feet ? parseFloat(state.square_feet) : null,
+      number_of_courts: state.number_of_courts ? parseInt(state.number_of_courts) : null,
+      crack_length_ft: state.crack_length_ft ? parseFloat(state.crack_length_ft) : null,
+      bird_bath_count: state.bird_bath_count ? parseInt(state.bird_bath_count) : null,
+    }),
+    [state.square_feet, state.number_of_courts, state.crack_length_ft, state.bird_bath_count]
   );
 
   const subtotal = getRecommendedPackageSubtotal(state);
   const total = Math.max(0, subtotal - state.discount_amount);
 
-  const handleProjectCreated = useCallback((newProject: ProjectOption) => {
-    setProjects((prev) => [...prev, newProject]);
-  }, []);
-
   function handleSave() {
     if (!state.customer_id && !state.lead_id) {
       setError("Please select a customer or lead.");
-      return;
-    }
-    if (!state.project_id) {
-      setError("Please select or create a project.");
       return;
     }
     if (state.packages.length === 0) {
@@ -85,7 +80,14 @@ export function QuoteBuilder({
       id: quote?.id,
       customer_id: state.customer_id || null,
       lead_id: state.lead_id || null,
-      project_id: state.project_id,
+      project_type: state.project_type || null,
+      square_feet: state.square_feet ? parseFloat(state.square_feet) : null,
+      number_of_courts: state.number_of_courts ? parseInt(state.number_of_courts) : null,
+      city: state.city || null,
+      address_line1: state.address_line1 || null,
+      state: state.state || null,
+      crack_length_ft: state.crack_length_ft ? parseFloat(state.crack_length_ft) : null,
+      bird_bath_count: state.bird_bath_count ? parseInt(state.bird_bath_count) : null,
       packages: state.packages.map((pkg) => ({
         tier: pkg.tier,
         name: pkg.name,
@@ -138,9 +140,7 @@ export function QuoteBuilder({
         state={state}
         customers={customers}
         leads={leads}
-        projects={projects}
         dispatch={dispatch}
-        onProjectCreated={handleProjectCreated}
       />
 
       <Separator />
@@ -148,7 +148,7 @@ export function QuoteBuilder({
       <PackageBuilderSection
         state={state}
         services={services}
-        project={selectedProject}
+        projectData={projectData}
         dispatch={dispatch}
       />
 

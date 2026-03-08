@@ -270,8 +270,8 @@ export function QuotePdfDocument({ quote, selectedPackageId }: QuotePdfDocumentP
     ? quote.quote_packages.filter((p) => p.id === selectedPackageId)
     : quote.quote_packages;
 
-  const projectType = quote.project?.project_type
-    ? (PROJECT_TYPE_LABELS[quote.project.project_type] ?? quote.project.project_type)
+  const projectType = quote.project_type
+    ? (PROJECT_TYPE_LABELS[quote.project_type] ?? quote.project_type)
     : null;
 
   const createdDate = new Date(quote.created_at).toLocaleDateString("en-US", {
@@ -320,18 +320,14 @@ export function QuotePdfDocument({ quote, selectedPackageId }: QuotePdfDocumentP
         )}
 
         {/* Project Details */}
-        {quote.project && (
+        {(projectType || quote.city || quote.square_feet) && (
           <>
             <Text style={s.sectionTitle}>Project Details</Text>
-            <View style={s.row}>
-              <Text style={s.label}>Project:</Text>
-              <Text style={s.value}>{quote.project.name}</Text>
-            </View>
-            {quote.project.address_line1 && (
+            {quote.address_line1 && (
               <View style={s.row}>
                 <Text style={s.label}>Address:</Text>
                 <Text style={s.value}>
-                  {[quote.project.address_line1, quote.project.city, quote.project.state, quote.project.zip]
+                  {[quote.address_line1, quote.city, quote.state, quote.zip]
                     .filter(Boolean)
                     .join(", ")}
                 </Text>
@@ -343,16 +339,16 @@ export function QuotePdfDocument({ quote, selectedPackageId }: QuotePdfDocumentP
                 <Text style={s.value}>{projectType}</Text>
               </View>
             )}
-            {quote.project.number_of_courts && (
+            {quote.number_of_courts && (
               <View style={s.row}>
                 <Text style={s.label}>Courts:</Text>
-                <Text style={s.value}>{quote.project.number_of_courts}</Text>
+                <Text style={s.value}>{quote.number_of_courts}</Text>
               </View>
             )}
-            {quote.project.square_feet && (
+            {quote.square_feet && (
               <View style={s.row}>
                 <Text style={s.label}>Square Feet:</Text>
-                <Text style={s.value}>{quote.project.square_feet.toLocaleString()}</Text>
+                <Text style={s.value}>{quote.square_feet.toLocaleString()}</Text>
               </View>
             )}
           </>

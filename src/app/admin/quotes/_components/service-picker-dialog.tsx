@@ -25,28 +25,27 @@ import {
 } from "@/lib/constants";
 import { lineItemFromService } from "@/lib/admin/quote-builder-reducer";
 import type { Service } from "@/lib/admin/queries/catalog-queries";
-import type { ProjectOption, QuoteBuilderAction } from "@/lib/admin/types/quote-types";
+import type { ProjectData, QuoteBuilderAction } from "@/lib/admin/types/quote-types";
 
 interface ServicePickerDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   services: Service[];
   packageKey: string;
-  project: ProjectOption | null;
+  projectData: ProjectData;
   dispatch: React.Dispatch<QuoteBuilderAction>;
 }
 
-function getDefaultQuantity(service: Service, project: ProjectOption | null): number {
-  if (!project) return 1;
+function getDefaultQuantity(service: Service, data: ProjectData): number {
   switch (service.unit_of_measure) {
     case "per_sqft":
-      return project.square_feet ?? 1;
+      return data.square_feet ?? 1;
     case "per_court":
-      return project.number_of_courts ?? 1;
+      return data.number_of_courts ?? 1;
     case "per_linear_ft":
-      return project.crack_length_ft ?? 1;
+      return data.crack_length_ft ?? 1;
     case "each":
-      return project.bird_bath_count ?? 1;
+      return data.bird_bath_count ?? 1;
     default:
       return 1;
   }
@@ -57,7 +56,7 @@ export function ServicePickerDialog({
   onOpenChange,
   services,
   packageKey,
-  project,
+  projectData,
   dispatch,
 }: ServicePickerDialogProps) {
   const [search, setSearch] = useState("");
@@ -78,7 +77,7 @@ export function ServicePickerDialog({
   }, [activeServices, search]);
 
   function addService(service: Service) {
-    const qty = getDefaultQuantity(service, project);
+    const qty = getDefaultQuantity(service, projectData);
     const item = lineItemFromService(service, qty);
     dispatch({ type: "ADD_LINE_ITEM", packageKey, item });
     onOpenChange(false);

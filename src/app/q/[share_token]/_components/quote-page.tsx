@@ -144,9 +144,11 @@ export function QuotePage({ quote, colors }: QuotePageProps) {
     [selectedPackageId, selectedPackage, toggles, colorSelections, total, quote, router]
   );
 
-  // Detect court type from project sports
+  // Detect court type from quote sports or project_type
   const courtType: "pickleball" | "tennis" =
-    quote.project?.sports?.includes("pickleball") ? "pickleball" : "tennis";
+    quote.sports?.includes("pickleball") || quote.project_type === "pickleball_court"
+      ? "pickleball"
+      : "tennis";
 
   return (
     <div className="min-h-screen bg-muted/30">
@@ -159,8 +161,7 @@ export function QuotePage({ quote, colors }: QuotePageProps) {
                 Quote {quote.quote_number}
               </h1>
               <p className="text-sm text-muted-foreground">
-                {quote.project?.name}
-                {quote.project?.city && ` — ${quote.project.city}, ${quote.project.state}`}
+                {quote.city && `${quote.city}${quote.state ? `, ${quote.state}` : ""}`}
               </p>
             </div>
             {isAccepted && (

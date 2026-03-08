@@ -139,12 +139,3 @@ export const ACTIVITY_EVENT_COLORS: Record<string, string> = {
   completed: "bg-emerald-500",
 };
 
-// Project status
-export const PROJECT_STATUS_LABELS: Record<string, string> = {
-  quoting: "Quoting",
-  scheduled: "Scheduled",
-  in_progress: "In Progress",
-  completed: "Completed",
-  on_hold: "On Hold",
-  cancelled: "Cancelled",
-};

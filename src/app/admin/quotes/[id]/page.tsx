@@ -2,7 +2,6 @@ import { notFound } from "next/navigation";
 import { PageHeader } from "@/components/admin/page-header";
 import { getQuoteById } from "@/lib/admin/queries/quote-queries";
 import { getCustomers } from "@/lib/admin/queries/customer-queries";
-import { getProjectOptions } from "@/lib/admin/queries/project-queries";
 import { getServices } from "@/lib/admin/queries/catalog-queries";
 import { getColors } from "@/lib/admin/queries/color-queries";
 import { getLeads } from "@/lib/admin/queries/lead-queries";
@@ -19,10 +18,9 @@ export default async function EditQuotePage({
 }) {
   const { id } = await params;
 
-  const [quote, customers, projects, services, colors, allLeads] = await Promise.all([
+  const [quote, customers, services, colors, allLeads] = await Promise.all([
     getQuoteById(id),
     getCustomers(),
-    getProjectOptions(),
     getServices(),
     getColors(),
     getLeads(),
@@ -69,7 +67,6 @@ export default async function EditQuotePage({
           quote={quote}
           customers={customerOptions}
           leads={leadOptions}
-          projects={projects}
           services={services}
           colors={colors}
         />

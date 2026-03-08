@@ -19,7 +19,14 @@ export function createEmptyState(): QuoteBuilderState {
   return {
     customer_id: "",
     lead_id: "",
-    project_id: "",
+    project_type: "",
+    square_feet: "",
+    number_of_courts: "",
+    city: "",
+    address_line1: "",
+    state: "TX",
+    crack_length_ft: "",
+    bird_bath_count: "",
     packages: [],
     color_inside_id: "",
     color_outside_id: "",
@@ -37,7 +44,14 @@ export function stateFromQuote(quote: QuoteDetail): QuoteBuilderState {
   return {
     customer_id: quote.customer_id ?? "",
     lead_id: quote.lead_id ?? "",
-    project_id: quote.project_id,
+    project_type: quote.project_type ?? "",
+    square_feet: quote.square_feet != null ? String(quote.square_feet) : "",
+    number_of_courts: quote.number_of_courts != null ? String(quote.number_of_courts) : "",
+    city: quote.city ?? "",
+    address_line1: quote.address_line1 ?? "",
+    state: quote.state ?? "TX",
+    crack_length_ft: "",
+    bird_bath_count: "",
     packages: quote.quote_packages.map((pkg) => ({
       _key: nextKey(),
       tier: pkg.tier,
@@ -135,13 +149,37 @@ export function quoteBuilderReducer(
 ): QuoteBuilderState {
   switch (action.type) {
     case "SET_CUSTOMER":
-      return { ...state, customer_id: action.customer_id, lead_id: "", project_id: "" };
+      return {
+        ...state,
+        customer_id: action.customer_id,
+        lead_id: "",
+        project_type: "",
+        square_feet: "",
+        number_of_courts: "",
+        city: "",
+        address_line1: "",
+        state: "TX",
+        crack_length_ft: "",
+        bird_bath_count: "",
+      };
 
     case "SET_LEAD":
-      return { ...state, lead_id: action.lead_id, customer_id: "", project_id: "" };
+      return {
+        ...state,
+        lead_id: action.lead_id,
+        customer_id: "",
+        project_type: "",
+        square_feet: "",
+        number_of_courts: "",
+        city: "",
+        address_line1: "",
+        state: "TX",
+        crack_length_ft: "",
+        bird_bath_count: "",
+      };
 
-    case "SET_PROJECT":
-      return { ...state, project_id: action.project_id };
+    case "SET_PROJECT_FIELD":
+      return { ...state, [action.field]: action.value };
 
     case "ADD_PACKAGE": {
       const tierLabel =

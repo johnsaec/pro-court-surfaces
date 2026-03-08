@@ -73,7 +73,7 @@ export function QuotesTable({ quotes }: { quotes: QuoteListRow[] }) {
             <TableRow>
               <TableHead>Quote #</TableHead>
               <TableHead>Customer</TableHead>
-              <TableHead>Project</TableHead>
+              <TableHead>Type</TableHead>
               <TableHead>Status</TableHead>
               <TableHead className="text-right">Total</TableHead>
               <TableHead>Created</TableHead>
@@ -90,7 +90,14 @@ export function QuotesTable({ quotes }: { quotes: QuoteListRow[] }) {
                   {quote.customer?.display_name ??
                     (quote.lead ? `Lead: ${quote.lead.display_name}` : "—")}
                 </TableCell>
-                <TableCell>{quote.project?.name ?? "—"}</TableCell>
+                <TableCell>
+                  {quote.project_type ? (
+                    <span className="text-sm">
+                      {quote.project_type.replace(/_/g, " ")}
+                      {quote.city && <span className="text-muted-foreground"> — {quote.city}</span>}
+                    </span>
+                  ) : "—"}
+                </TableCell>
                 <TableCell>
                   <Badge className={QUOTE_STATUS_COLORS[quote.status]}>
                     {QUOTE_STATUS_LABELS[quote.status] ?? quote.status}

@@ -25,7 +25,7 @@ export async function acceptQuote(payload: AcceptPayload) {
   const { data: quote, error: fetchError } = await supabase
     .from("quotes")
     .select(
-      `*, customer:customers(*), lead:leads(*), project:projects!quotes_project_id_fkey(*),
+      `*, customer:customers(*), lead:leads(*),
        color_inside:color_palette!quotes_color_inside_id_fkey(name),
        color_outside:color_palette!quotes_color_outside_id_fkey(name),
        color_lines:color_palette!quotes_color_lines_id_fkey(name),
@@ -80,18 +80,11 @@ export async function acceptQuote(payload: AcceptPayload) {
       })
       .eq("id", lead.id);
 
-    // Update quote and project with new customer_id
+    // Update quote with new customer_id
     await supabase
       .from("quotes")
       .update({ customer_id: customerId })
       .eq("id", payload.quote_id);
-
-    if (quote.project_id) {
-      await supabase
-        .from("projects")
-        .update({ customer_id: customerId })
-        .eq("id", quote.project_id);
-    }
 
     customerEmail = lead.email ?? payload.customer_email;
   }

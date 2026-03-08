@@ -11,7 +11,6 @@ export async function getQuoteByShareToken(
       `*,
        customer:customers(display_name, email, phone),
        lead:leads(display_name, email, phone),
-       project:projects!quotes_project_id_fkey(name, address_line1, city, state, zip, square_feet, number_of_courts, project_type, sports),
        color_inside:color_palette!quotes_color_inside_id_fkey(name, hex_code),
        color_outside:color_palette!quotes_color_outside_id_fkey(name, hex_code),
        color_lines:color_palette!quotes_color_lines_id_fkey(name, hex_code),
