@@ -42,6 +42,18 @@ export default async function EditQuotePage({
       display_name: l.display_name,
       email: l.email,
       phone: l.phone,
+      project_type: l.project_type,
+      square_feet: l.square_feet,
+      number_of_courts: l.number_of_courts,
+      city: l.city,
+      address_line1: l.address_line1 ?? null,
+      state: l.state ?? null,
+      zip: l.zip ?? null,
+      court_age_years: l.court_age_years,
+      cracks_present: l.cracks_present,
+      crack_length_ft: l.crack_length_ft,
+      bird_bath_count: l.bird_bath_count,
+      bird_bath_area_sqft: l.bird_bath_area_sqft,
     }));
 
   return (

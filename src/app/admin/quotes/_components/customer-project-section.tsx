@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition, useMemo } from "react";
+import { useState, useTransition, useMemo, useCallback } from "react";
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -21,6 +21,13 @@ import type {
   ProjectOption,
   QuoteBuilderAction,
 } from "@/lib/admin/types/quote-types";
+
+/** Default square footage by project type when lead doesn't have it */
+const DEFAULT_SQFT: Record<string, number> = {
+  pickleball_court: 1800,
+  tennis_court: 7200,
+  basketball_court: 4200,
+};
 
 interface CustomerProjectSectionProps {
   state: { customer_id: string; lead_id: string; project_id: string };
@@ -49,6 +56,23 @@ export function CustomerProjectSection({
   const [squareFeet, setSquareFeet] = useState("");
   const [numberOfCourts, setNumberOfCourts] = useState("");
   const [city, setCity] = useState("");
+
+  /** Pre-fill project form from lead intake data */
+  const prefillFromLead = useCallback((lead: LeadOption) => {
+    if (lead.project_type) setProjectType(lead.project_type);
+    if (lead.number_of_courts) setNumberOfCourts(String(lead.number_of_courts));
+    if (lead.city) setCity(lead.city);
+
+    // Use lead's sq ft if available, otherwise default by project type
+    if (lead.square_feet) {
+      setSquareFeet(String(lead.square_feet));
+    } else if (lead.project_type && DEFAULT_SQFT[lead.project_type]) {
+      setSquareFeet(String(DEFAULT_SQFT[lead.project_type]));
+    }
+
+    // Auto-generate project name from lead name
+    setProjectName(`${lead.display_name} Court`);
+  }, []);
 
   // Track active tab in local state (initialized from reducer state)
   const [activeTab, setActiveTab] = useState(state.lead_id ? "lead" : "customer");
@@ -89,14 +113,18 @@ export function CustomerProjectSection({
       });
 
       if (result.success && result.project_id) {
+        // Pull condition assessment from the selected lead (if any)
+        const selectedLead = state.lead_id
+          ? leads.find((l) => l.id === state.lead_id)
+          : null;
         const newProject: ProjectOption = {
           id: result.project_id,
           name: projectName.trim(),
           customer_id: state.customer_id,
           square_feet: squareFeet ? parseFloat(squareFeet) : null,
           number_of_courts: numberOfCourts ? parseInt(numberOfCourts) : null,
-          crack_length_ft: null,
-          bird_bath_count: null,
+          crack_length_ft: selectedLead?.crack_length_ft ?? null,
+          bird_bath_count: selectedLead?.bird_bath_count ?? null,
         };
         onProjectCreated(newProject);
         dispatch({ type: "SET_PROJECT", project_id: result.project_id });
@@ -201,9 +229,11 @@ export function CustomerProjectSection({
               <Label>Lead</Label>
               <Select
                 value={state.lead_id}
-                onValueChange={(v) =>
-                  dispatch({ type: "SET_LEAD", lead_id: v })
-                }
+                onValueChange={(v) => {
+                  dispatch({ type: "SET_LEAD", lead_id: v });
+                  const lead = leads.find((l) => l.id === v);
+                  if (lead) prefillFromLead(lead);
+                }}
               >
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Select lead..." />
@@ -273,7 +303,16 @@ export function CustomerProjectSection({
             </div>
             <div className="space-y-1.5">
               <Label>Project Type</Label>
-              <Select value={projectType} onValueChange={setProjectType}>
+              <Select
+                value={projectType}
+                onValueChange={(v) => {
+                  setProjectType(v);
+                  // Default sq ft when user hasn't entered a value
+                  if (!squareFeet && DEFAULT_SQFT[v]) {
+                    setSquareFeet(String(DEFAULT_SQFT[v]));
+                  }
+                }}
+              >
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Select type..." />
                 </SelectTrigger>

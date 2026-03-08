@@ -13,6 +13,19 @@ export type LeadOption = {
   display_name: string;
   email: string | null;
   phone: string | null;
+  // Pre-fill project creation from lead intake data
+  project_type: string | null;
+  square_feet: number | null;
+  number_of_courts: number | null;
+  city: string | null;
+  address_line1: string | null;
+  state: string | null;
+  zip: string | null;
+  court_age_years: number | null;
+  cracks_present: boolean;
+  crack_length_ft: number | null;
+  bird_bath_count: number | null;
+  bird_bath_area_sqft: number | null;
 };
 
 export type ProjectOption = {
