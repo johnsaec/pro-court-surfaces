@@ -139,7 +139,7 @@ export default function CourtConstructionCostsPage() {
           <CalloutBox title="Multi-Court Pickleball Builds">
             <p>Most amenity center projects spec 4{"\u2013"}8 pickleball courts on a shared slab. For surfacing only on a multi-court slab, budget <strong className="text-brand-text">$3,500 {"\u2013"} $7,000 per pickleball court</strong> for a professional-grade system.</p>
           </CalloutBox>
-          <p className="text-brand-text-muted leading-relaxed mb-4">The cost to install a pickleball court is roughly 40{"\u2013"}50% less than tennis on a per-court basis. But watch the total scope {"\u2014"} a project with 6 pickleball courts can easily match the total surfacing cost of 2 tennis courts.</p>
+          <p className="text-brand-text-muted leading-relaxed mb-4">The cost to install a pickleball court is roughly 40{"\u2013"}50% less than tennis on a per-court basis. But watch the total scope {"\u2014"} a project with 6 pickleball courts can easily match the total surfacing cost of 2 tennis courts. See our <Link href="/blog/pickleball-court-installation" className="text-brand-blue hover:underline">pickleball court installation guide</Link> for dimensions, concrete specs, and surfacing details.</p>
         </section>
 
         <section id="multi-sport-costs">
@@ -148,7 +148,7 @@ export default function CourtConstructionCostsPage() {
           <h3 className="text-xl font-semibold text-brand-text mt-8 mb-3">Dual-Line Courts</h3>
           <p className="text-brand-text-muted leading-relaxed mb-4">The most cost-effective approach: a full-size tennis court with pickleball lines added. Striping dual lines adds <strong className="text-brand-text">$500 {"\u2013"} $1,500 per court</strong> over single-sport striping.</p>
           <h3 className="text-xl font-semibold text-brand-text mt-8 mb-3">Conversion Projects</h3>
-          <p className="text-brand-text-muted leading-relaxed mb-4">Converting an existing tennis court to add pickleball lines is common in amenity center renovations. Good condition: <strong className="text-brand-text">$1,500 {"\u2013"} $4,000 per court</strong> for restriping. Needs recoat: add <strong className="text-brand-text">$5,000 {"\u2013"} $10,000</strong> for resurfacing first.</p>
+          <p className="text-brand-text-muted leading-relaxed mb-4">Converting an existing tennis court to add pickleball lines is common in amenity center renovations. Good condition: <strong className="text-brand-text">$1,500 {"\u2013"} $4,000 per court</strong> for restriping. Needs recoat: add <strong className="text-brand-text">$5,000 {"\u2013"} $10,000</strong> for <Link href="/blog/court-resurfacing" className="text-brand-blue hover:underline">resurfacing</Link> first.</p>
           <CostTable title="Multi-Sport Court Surfacing Costs (Per Court)" headers={["Scenario", "Cost Range"]} rows={[
             { label: "New build with dual lines (tennis + pickleball)", value: "$8,000 \u2013 $16,500" },
             { label: "Restripe existing court for dual sport", value: "$1,500 \u2013 $4,000" },
@@ -211,6 +211,8 @@ export default function CourtConstructionCostsPage() {
         <div className="mt-12 p-6 bg-brand-bg-alt border border-gray-200 rounded-xl">
           <p className="text-brand-text font-semibold mb-2">Related reading</p>
           <ul className="space-y-2 text-brand-text-muted text-sm">
+            <li><Link href="/blog/court-resurfacing" className="text-brand-blue hover:underline">Court resurfacing process, costs, and what to expect</Link></li>
+            <li><Link href="/blog/pickleball-court-installation" className="text-brand-blue hover:underline">Pickleball court installation: dimensions, specs, and pricing</Link></li>
             <li><Link href="/blog/court-surface-types" className="text-brand-blue hover:underline">Compare court surface types: acrylic vs. tile vs. cushion vs. turf</Link></li>
             <li><Link href="/commercial" className="text-brand-blue hover:underline">Request a court surfacing bid (48-hour turnaround)</Link></li>
           </ul>

@@ -258,8 +258,11 @@ export default function AustinCourtSurfacingPage() {
         <div className="mt-12 p-6 bg-brand-bg-alt border border-gray-200 rounded-xl">
           <p className="text-brand-text font-semibold mb-2">Related reading</p>
           <ul className="space-y-2 text-brand-text-muted text-sm">
+            <li><Link href="/blog/court-resurfacing" className="text-brand-blue hover:underline">Court resurfacing process, costs, and what to expect</Link></li>
+            <li><Link href="/blog/pickleball-court-installation" className="text-brand-blue hover:underline">Pickleball court installation: dimensions, specs, and pricing</Link></li>
             <li><Link href="/blog/court-construction-costs" className="text-brand-blue hover:underline">Court construction costs in Texas: what GCs need to budget</Link></li>
             <li><Link href="/blog/court-surface-types" className="text-brand-blue hover:underline">Compare court surface types: acrylic vs. tile vs. cushion vs. turf</Link></li>
+            <li><Link href="/blog/san-antonio-court-surfacing" className="text-brand-blue hover:underline">Court surfacing in San Antonio, TX</Link></li>
             <li><Link href="/commercial" className="text-brand-blue hover:underline">Request a court surfacing bid (48-hour turnaround)</Link></li>
           </ul>
         </div>

@@ -237,7 +237,7 @@ export default function CourtResurfacingPage() {
         {/* Cost Guide */}
         <section id="cost-guide">
           <h2 className="text-3xl font-bold text-brand-text mt-12 mb-4">How much does court resurfacing cost?</h2>
-          <p className="text-brand-text-muted leading-relaxed mb-4">The table below shows typical per-court resurfacing costs in Central Texas as of 2026. All ranges include surface prep, 3{"\u2013"}5 coats of acrylic, and game line striping.</p>
+          <p className="text-brand-text-muted leading-relaxed mb-4">The table below shows typical per-court resurfacing costs in Central Texas as of 2026. All ranges include surface prep, 3{"\u2013"}5 coats of acrylic, and game line striping. For full construction cost breakdowns including concrete and site prep, see our <Link href="/blog/court-construction-costs" className="text-brand-blue hover:underline">court construction costs guide</Link>.</p>
           <CostTable
             title="Court Resurfacing Cost Guide (Per Court)"
             headers={["Court Type", "Cost Range"]}
@@ -298,6 +298,7 @@ export default function CourtResurfacingPage() {
         <div className="mt-12 p-6 bg-brand-bg-alt border border-gray-200 rounded-xl">
           <p className="text-brand-text font-semibold mb-2">Related reading</p>
           <ul className="space-y-2 text-brand-text-muted text-sm">
+            <li><Link href="/blog/pickleball-court-installation" className="text-brand-blue hover:underline">Pickleball court installation: dimensions, specs, and pricing</Link></li>
             <li><Link href="/blog/court-construction-costs" className="text-brand-blue hover:underline">Court construction costs in Texas: what GCs need to budget (2026)</Link></li>
             <li><Link href="/blog/court-surface-types" className="text-brand-blue hover:underline">Compare court surface types: acrylic vs. tile vs. cushion vs. turf</Link></li>
             <li><Link href="/commercial" className="text-brand-blue hover:underline">Request a court surfacing bid (48-hour turnaround)</Link></li>

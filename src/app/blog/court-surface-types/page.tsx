@@ -104,7 +104,7 @@ export default function CourtSurfaceTypesPage() {
             <li className="text-brand-text-muted leading-relaxed"><strong className="text-brand-text">Acrylic color coats</strong> {"\u2014"} 2-3 layers of pigmented acrylic for uniform color and texture</li>
             <li className="text-brand-text-muted leading-relaxed"><strong className="text-brand-text">Line striping</strong> {"\u2014"} regulation game lines for tennis, pickleball, or multi-sport</li>
           </ul>
-          <p className="text-brand-text-muted leading-relaxed mb-4">The surface texture is controlled by mixing silica sand into the acrylic, which gives the court grip for players and affects ball speed. This is the system that holds up best in high-traffic amenity center environments.</p>
+          <p className="text-brand-text-muted leading-relaxed mb-4">The surface texture is controlled by mixing silica sand into the acrylic, which gives the court grip for players and affects ball speed. This is the system that holds up best in high-traffic amenity center environments. When it is time for maintenance, the <Link href="/blog/court-resurfacing" className="text-brand-blue hover:underline">resurfacing process</Link> is straightforward and does not require replacing the substrate.</p>
           <ProsCons
             pros={[
               "Industry-standard for competitive and recreational play",
@@ -254,6 +254,8 @@ export default function CourtSurfaceTypesPage() {
           <p className="text-brand-text font-semibold mb-2">Related reading</p>
           <ul className="space-y-2 text-brand-text-muted text-sm">
             <li><Link href="/blog/court-construction-costs" className="text-brand-blue hover:underline">Court construction costs in Texas: full breakdown for GC estimators</Link></li>
+            <li><Link href="/blog/court-resurfacing" className="text-brand-blue hover:underline">Court resurfacing process, costs, and what to expect</Link></li>
+            <li><Link href="/blog/pickleball-court-installation" className="text-brand-blue hover:underline">Pickleball court installation: dimensions, specs, and pricing</Link></li>
             <li><Link href="/commercial" className="text-brand-blue hover:underline">How we work with GCs — see our subcontractor page</Link></li>
           </ul>
         </div>
