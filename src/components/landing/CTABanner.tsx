@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { trackEvent } from "@/lib/analytics";
 
 export function CTABanner() {
   return (
@@ -13,6 +16,7 @@ export function CTABanner() {
         <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
           <Link
             href="/#contact"
+            onClick={() => trackEvent("cta_click", { cta_text: "Get a Free Estimate", cta_location: "cta_banner", page_path: typeof window !== "undefined" ? window.location.pathname : "" })}
             className="inline-flex items-center gap-2 px-8 py-4 rounded-lg bg-brand-blue text-white font-semibold text-sm hover:bg-brand-blue/90 transition-all shadow-lg shadow-brand-blue/20"
           >
             Get a Free Estimate

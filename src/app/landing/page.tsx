@@ -3,6 +3,7 @@
 import { useState, type FormEvent } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { trackEvent } from "@/lib/analytics";
 import {
   Phone,
   Mail,
@@ -77,11 +78,12 @@ function useScrollReveal(threshold = 0.15) {
 /* ------------------------------------------------------------------ */
 /*  CTA button (scrolls to #contact)                                   */
 /* ------------------------------------------------------------------ */
-function CTA({ dark = false, className = "" }: { dark?: boolean; className?: string }) {
+function CTA({ dark = false, className = "", location = "section" }: { dark?: boolean; className?: string; location?: string }) {
   return (
     <div className={`mt-10 flex justify-center ${className}`}>
       <a
         href="#contact"
+        onClick={() => trackEvent("cta_click", { cta_text: "Get an Estimate", cta_location: location, page_path: "/landing" })}
         className={`inline-flex items-center gap-2 px-7 py-4 rounded-lg font-semibold text-base transition-all shadow-lg ${
           dark
             ? "bg-brand-green text-brand-navy hover:bg-brand-green/90 shadow-brand-green/20"
@@ -664,6 +666,10 @@ function LandingContact() {
       }
 
       setSubmitted(true);
+      trackEvent("generate_lead", {
+        form_name: "landing_contact",
+        page_path: "/landing",
+      });
     } catch (err) {
       setError(
         err instanceof Error ? err.message : "Something went wrong. Please try again."

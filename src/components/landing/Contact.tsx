@@ -3,6 +3,7 @@
 import { useState, type FormEvent } from "react";
 import { Phone, Mail, ArrowRight, Loader2 } from "lucide-react";
 import { useScrollReveal } from "./useScrollReveal";
+import { trackEvent } from "@/lib/analytics";
 
 const PROJECT_TYPES = [
   { value: "new_court_full_build", label: "New Court (Full Build)" },
@@ -62,6 +63,10 @@ export function Contact() {
       }
 
       setSubmitted(true);
+      trackEvent("generate_lead", {
+        form_name: "homepage_contact",
+        page_path: "/",
+      });
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
     } finally {

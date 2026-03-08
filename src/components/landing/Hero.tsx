@@ -1,5 +1,7 @@
 "use client";
 
+import { trackEvent } from "@/lib/analytics";
+
 export function Hero() {
   return (
     <section className="relative h-[100svh] w-full overflow-hidden">
@@ -47,6 +49,7 @@ export function Hero() {
         <div className="mt-8 flex flex-col sm:flex-row items-start gap-4">
           <a
             href="#contact"
+            onClick={() => trackEvent("cta_click", { cta_text: "Get a Free Estimate", cta_location: "hero", page_path: "/" })}
             className="group inline-flex items-center gap-2 px-7 py-4 rounded-lg bg-brand-blue text-white font-semibold text-sm hover:bg-brand-blue/90 transition-all shadow-xl shadow-brand-blue/20"
           >
             Get a Free Estimate

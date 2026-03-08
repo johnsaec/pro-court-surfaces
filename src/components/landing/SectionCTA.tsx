@@ -1,10 +1,14 @@
+"use client";
+
 import { Phone } from "lucide-react";
+import { trackEvent } from "@/lib/analytics";
 
 export function SectionCTA({ dark = false }: { dark?: boolean }) {
   return (
     <div className="mt-12 flex flex-col sm:flex-row items-center justify-center gap-4">
       <a
         href="#contact"
+        onClick={() => trackEvent("cta_click", { cta_text: "Get a Free Estimate", cta_location: "section", page_path: window.location.pathname })}
         className={`inline-flex items-center gap-2 px-7 py-3.5 rounded-lg font-semibold text-sm transition-all shadow-lg ${
           dark
             ? "bg-brand-green text-brand-navy hover:bg-brand-green/90 shadow-brand-green/20"

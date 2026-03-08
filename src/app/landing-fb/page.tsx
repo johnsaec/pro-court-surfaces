@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, type FormEvent } from "react";
 import Image from "next/image";
 import { ArrowRight, Loader2, Phone, Check, ChevronDown } from "lucide-react";
+import { trackEvent } from "@/lib/analytics";
 
 /* ------------------------------------------------------------------ */
 /*  Images                                                             */
@@ -629,6 +630,10 @@ function Contact() {
         throw new Error(data.error || "Something went wrong");
       }
       setSubmitted(true);
+      trackEvent("generate_lead", {
+        form_name: "landing_fb_contact",
+        page_path: "/landing-fb",
+      });
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong.");
     } finally {
