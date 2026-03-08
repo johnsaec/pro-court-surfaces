@@ -670,7 +670,7 @@ function LandingContact() {
         form_name: "landing_contact",
         page_path: "/landing",
       });
-      router.push("/landing/submit-success");
+      router.push("/post-submit");
     } catch (err) {
       setError(
         err instanceof Error ? err.message : "Something went wrong. Please try again."

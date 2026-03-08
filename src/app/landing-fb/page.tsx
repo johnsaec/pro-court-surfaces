@@ -634,7 +634,7 @@ function Contact() {
         form_name: "landing_fb_contact",
         page_path: "/landing-fb",
       });
-      router.push("/landing/submit-success");
+      router.push("/post-submit");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong.");
     } finally {

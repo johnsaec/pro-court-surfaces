@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+import { useRouter } from "next/navigation";
 import { Phone, Mail, ArrowRight, Loader2 } from "lucide-react";
 import { useScrollReveal } from "./useScrollReveal";
 import { trackEvent } from "@/lib/analytics";
@@ -23,7 +24,7 @@ const SPORT_OPTIONS = [
 ];
 
 export function Contact() {
-  const [submitted, setSubmitted] = useState(false);
+  const router = useRouter();
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [selectedSports, setSelectedSports] = useState<string[]>([]);
@@ -62,11 +63,11 @@ export function Contact() {
         throw new Error(data.error || "Something went wrong");
       }
 
-      setSubmitted(true);
       trackEvent("generate_lead", {
         form_name: "homepage_contact",
         page_path: "/",
       });
+      router.push("/post-submit");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
     } finally {
@@ -124,25 +125,6 @@ export function Contact() {
 
           {/* Right — form */}
           <div className="reveal-item" style={{ transitionDelay: "200ms" }}>
-            {submitted ? (
-              <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-10 text-center border border-white/10">
-                <div className="w-16 h-16 rounded-full bg-brand-green/20 flex items-center justify-center mx-auto mb-4">
-                  <svg className="w-8 h-8 text-brand-green" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                  </svg>
-                </div>
-                <p className="text-2xl font-bold">Thank you!</p>
-                <p className="mt-2 text-white/60">
-                  We&apos;ll be in touch within 24 hours. Check your email for next steps.
-                </p>
-                <p className="mt-4 text-white/40 text-sm">
-                  Need something urgent?{" "}
-                  <a href="tel:+15128930466" className="text-brand-green hover:underline">
-                    Call Patrick directly
-                  </a>
-                </p>
-              </div>
-            ) : (
               <form
                 onSubmit={handleSubmit}
                 className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 sm:p-8 border border-white/10 space-y-5"
@@ -292,7 +274,6 @@ export function Contact() {
                   )}
                 </button>
               </form>
-            )}
           </div>
         </div>
       </div>
