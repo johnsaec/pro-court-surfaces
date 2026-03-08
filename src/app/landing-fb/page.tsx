@@ -571,15 +571,20 @@ function Gallery() {
     <section className="bg-[#0a0a0a] pb-8">
       <div ref={ref} className="px-2 overflow-hidden">
         <div className="flex gap-2">
-          {[IMG.yoakum, IMG.twoColor, IMG.threeColor, IMG.after].map(
-            (src, i) => (
+          {[
+            { src: IMG.yoakum, alt: "Aerial view of resurfaced tennis courts at Yoakum City Park" },
+            { src: IMG.twoColor, alt: "Two-color residential court resurfacing with blue and green design" },
+            { src: IMG.threeColor, alt: "Three-color custom court resurfacing with professional lines" },
+            { src: IMG.after, alt: "Freshly resurfaced court with vibrant acrylic colors" },
+          ].map(
+            (img, i) => (
               <div
                 key={i}
                 className={`fb-fade fb-fade-d${i + 1} flex-1 min-w-0 rounded-lg overflow-hidden`}
               >
                 <Image
-                  src={src}
-                  alt="Completed court"
+                  src={img.src}
+                  alt={img.alt}
                   width={400}
                   height={300}
                   className="w-full aspect-square object-cover"
