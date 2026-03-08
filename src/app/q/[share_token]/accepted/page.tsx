@@ -51,9 +51,17 @@ export default async function QuoteAcceptedPage({
     }
   }
 
-  const depositAmount = selection?.final_total
-    ? selection.final_total / 2
-    : (quote.total ?? 0) / 2;
+  // Use first milestone from custom schedule, or default 50%
+  const hasCustomSchedule =
+    quote.payment_schedule &&
+    Array.isArray(quote.payment_schedule) &&
+    quote.payment_schedule.length > 0;
+
+  const depositAmount = hasCustomSchedule
+    ? (quote.payment_schedule as { label: string; amount: number }[])[0].amount
+    : selection?.final_total
+      ? selection.final_total / 2
+      : (quote.total ?? 0) / 2;
 
   return (
     <AcceptedPage

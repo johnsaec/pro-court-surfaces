@@ -431,10 +431,25 @@ export function QuotePdfDocument({ quote, selectedPackageId }: QuotePdfDocumentP
             <Text style={s.summaryTotalLabel}>Total</Text>
             <Text style={s.summaryTotalValue}>{fmt(quote.total)}</Text>
           </View>
-          <View style={[s.summaryRow, { marginTop: 6 }]}>
-            <Text style={s.summaryLabel}>50% Deposit Due</Text>
-            <Text style={s.summaryValue}>{fmt((quote.total ?? 0) / 2)}</Text>
-          </View>
+          {/* Payment schedule or default 50% deposit */}
+          {quote.payment_schedule && quote.payment_schedule.length > 0 ? (
+            <>
+              <View style={{ borderTop: `0.5px solid ${BORDER}`, marginTop: 4, paddingTop: 6 }}>
+                <Text style={{ fontSize: 8, fontFamily: "Helvetica-Bold", marginBottom: 4 }}>Payment Schedule</Text>
+              </View>
+              {quote.payment_schedule.map((m: { label: string; amount: number }, i: number) => (
+                <View key={i} style={s.summaryRow}>
+                  <Text style={s.summaryLabel}>{i + 1}. {m.label}</Text>
+                  <Text style={s.summaryValue}>{fmt(m.amount)}</Text>
+                </View>
+              ))}
+            </>
+          ) : (
+            <View style={[s.summaryRow, { marginTop: 6 }]}>
+              <Text style={s.summaryLabel}>50% Deposit Due</Text>
+              <Text style={s.summaryValue}>{fmt((quote.total ?? 0) / 2)}</Text>
+            </View>
+          )}
         </View>
 
         {/* Terms & Conditions */}

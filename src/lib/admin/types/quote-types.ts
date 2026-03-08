@@ -1,6 +1,13 @@
 import type { Service } from "@/lib/admin/queries/catalog-queries";
 import type { Color } from "@/lib/admin/queries/color-queries";
 
+// ── Payment schedule ────────────────────────────────────────────────
+
+export type PaymentMilestone = {
+  label: string;
+  amount: number;
+};
+
 // ── Option types for dropdowns ──────────────────────────────────────
 
 export type CustomerOption = {
@@ -89,6 +96,8 @@ export type QuoteBuilderState = {
   internal_notes: string;
   discount_amount: number;
   deposit_due_days: number;
+  payment_mode: "standard" | "custom";
+  payment_schedule: PaymentMilestone[];
 };
 
 // ── Reducer Actions ─────────────────────────────────────────────────
@@ -121,7 +130,8 @@ export type QuoteBuilderAction =
     }
   | { type: "REMOVE_LINE_ITEM"; packageKey: string; itemKey: string }
   | { type: "SET_COLOR"; field: "color_inside_id" | "color_outside_id" | "color_lines_id" | "color_nvz_id"; value: string }
-  | { type: "SET_FIELD"; field: "cover_note" | "terms_and_conditions" | "internal_notes" | "discount_amount" | "deposit_due_days"; value: string | number }
+  | { type: "SET_FIELD"; field: "cover_note" | "terms_and_conditions" | "internal_notes" | "discount_amount" | "deposit_due_days" | "payment_mode"; value: string | number }
+  | { type: "SET_PAYMENT_SCHEDULE"; schedule: PaymentMilestone[] }
   | { type: "LOAD_STATE"; state: QuoteBuilderState };
 
 // ── Save Payload ────────────────────────────────────────────────────
@@ -167,6 +177,7 @@ export type QuoteSavePayload = {
   internal_notes: string | null;
   discount_amount: number;
   deposit_due_days: number;
+  payment_schedule: PaymentMilestone[] | null;
   subtotal: number;
   total: number;
 };
@@ -251,6 +262,7 @@ export type QuoteDetail = {
   discount_amount: number | null;
   total: number | null;
   deposit_due_days: number | null;
+  payment_schedule: PaymentMilestone[] | null;
   accepted_by_name: string | null;
   accepted_by_email: string | null;
   stripe_invoice_id: string | null;

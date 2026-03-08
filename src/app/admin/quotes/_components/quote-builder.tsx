@@ -117,6 +117,10 @@ export function QuoteBuilder({
       internal_notes: state.internal_notes || null,
       discount_amount: state.discount_amount,
       deposit_due_days: state.deposit_due_days,
+      payment_schedule:
+        state.payment_mode === "custom" && state.payment_schedule.length > 0
+          ? state.payment_schedule
+          : null,
       subtotal,
       total,
     };

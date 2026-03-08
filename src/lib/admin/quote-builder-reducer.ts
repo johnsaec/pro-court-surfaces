@@ -37,6 +37,8 @@ export function createEmptyState(): QuoteBuilderState {
     internal_notes: "",
     discount_amount: 0,
     deposit_due_days: 7,
+    payment_mode: "standard",
+    payment_schedule: [],
   };
 }
 
@@ -83,6 +85,8 @@ export function stateFromQuote(quote: QuoteDetail): QuoteBuilderState {
     internal_notes: quote.internal_notes ?? "",
     discount_amount: quote.discount_amount ?? 0,
     deposit_due_days: quote.deposit_due_days ?? 7,
+    payment_mode: quote.payment_schedule ? "custom" : "standard",
+    payment_schedule: quote.payment_schedule ?? [],
   };
 }
 
@@ -277,6 +281,9 @@ export function quoteBuilderReducer(
 
     case "SET_FIELD":
       return { ...state, [action.field]: action.value };
+
+    case "SET_PAYMENT_SCHEDULE":
+      return { ...state, payment_schedule: action.schedule };
 
     case "LOAD_STATE":
       return action.state;

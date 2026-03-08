@@ -121,8 +121,23 @@ export async function acceptQuote(payload: AcceptPayload) {
       }
     }
 
-    // 4. Create Stripe Invoice: 50% deposit
-    const depositAmount = Math.round(payload.total_price * 50); // cents (50% of total, total is in dollars)
+    // 4. Create Stripe Invoice: first milestone (custom) or 50% deposit (standard)
+    const hasCustomSchedule =
+      quote.payment_schedule &&
+      Array.isArray(quote.payment_schedule) &&
+      quote.payment_schedule.length > 0;
+
+    const firstMilestone = hasCustomSchedule
+      ? (quote.payment_schedule as { label: string; amount: number }[])[0]
+      : null;
+
+    const depositAmount = firstMilestone
+      ? Math.round(firstMilestone.amount * 100) // custom milestone amount in cents
+      : Math.round(payload.total_price * 50); // 50% of total in cents
+
+    const depositDescription = firstMilestone
+      ? `${firstMilestone.label} — Quote ${quote.quote_number}`
+      : `50% Deposit — Quote ${quote.quote_number}`;
 
     const invoice = await stripe.invoices.create({
       customer: stripeCustomerId,
@@ -136,7 +151,7 @@ export async function acceptQuote(payload: AcceptPayload) {
       invoice: invoice.id,
       amount: depositAmount,
       currency: "usd",
-      description: `50% Deposit — Quote ${quote.quote_number}`,
+      description: depositDescription,
     });
 
     const finalizedInvoice = await stripe.invoices.finalizeInvoice(invoice.id);

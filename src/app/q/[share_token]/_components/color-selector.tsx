@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CourtDiagram } from "./court-diagram";
 import { ColorPickerSheet } from "./color-picker-sheet";
 import type { Color } from "@/lib/admin/queries/color-queries";
@@ -55,17 +54,17 @@ export function ColorSelector({
           ? colorSelections.nvz_id
           : colorSelections.lines_id;
 
-  // Filter colors for lines zone to only show white/black/gray/yellow
   const sheetColors = activeZone === "lines"
     ? colors.filter((c) => LINE_COLOR_NAMES.has(c.name.toLowerCase()))
     : colors;
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Court Colors</CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-4">
+    <div className="space-y-5">
+      <p className="text-[11px] text-stone-400 uppercase tracking-[0.2em] font-medium">
+        Court Colors
+      </p>
+
+      <div className="rounded-lg border border-stone-200 bg-white p-5 sm:p-8">
         <CourtDiagram
           courtType={courtType}
           outsideColor={outsideColor?.hex_code ?? "#8B9467"}
@@ -76,30 +75,46 @@ export function ColorSelector({
           onZoneClick={handleZoneClick}
         />
 
-        {/* Current color labels */}
-        <div className="grid grid-cols-4 gap-4 text-center text-sm">
-          <ColorLabel label="Outside" color={outsideColor} onClick={() => handleZoneClick("outside")} />
-          <ColorLabel label="Inside" color={insideColor} onClick={() => handleZoneClick("inside")} />
-          <ColorLabel label="NVZ" color={nvzColor} onClick={() => handleZoneClick("nvz")} />
-          <ColorLabel label="Lines" color={linesColor} onClick={() => handleZoneClick("lines")} />
+        {/* Color swatches row */}
+        <div className="grid grid-cols-4 gap-3 sm:gap-6 mt-6 pt-5 border-t border-stone-100">
+          <ColorLabel
+            label="Outside"
+            color={outsideColor}
+            onClick={() => handleZoneClick("outside")}
+          />
+          <ColorLabel
+            label="Inside"
+            color={insideColor}
+            onClick={() => handleZoneClick("inside")}
+          />
+          <ColorLabel
+            label="NVZ"
+            color={nvzColor}
+            onClick={() => handleZoneClick("nvz")}
+          />
+          <ColorLabel
+            label="Lines"
+            color={linesColor}
+            onClick={() => handleZoneClick("lines")}
+          />
         </div>
 
         {!readOnly && (
-          <p className="text-xs text-muted-foreground text-center">
-            Click on the court diagram or color labels to change colors
+          <p className="text-[11px] text-stone-400 text-center mt-4">
+            Tap the court diagram or swatches to change colors
           </p>
         )}
+      </div>
 
-        <ColorPickerSheet
-          open={sheetOpen}
-          zone={activeZone}
-          colors={sheetColors}
-          selectedColorId={currentSelectedId}
-          onSelect={handleColorSelect}
-          onClose={() => setSheetOpen(false)}
-        />
-      </CardContent>
-    </Card>
+      <ColorPickerSheet
+        open={sheetOpen}
+        zone={activeZone}
+        colors={sheetColors}
+        selectedColorId={currentSelectedId}
+        onSelect={handleColorSelect}
+        onClose={() => setSheetOpen(false)}
+      />
+    </div>
   );
 }
 
@@ -109,17 +124,24 @@ function ColorLabel({
   onClick,
 }: {
   label: string;
-  color: Color | undefined;
+  color: { hex_code: string; name: string } | undefined;
   onClick: () => void;
 }) {
   return (
-    <button onClick={onClick} className="flex flex-col items-center gap-1.5 hover:opacity-80 transition-opacity">
+    <button
+      onClick={onClick}
+      className="flex flex-col items-center gap-2 hover:opacity-80 transition-opacity"
+    >
       <div
-        className="w-6 h-6 rounded-full border"
+        className="w-8 h-8 rounded-full border-2 border-stone-200 shadow-sm"
         style={{ backgroundColor: color?.hex_code ?? "#ccc" }}
       />
-      <span className="font-medium">{label}</span>
-      <span className="text-xs text-muted-foreground">{color?.name ?? "Not set"}</span>
+      <div className="text-center">
+        <span className="block text-xs font-medium text-stone-600">{label}</span>
+        <span className="block text-[10px] text-stone-400 mt-0.5">
+          {color?.name ?? "Not set"}
+        </span>
+      </div>
     </button>
   );
 }

@@ -44,7 +44,17 @@ export default async function QuotePreviewPage({
             quoteId={id}
             status={quote.status}
             stripeBalanceInvoiceId={quote.stripe_balance_invoice_id ?? null}
-            balanceAmount={Math.round((quote.total ?? 0) / 2)}
+            balanceAmount={
+              quote.payment_schedule &&
+              Array.isArray(quote.payment_schedule) &&
+              quote.payment_schedule.length > 1
+                ? Math.round(
+                    (quote.payment_schedule as { amount: number }[])
+                      .slice(1)
+                      .reduce((sum, m) => sum + m.amount, 0)
+                  )
+                : Math.round((quote.total ?? 0) / 2)
+            }
           />
           <Button asChild>
             <Link href={`/admin/quotes/${id}`}>

@@ -44,6 +44,7 @@ export async function saveQuote(
           internal_notes: payload.internal_notes,
           discount_amount: payload.discount_amount,
           deposit_due_days: payload.deposit_due_days,
+          payment_schedule: payload.payment_schedule,
           subtotal: payload.subtotal,
           total: payload.total,
         })
@@ -82,6 +83,7 @@ export async function saveQuote(
           internal_notes: payload.internal_notes,
           discount_amount: payload.discount_amount,
           deposit_due_days: payload.deposit_due_days,
+          payment_schedule: payload.payment_schedule,
           subtotal: payload.subtotal,
           total: payload.total,
         })
@@ -287,8 +289,24 @@ export async function collectBalance(
     }
   }
 
-  // 4. Create Stripe invoice for remaining 50%
-  const balanceAmount = Math.round(total * 50); // cents (50% of total in dollars)
+  // 4. Create Stripe invoice for remaining balance
+  const hasCustomSchedule =
+    quote.payment_schedule &&
+    Array.isArray(quote.payment_schedule) &&
+    quote.payment_schedule.length > 1;
+
+  // Sum remaining milestones (all except first), or default 50%
+  const balanceAmount = hasCustomSchedule
+    ? Math.round(
+        (quote.payment_schedule as { label: string; amount: number }[])
+          .slice(1)
+          .reduce((sum: number, m: { amount: number }) => sum + m.amount, 0) * 100
+      )
+    : Math.round(total * 50); // cents (50% of total in dollars)
+
+  const balanceDescription = hasCustomSchedule
+    ? `Remaining Balance — Quote ${quote.quote_number}`
+    : `Remaining Balance — Quote ${quote.quote_number}`;
 
   try {
     const invoice = await stripe.invoices.create({
@@ -303,7 +321,7 @@ export async function collectBalance(
       invoice: invoice.id,
       amount: balanceAmount,
       currency: "usd",
-      description: `Remaining Balance — Quote ${quote.quote_number}`,
+      description: balanceDescription,
     });
 
     const finalizedInvoice = await stripe.invoices.finalizeInvoice(invoice.id);

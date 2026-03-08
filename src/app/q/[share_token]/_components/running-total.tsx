@@ -1,13 +1,13 @@
 "use client";
 
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import type { PaymentMilestone } from "@/lib/admin/types/quote-types";
 
 interface RunningTotalProps {
   total: number;
   hasSelection: boolean;
   onAcceptClick: () => void;
   readOnly?: boolean;
+  paymentSchedule?: PaymentMilestone[] | null;
 }
 
 export function RunningTotal({
@@ -15,38 +15,50 @@ export function RunningTotal({
   hasSelection,
   onAcceptClick,
   readOnly,
+  paymentSchedule,
 }: RunningTotalProps) {
   if (readOnly) return null;
 
+  // First milestone amount, or default 50%
+  const depositAmount =
+    paymentSchedule && paymentSchedule.length > 0
+      ? paymentSchedule[0].amount
+      : total / 2;
+
+  const depositLabel =
+    paymentSchedule && paymentSchedule.length > 0
+      ? paymentSchedule[0].label
+      : "50% Deposit";
+
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-40 border-t bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
-      <div className="max-w-3xl mx-auto px-4 pt-2 pb-1">
-        <p className="text-xs text-muted-foreground">
-          By paying your deposit, you agree to our{" "}
-          <Link
-            href="/terms"
-            target="_blank"
-            className="underline underline-offset-2 hover:text-foreground"
+    <div className="fixed bottom-0 left-0 right-0 z-40 border-t border-stone-200 bg-white/95 backdrop-blur-sm supports-[backdrop-filter]:bg-white/90">
+      <div className="max-w-2xl mx-auto px-6 py-4 flex items-center justify-between gap-4">
+        <div>
+          <p className="text-xs text-stone-400 mb-0.5">Estimated Total</p>
+          <p
+            className="text-2xl sm:text-3xl font-semibold tabular-nums text-stone-800"
+            style={{ fontFamily: "var(--font-display), serif" }}
           >
-            terms &amp; conditions
-          </Link>{" "}
-          for this project.
-        </p>
-      </div>
-      <div className="max-w-3xl mx-auto px-4 pb-3 flex items-center justify-between">
-        <div className="text-sm">
-          <span className="text-muted-foreground">Estimated Total</span>
-          <span className="ml-2 text-2xl font-bold tabular-nums">
-            ${total.toFixed(2)}
-          </span>
+            ${total.toLocaleString("en-US", { minimumFractionDigits: 2 })}
+          </p>
         </div>
-        <Button
-          size="lg"
+        <button
           disabled={!hasSelection}
           onClick={onAcceptClick}
+          className={[
+            "shrink-0 px-6 py-3 rounded-lg text-sm font-semibold transition-all",
+            hasSelection
+              ? "bg-[#1a5632] text-white hover:bg-[#143f26] active:scale-[0.98] shadow-sm"
+              : "bg-stone-200 text-stone-400 cursor-not-allowed",
+          ].join(" ")}
         >
-          Accept &amp; Pay Deposit (50%)
-        </Button>
+          <span className="hidden sm:inline">
+            Accept & Pay {depositLabel} — ${depositAmount.toLocaleString("en-US", { minimumFractionDigits: 2 })}
+          </span>
+          <span className="sm:hidden">
+            Accept — ${depositAmount.toLocaleString("en-US", { minimumFractionDigits: 2 })}
+          </span>
+        </button>
       </div>
     </div>
   );

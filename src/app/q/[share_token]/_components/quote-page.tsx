@@ -2,8 +2,6 @@
 
 import { useState, useMemo, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
 import { PackageSelector } from "./package-selector";
 import { AddonToggles } from "./addon-toggles";
 import { ColorSelector } from "./color-selector";
@@ -14,7 +12,6 @@ import { computePackageTotal } from "@/lib/quotes/quote-calculator";
 import type { ColorSelections } from "@/lib/quotes/quote-calculator";
 import type { QuoteDetail } from "@/lib/admin/types/quote-types";
 import type { Color } from "@/lib/admin/queries/color-queries";
-import { QUOTE_STATUS_LABELS, QUOTE_STATUS_COLORS } from "@/lib/constants";
 
 type CourtZone = "outside" | "inside" | "lines" | "nvz";
 
@@ -80,7 +77,6 @@ export function QuotePage({ quote, colors }: QuotePageProps) {
   const handlePackageSelect = useCallback(
     (packageId: string) => {
       setSelectedPackageId(packageId);
-      // Reset toggles for new package
       const pkg = quote.quote_packages.find((p) => p.id === packageId);
       if (pkg) {
         const newToggles = new Map<string, boolean>();
@@ -150,84 +146,173 @@ export function QuotePage({ quote, colors }: QuotePageProps) {
       ? "pickleball"
       : "tennis";
 
+  const contactName = quote.customer?.display_name ?? quote.lead?.display_name;
+  const createdDate = new Date(quote.created_at).toLocaleDateString("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
+
   return (
-    <div className="min-h-screen bg-muted/30">
+    <div className="min-h-screen bg-[#faf8f5]">
+      {/* Brand accent bar */}
+      <div className="h-1.5 bg-[#1a5632]" />
+
       {/* Header */}
-      <header className="sticky top-0 z-30 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
-        <div className="max-w-3xl mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
+      <header className="border-b border-stone-200 bg-white">
+        <div className="max-w-2xl mx-auto px-6 py-8 sm:py-10">
+          <div className="flex items-start justify-between gap-4">
             <div>
-              <h1 className="text-lg font-semibold">
-                Quote {quote.quote_number}
+              <h1
+                className="text-2xl sm:text-3xl text-[#1a5632]"
+                style={{ fontFamily: "var(--font-display), serif" }}
+              >
+                Pro Court Surfaces
               </h1>
-              <p className="text-sm text-muted-foreground">
-                {quote.city && `${quote.city}${quote.state ? `, ${quote.state}` : ""}`}
+              <p className="text-sm text-stone-400 mt-1 tracking-wide">
+                Austin, Texas
               </p>
             </div>
-            {isAccepted && (
-              <Badge className={QUOTE_STATUS_COLORS.accepted}>
-                {QUOTE_STATUS_LABELS.accepted}
-              </Badge>
-            )}
+            <div className="text-right shrink-0">
+              <p className="text-sm font-semibold text-stone-700 tracking-wide">
+                {quote.quote_number}
+              </p>
+              <p className="text-xs text-stone-400 mt-1">{createdDate}</p>
+              {quote.version > 1 && (
+                <p className="text-xs text-stone-400">v{quote.version}</p>
+              )}
+            </div>
           </div>
         </div>
       </header>
 
-      {/* Content */}
-      <main className="max-w-3xl mx-auto px-4 py-8 space-y-8 pb-28">
+      {/* Main content */}
+      <main className="max-w-2xl mx-auto px-6 py-10 sm:py-14 space-y-10 pb-36">
+        {/* Prepared for + project summary */}
+        <section
+          className="animate-[fadeInUp_0.5s_ease-out_both]"
+        >
+          <p className="text-[11px] text-stone-400 uppercase tracking-[0.2em] font-medium mb-3">
+            Prepared for
+          </p>
+          {contactName && (
+            <p
+              className="text-2xl text-stone-800"
+              style={{ fontFamily: "var(--font-display), serif" }}
+            >
+              {contactName}
+            </p>
+          )}
+          {(quote.city || quote.address_line1) && (
+            <p className="text-sm text-stone-500 mt-1.5">
+              {quote.address_line1 && `${quote.address_line1}, `}
+              {quote.city}
+              {quote.state ? `, ${quote.state}` : ""}
+              {quote.zip ? ` ${quote.zip}` : ""}
+            </p>
+          )}
+          {(quote.square_feet || quote.number_of_courts) && (
+            <div className="flex gap-6 mt-4 text-sm text-stone-500">
+              {quote.number_of_courts && (
+                <span>
+                  {quote.number_of_courts} court{quote.number_of_courts > 1 ? "s" : ""}
+                </span>
+              )}
+              {quote.square_feet && (
+                <span>{quote.square_feet.toLocaleString()} sq ft</span>
+              )}
+            </div>
+          )}
+        </section>
+
         {/* Cover note */}
         {quote.cover_note && (
-          <div className="prose prose-sm max-w-none">
-            <p className="text-muted-foreground whitespace-pre-wrap">
+          <section
+            className="border-l-2 border-[#1a5632]/30 pl-6 animate-[fadeInUp_0.5s_ease-out_0.1s_both]"
+          >
+            <p className="text-stone-600 whitespace-pre-wrap leading-relaxed">
               {quote.cover_note}
             </p>
-          </div>
+          </section>
         )}
 
+        <hr className="border-stone-200" />
+
         {/* Package selector */}
-        <PackageSelector
-          packages={quote.quote_packages}
-          selectedPackageId={selectedPackageId}
-          onSelect={handlePackageSelect}
-          readOnly={isAccepted}
-        />
+        <section className="animate-[fadeInUp_0.5s_ease-out_0.15s_both]">
+          <PackageSelector
+            packages={quote.quote_packages}
+            selectedPackageId={selectedPackageId}
+            onSelect={handlePackageSelect}
+            readOnly={isAccepted}
+          />
+        </section>
 
         {/* Add-ons */}
         {optionalItems.length > 0 && (
           <>
-            <Separator />
-            <AddonToggles
-              optionalItems={optionalItems}
-              toggles={toggles}
-              onToggle={handleToggle}
-              readOnly={isAccepted}
-            />
+            <hr className="border-stone-200" />
+            <section className="animate-[fadeInUp_0.5s_ease-out_0.2s_both]">
+              <AddonToggles
+                optionalItems={optionalItems}
+                toggles={toggles}
+                onToggle={handleToggle}
+                readOnly={isAccepted}
+              />
+            </section>
           </>
         )}
 
         {/* Color selector */}
-        <Separator />
-        <ColorSelector
-          courtType={courtType}
-          colors={colors}
-          colorSelections={colorSelections}
-          onColorChange={handleColorChange}
-          readOnly={isAccepted}
-        />
+        <hr className="border-stone-200" />
+        <section className="animate-[fadeInUp_0.5s_ease-out_0.25s_both]">
+          <ColorSelector
+            courtType={courtType}
+            colors={colors}
+            colorSelections={colorSelections}
+            onColorChange={handleColorChange}
+            readOnly={isAccepted}
+          />
+        </section>
 
         {/* Terms */}
         {quote.terms_and_conditions && (
           <>
-            <Separator />
-            <div className="space-y-2">
-              <h3 className="text-sm font-medium">Terms & Conditions</h3>
-              <p className="text-xs text-muted-foreground whitespace-pre-wrap">
+            <hr className="border-stone-200" />
+            <section className="animate-[fadeInUp_0.5s_ease-out_0.3s_both]">
+              <p className="text-[11px] text-stone-400 uppercase tracking-[0.2em] font-medium mb-3">
+                Terms & Conditions
+              </p>
+              <p className="text-xs text-stone-400 whitespace-pre-wrap leading-relaxed">
                 {quote.terms_and_conditions}
               </p>
-            </div>
+            </section>
           </>
         )}
       </main>
+
+      {/* Payment schedule (shown above running total if custom) */}
+      {quote.payment_schedule && quote.payment_schedule.length > 1 && (
+        <div className="max-w-2xl mx-auto px-6 pb-4">
+          <div className="rounded-lg border border-stone-200 bg-white p-5">
+            <p className="text-[11px] text-stone-400 uppercase tracking-[0.2em] font-medium mb-3">
+              Payment Schedule
+            </p>
+            <div className="space-y-2">
+              {quote.payment_schedule.map((m, i) => (
+                <div key={i} className="flex justify-between text-sm">
+                  <span className="text-stone-600">
+                    {i + 1}. {m.label}
+                  </span>
+                  <span className="tabular-nums font-medium text-stone-700">
+                    ${m.amount.toLocaleString("en-US", { minimumFractionDigits: 2 })}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Running total bar */}
       <RunningTotal
@@ -235,6 +320,7 @@ export function QuotePage({ quote, colors }: QuotePageProps) {
         hasSelection={!!selectedPackageId}
         onAcceptClick={() => setShowAcceptDialog(true)}
         readOnly={isAccepted}
+        paymentSchedule={quote.payment_schedule}
       />
 
       {/* Accept dialog */}
@@ -244,6 +330,7 @@ export function QuotePage({ quote, colors }: QuotePageProps) {
         onAccept={handleAccept}
         defaultEmail={quote.customer?.email ?? quote.lead?.email ?? null}
         total={total}
+        paymentSchedule={quote.payment_schedule}
       />
     </div>
   );

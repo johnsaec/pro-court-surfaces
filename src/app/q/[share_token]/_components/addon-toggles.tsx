@@ -1,8 +1,6 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
 import type { QuoteLineItemRow } from "@/lib/admin/types/quote-types";
 
 interface AddonTogglesProps {
@@ -21,34 +19,40 @@ export function AddonToggles({
   if (optionalItems.length === 0) return null;
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Optional Add-Ons</CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-4">
+    <div className="space-y-5">
+      <p className="text-[11px] text-stone-400 uppercase tracking-[0.2em] font-medium">
+        Optional Enhancements
+      </p>
+
+      <div className="space-y-1">
         {optionalItems.map((item) => {
           const isEnabled = toggles.get(item.id) ?? false;
           return (
             <div
               key={item.id}
-              className="flex items-center justify-between gap-4"
+              className={[
+                "flex items-center justify-between gap-4 rounded-lg px-5 py-4 transition-colors border",
+                isEnabled
+                  ? "bg-[#1a5632]/4 border-[#1a5632]/15"
+                  : "bg-white border-stone-200",
+              ].join(" ")}
             >
               <div className="flex-1 min-w-0">
-                <Label
+                <label
                   htmlFor={`addon-${item.id}`}
-                  className="text-sm font-medium cursor-pointer"
+                  className="text-sm font-medium text-stone-700 cursor-pointer"
                 >
                   {item.name}
-                </Label>
+                </label>
                 {item.description && (
-                  <p className="text-xs text-muted-foreground mt-0.5">
+                  <p className="text-xs text-stone-400 mt-0.5 leading-relaxed">
                     {item.description}
                   </p>
                 )}
               </div>
-              <div className="flex items-center gap-3 shrink-0">
-                <span className="text-sm font-medium tabular-nums text-muted-foreground">
-                  +${item.total_price.toFixed(2)}
+              <div className="flex items-center gap-4 shrink-0">
+                <span className="text-sm tabular-nums text-stone-500">
+                  +${item.total_price.toLocaleString("en-US", { minimumFractionDigits: 2 })}
                 </span>
                 <Switch
                   id={`addon-${item.id}`}
@@ -57,12 +61,13 @@ export function AddonToggles({
                     !readOnly && onToggle(item.id, !!checked)
                   }
                   disabled={readOnly}
+                  className="data-[state=checked]:bg-[#1a5632]"
                 />
               </div>
             </div>
           );
         })}
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }
