@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Blog | Pro Court Surfaces",
-  description: "Court construction guides, cost breakdowns, and surfacing insights for general contractors in Central Texas.",
+  title: "Court Surfacing Guides & Cost Breakdowns | Pro Court Surfaces",
+  description: "Court construction guides, cost breakdowns, and surfacing insights for homeowners and contractors in Central Texas.",
   alternates: { canonical: "https://www.procourtsurfaces.com/blog" },
 };
 

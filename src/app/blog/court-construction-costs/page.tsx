@@ -8,7 +8,7 @@ import { BlogCTA } from "../_components/BlogCTA";
 import { CTABanner } from "@/components/landing/CTABanner";
 
 export const metadata: Metadata = {
-  title: "Court Construction Costs in Texas: What GCs Need to Budget (2026) | Pro Court Surfaces",
+  title: "Court Construction Costs in Texas (2026) | Pro Court Surfaces",
   description: "Realistic court construction cost breakdowns for GC estimators in Central Texas. Tennis, pickleball, and multi-sport court budgeting data for 2026 bids.",
   keywords: "cost of tennis court construction, tennis court contractors, tennis court construction companies, court construction costs Texas",
   openGraph: {

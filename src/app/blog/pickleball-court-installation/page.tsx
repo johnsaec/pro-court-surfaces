@@ -8,7 +8,7 @@ import { CTABanner } from "@/components/landing/CTABanner";
 import { BlogFAQ } from "../_components/BlogFAQ";
 
 export const metadata: Metadata = {
-  title: "Pickleball Court Installation & Surfacing | Central Texas | Pro Court Surfaces",
+  title: "Pickleball Court Installation in Austin TX | Pro Court Surfaces",
   description: "Pickleball court installation and surfacing for multi-family amenity centers in Central Texas. ATS Acrytech system, concrete specs, costs, and timelines.",
   keywords: "pickleball court installation, pickleball court surfacing, pickleball court cost, pickleball court dimensions, pickleball court resurfacing, Central Texas",
   openGraph: {

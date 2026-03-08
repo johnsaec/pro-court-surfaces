@@ -7,7 +7,7 @@ import { BlogCTA } from "../_components/BlogCTA";
 import { CTABanner } from "@/components/landing/CTABanner";
 
 export const metadata: Metadata = {
-  title: "Sport Court Surfacing in San Antonio, TX | Pro Court Surfaces",
+  title: "Pickleball & Tennis Court Surfacing San Antonio | Pro Court Surfaces",
   description: "Tennis court resurfacing and pickleball court installation in San Antonio, TX. Pro Court Surfaces is a sport court surfacing subcontractor for GCs building amenity centers across the San Antonio metro.",
   keywords: "tennis court resurfacing San Antonio, pickleball court installation San Antonio, court surfacing San Antonio TX, sport court contractor San Antonio, court resurfacing New Braunfels, pickleball court San Antonio",
   openGraph: {

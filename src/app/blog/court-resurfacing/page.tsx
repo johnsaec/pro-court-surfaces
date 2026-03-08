@@ -8,7 +8,7 @@ import { BlogCTA } from "../_components/BlogCTA";
 import { CTABanner } from "@/components/landing/CTABanner";
 
 export const metadata: Metadata = {
-  title: "Tennis & Pickleball Court Resurfacing | Central Texas | Pro Court Surfaces",
+  title: "Court Resurfacing in Austin TX | Pro Court Surfaces",
   description: "Tennis court resurfacing, pickleball court resurfacing, and basketball court refinishing in Central Texas. Process, cost guide, and FAQs from Pro Court Surfaces.",
   keywords: "court resurfacing, tennis court resurfacing, pickleball court resurfacing, basketball court resurfacing, court refinishing, Central Texas",
   openGraph: {
