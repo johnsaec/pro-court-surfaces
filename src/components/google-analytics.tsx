@@ -15,17 +15,20 @@ import { usePathname } from "next/navigation";
 export function AutoLinkTracking() {
   const pathname = usePathname();
 
-  // Track SPA route changes
+  // Track SPA route changes — small delay so Next.js metadata updates first
   useEffect(() => {
-    // Skip the initial page load — gtag.js handles that one
     if (!window.__gaInitialPageTracked) {
       window.__gaInitialPageTracked = true;
       return;
     }
-    window.gtag?.("event", "page_view", {
-      page_path: pathname,
-      page_title: document.title,
-    });
+    const timeout = setTimeout(() => {
+      window.gtag?.("event", "page_view", {
+        page_path: pathname,
+        page_location: window.location.href,
+        page_title: document.title,
+      });
+    }, 100);
+    return () => clearTimeout(timeout);
   }, [pathname]);
 
   // Auto-track tel: and mailto: clicks
