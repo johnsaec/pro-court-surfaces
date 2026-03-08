@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef, type FormEvent } from "react";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { ArrowRight, Loader2, Phone, Check, ChevronDown } from "lucide-react";
 import { trackEvent } from "@/lib/analytics";
@@ -603,7 +604,7 @@ function Gallery() {
 /*  CONTACT                                                            */
 /* ================================================================== */
 function Contact() {
-  const [submitted, setSubmitted] = useState(false);
+  const router = useRouter();
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
   const ref = useReveal();
@@ -629,11 +630,11 @@ function Contact() {
         const data = await res.json();
         throw new Error(data.error || "Something went wrong");
       }
-      setSubmitted(true);
       trackEvent("generate_lead", {
         form_name: "landing_fb_contact",
         page_path: "/landing-fb",
       });
+      router.push("/landing/submit-success");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong.");
     } finally {
@@ -657,24 +658,6 @@ function Contact() {
         </div>
 
         <div className="fb-fade fb-fade-d1">
-          {submitted ? (
-            <div className="rounded-2xl bg-white/5 border border-brand-green/20 p-8 text-center">
-              <div className="w-14 h-14 rounded-full bg-brand-green/20 flex items-center justify-center mx-auto mb-4">
-                <Check className="w-7 h-7 text-brand-green" />
-              </div>
-              <p className="text-white text-xl font-bold font-display">GOT IT!</p>
-              <p className="mt-2 text-white/50 text-sm">
-                Patrick will reach out within 24 hours.
-              </p>
-              <a
-                href="tel:+15128930466"
-                className="mt-4 inline-flex items-center gap-2 text-brand-green text-sm font-medium hover:underline"
-              >
-                <Phone className="w-3.5 h-3.5" />
-                Need it sooner? Call Patrick
-              </a>
-            </div>
-          ) : (
             <form
               onSubmit={handleSubmit}
               className="rounded-2xl bg-white/[0.03] border border-white/[0.08] p-5 sm:p-6 space-y-4"
@@ -742,7 +725,6 @@ function Contact() {
                 </a>
               </p>
             </form>
-          )}
         </div>
       </div>
     </section>

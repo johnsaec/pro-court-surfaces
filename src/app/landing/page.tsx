@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { trackEvent } from "@/lib/analytics";
@@ -636,7 +637,7 @@ function LandingBeforeAfter() {
 /*  CONTACT FORM (simplified: name + email + phone)                    */
 /* ================================================================== */
 function LandingContact() {
-  const [submitted, setSubmitted] = useState(false);
+  const router = useRouter();
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
   const ref = useScrollReveal();
@@ -665,11 +666,11 @@ function LandingContact() {
         throw new Error(data.error || "Something went wrong");
       }
 
-      setSubmitted(true);
       trackEvent("generate_lead", {
         form_name: "landing_contact",
         page_path: "/landing",
       });
+      router.push("/landing/submit-success");
     } catch (err) {
       setError(
         err instanceof Error ? err.message : "Something went wrong. Please try again."
@@ -697,31 +698,6 @@ function LandingContact() {
         </div>
 
         <div className="reveal-item" style={{ transitionDelay: "150ms" }}>
-          {submitted ? (
-            <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 text-center border border-white/10">
-              <div className="w-14 h-14 rounded-full bg-brand-green/20 flex items-center justify-center mx-auto mb-4">
-                <svg
-                  className="w-7 h-7 text-brand-green"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={2}
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                </svg>
-              </div>
-              <p className="text-xl font-bold">Got it!</p>
-              <p className="mt-2 text-white/60">
-                Patrick will reach out within 24 hours.
-              </p>
-              <p className="mt-4 text-white/40 text-sm">
-                Need it sooner?{" "}
-                <a href="tel:+15128930466" className="text-brand-green hover:underline">
-                  Call Patrick directly
-                </a>
-              </p>
-            </div>
-          ) : (
             <form
               onSubmit={handleSubmit}
               className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/10 space-y-4"
@@ -801,7 +777,6 @@ function LandingContact() {
                 </a>
               </p>
             </form>
-          )}
         </div>
       </div>
     </section>
