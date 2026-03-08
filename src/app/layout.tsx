@@ -56,23 +56,20 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const gaId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID?.trim();
+
   return (
     <html lang="en">
       <head>
-        {process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID && (
+        {gaId && (
           <>
             <script
               async
-              src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID}`}
+              src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}
             />
             <script
               dangerouslySetInnerHTML={{
-                __html: `
-                  window.dataLayer = window.dataLayer || [];
-                  window.gtag = function(){window.dataLayer.push(arguments);};
-                  window.gtag('js', new Date());
-                  window.gtag('config', '${process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID}');
-                `,
+                __html: `window.dataLayer=window.dataLayer||[];window.gtag=function(){window.dataLayer.push(arguments);};window.gtag('js',new Date());window.gtag('config','${gaId}');`,
               }}
             />
           </>
