@@ -7,7 +7,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
-    const { name, email, phone, city, projectType, sports, message } = body;
+    const { name, email, phone, city, projectType, sports, message, attribution } = body;
 
     if (!name || !email) {
       return NextResponse.json(
@@ -46,6 +46,34 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: true, id: existing.id, updated: true });
     }
 
+    // Build attribution fields for insert (if provided)
+    const attrFields = attribution
+      ? {
+          ft_source: attribution.ft_source ?? null,
+          ft_medium: attribution.ft_medium ?? null,
+          ft_campaign: attribution.ft_campaign ?? null,
+          ft_content: attribution.ft_content ?? null,
+          ft_term: attribution.ft_term ?? null,
+          ft_channel: attribution.ft_channel ?? null,
+          ft_referrer: attribution.ft_referrer ?? null,
+          ft_landing_page: attribution.ft_landing_page ?? null,
+          ft_click_id: attribution.ft_click_id ?? null,
+          ft_click_id_type: attribution.ft_click_id_type ?? null,
+          ft_timestamp: attribution.ft_timestamp ?? null,
+          lt_source: attribution.lt_source ?? null,
+          lt_medium: attribution.lt_medium ?? null,
+          lt_campaign: attribution.lt_campaign ?? null,
+          lt_content: attribution.lt_content ?? null,
+          lt_term: attribution.lt_term ?? null,
+          lt_channel: attribution.lt_channel ?? null,
+          lt_referrer: attribution.lt_referrer ?? null,
+          lt_landing_page: attribution.lt_landing_page ?? null,
+          lt_click_id: attribution.lt_click_id ?? null,
+          lt_click_id_type: attribution.lt_click_id_type ?? null,
+          lt_timestamp: attribution.lt_timestamp ?? null,
+        }
+      : {};
+
     const { data: lead, error } = await supabase
       .from("leads")
       .insert({
@@ -62,6 +90,7 @@ export async function POST(req: NextRequest) {
         sports: sports?.length ? sports : [],
         form_type: "step1",
         notes: message && message !== "" ? `Website form: ${message}` : null,
+        ...attrFields,
       })
       .select("id")
       .single();
@@ -98,7 +127,11 @@ export async function POST(req: NextRequest) {
 - City: ${city || "Not provided"}
 - Project Type: ${projectLabel}
 - Sports: ${sportsLabel}
-- Notes: ${message || "None"}`,
+- Notes: ${message || "None"}
+- Channel: ${attribution?.lt_channel || "direct"}
+- Source: ${attribution?.lt_source || "none"}
+- Medium: ${attribution?.lt_medium || "none"}
+- Campaign: ${attribution?.lt_campaign || "none"}`,
       }),
     ]);
 

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Phone, Mail, ArrowRight, Loader2 } from "lucide-react";
 import { useScrollReveal } from "./useScrollReveal";
 import { trackEvent } from "@/lib/analytics";
+import { getAttribution } from "@/lib/attribution";
 
 const PROJECT_TYPES = [
   { value: "new_court_full_build", label: "New Court (Full Build)" },
@@ -55,6 +56,7 @@ export function Contact() {
           projectType: formData.get("projectType") || null,
           sports: selectedSports,
           message: formData.get("message"),
+          attribution: getAttribution(),
         }),
       });
 

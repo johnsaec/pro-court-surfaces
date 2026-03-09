@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { trackEvent } from "@/lib/analytics";
+import { getAttribution } from "@/lib/attribution";
 import {
   Phone,
   Mail,
@@ -658,6 +659,7 @@ function LandingContact() {
           email: fd.get("email"),
           phone: fd.get("phone"),
           message: "Landing page lead",
+          attribution: getAttribution(),
         }),
       });
 

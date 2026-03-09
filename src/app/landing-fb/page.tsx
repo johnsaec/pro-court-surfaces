@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { ArrowRight, Loader2, Phone, Check, ChevronDown } from "lucide-react";
 import { trackEvent } from "@/lib/analytics";
+import { getAttribution } from "@/lib/attribution";
 
 /* ------------------------------------------------------------------ */
 /*  Images                                                             */
@@ -624,6 +625,7 @@ function Contact() {
           email: fd.get("email"),
           phone: fd.get("phone"),
           message: "FB landing page lead",
+          attribution: getAttribution(),
         }),
       });
       if (!res.ok) {
