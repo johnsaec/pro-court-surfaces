@@ -24,6 +24,14 @@ const breadcrumbSchema = {
 
 const posts = [
   {
+    slug: "backyard-pickleball-court",
+    title: "Backyard Pickleball Court: Cost, Size & Build Guide (2026)",
+    description: "How much does a backyard pickleball court cost? Full guide to sizing, surface options, concrete specs, and costs for homeowners in Austin and Central Texas.",
+    date: "Mar 9, 2026",
+    readTime: "10 min read",
+    category: "Homeowner Guide",
+  },
+  {
     slug: "pickleball-court-installation",
     title: "Pickleball Court Installation & Surfacing in Central Texas",
     description: "Dimensions, concrete specs, ATS Acrytech surface details, cost ranges, and FAQ — everything GCs need to bid pickleball court projects.",
