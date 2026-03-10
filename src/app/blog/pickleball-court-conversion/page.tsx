@@ -246,7 +246,7 @@ export default function PickleballCourtConversionPage() {
               {
                 step: 3,
                 title: "Acrylic Application",
-                description: "3\u20135 coats of professional acrylic sport court coating (ATS Acrytech, Laykold, or SportMaster) applied per manufacturer specifications. Each coat is weather-monitored for temperature and humidity.",
+                description: "2\u20134 coats of professional acrylic sport court coating (ATS Acrytech, Laykold, or SportMaster) applied per manufacturer specifications. Each coat is weather-monitored for temperature and humidity.",
               },
               {
                 step: 4,

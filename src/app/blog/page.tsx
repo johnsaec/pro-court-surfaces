@@ -24,6 +24,30 @@ const breadcrumbSchema = {
 
 const posts = [
   {
+    slug: "pickleball-court-dimensions",
+    title: "Pickleball Court Dimensions: Official Size, Layout & Spacing Guide",
+    description: "Official pickleball court dimensions, total space requirements, multi-court layouts, and concrete slab specs. Everything you need to plan your court.",
+    date: "Mar 9, 2026",
+    readTime: "7 min read",
+    category: "Dimensions Guide",
+  },
+  {
+    slug: "tennis-court-dimensions",
+    title: "Tennis Court Dimensions: Official Size, Layout & Space Requirements",
+    description: "Official tennis court dimensions for singles and doubles, total space requirements, surface types, and when to resurface.",
+    date: "Mar 9, 2026",
+    readTime: "8 min read",
+    category: "Dimensions Guide",
+  },
+  {
+    slug: "diy-pickleball-court",
+    title: "DIY Pickleball Court: What You Can Do Yourself vs. What Needs a Pro (2026)",
+    description: "Honest guide to building a DIY pickleball court. What homeowners can do themselves, where DIY projects fail, and when to hire a professional court surfacing contractor.",
+    date: "Mar 9, 2026",
+    readTime: "10 min read",
+    category: "DIY Guide",
+  },
+  {
     slug: "pickleball-court-conversion",
     title: "Convert a Tennis Court to Pickleball: Cost, Layout & Process (2026)",
     description: "How to convert a tennis or basketball court to pickleball. Costs, 4-court layouts, and what to expect from the conversion process in Austin, TX.",
