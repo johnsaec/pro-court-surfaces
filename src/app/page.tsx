@@ -96,6 +96,12 @@ const localBusinessSchema = {
     { "@type": "City", name: "Pflugerville" },
     { "@type": "City", name: "Lakeway" },
     { "@type": "City", name: "Bee Cave" },
+    {
+      "@type": "City",
+      name: "San Antonio",
+      sameAs: "https://en.wikipedia.org/wiki/San_Antonio",
+    },
+    { "@type": "City", name: "New Braunfels" },
   ],
   serviceArea: {
     "@type": "GeoCircle",

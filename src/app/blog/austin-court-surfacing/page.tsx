@@ -6,19 +6,19 @@ import { BlogCTA } from "../_components/BlogCTA";
 import { CTABanner } from "@/components/landing/CTABanner";
 
 export const metadata: Metadata = {
-  title: "Sport Court Surfacing in Austin, TX | Pro Court Surfaces",
-  description: "Tennis court resurfacing, pickleball court installation, and sport court surfacing in Austin, TX. Serving Austin, Round Rock, Cedar Park, Georgetown, and the full Central Texas metro.",
-  keywords: "court surfacing Austin TX, tennis court resurfacing Austin, pickleball court installation Austin, sport court surfacing Central Texas, court resurfacing Round Rock, court surfacing Cedar Park",
+  title: "Tennis & Pickleball Court Resurfacing in Austin TX | Pro Court Surfaces",
+  description: "Tennis court resurfacing, pickleball court resurfacing and installation, and sport court surfacing in Austin, TX. Serving Austin, Round Rock, Cedar Park, Georgetown, and the full Central Texas metro.",
+  keywords: "tennis court resurfacing Austin, court resurfacing Austin TX, pickleball court resurfacing Austin, pickleball court installation Austin, sport court surfacing Central Texas, court resurfacing Round Rock, court surfacing Cedar Park",
   openGraph: {
-    title: "Sport Court Surfacing in Austin, TX",
-    description: "Tennis court resurfacing, pickleball court installation, and sport court surfacing in Austin, TX.",
+    title: "Tennis & Pickleball Court Resurfacing in Austin, TX",
+    description: "Tennis court resurfacing, pickleball court resurfacing and installation, and sport court surfacing in Austin, TX.",
     type: "article",
     url: "https://www.procourtsurfaces.com/blog/austin-court-surfacing",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Sport Court Surfacing in Austin, TX",
-    description: "Tennis court resurfacing, pickleball court installation, and sport court surfacing in Austin, TX.",
+    title: "Tennis & Pickleball Court Resurfacing in Austin, TX",
+    description: "Tennis court resurfacing, pickleball court resurfacing and installation, and sport court surfacing in Austin, TX.",
   },
   alternates: { canonical: "https://www.procourtsurfaces.com/blog/austin-court-surfacing" },
 };
@@ -26,8 +26,8 @@ export const metadata: Metadata = {
 const articleSchema = {
   "@context": "https://schema.org",
   "@type": "Article",
-  headline: "Sport Court Surfacing in Austin, TX",
-  description: "Tennis court resurfacing, pickleball court installation, and sport court surfacing in Austin, TX.",
+  headline: "Tennis & Pickleball Court Resurfacing in Austin, TX",
+  description: "Tennis court resurfacing, pickleball court resurfacing and installation, and sport court surfacing in Austin, TX.",
   author: { "@type": "Organization", name: "Pro Court Surfaces" },
   publisher: { "@type": "Organization", name: "Pro Court Surfaces" },
   datePublished: "2026-03-05",

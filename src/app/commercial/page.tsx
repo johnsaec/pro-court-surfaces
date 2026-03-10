@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import CommercialSections from "./_components/CommercialSections";
 
 export const metadata: Metadata = {
-  title: "GC Court Surfacing Sub | Pro Court Surfaces",
+  title: "Court Surfacing Subcontractor — Central Texas | Pro Court Surfaces",
   description:
-    "Pro Court Surfaces is a sport court surfacing subcontractor in Central Texas. ATS Sports Acrytech surfaces for multi-family amenity centers — 48hr bids, 2yr warranty, zero scope overlap.",
+    "Sport court surfacing subcontractor for GCs in Austin, San Antonio, and Central Texas. ATS Sports Acrytech surfaces for multi-family amenity centers — 48hr bids, 2yr warranty, zero scope overlap.",
   alternates: { canonical: "https://www.procourtsurfaces.com/commercial" },
 };
 

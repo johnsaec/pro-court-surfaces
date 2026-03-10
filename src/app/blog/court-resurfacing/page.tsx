@@ -8,9 +8,9 @@ import { BlogCTA } from "../_components/BlogCTA";
 import { CTABanner } from "@/components/landing/CTABanner";
 
 export const metadata: Metadata = {
-  title: "Court Resurfacing in Austin TX | Pro Court Surfaces",
-  description: "Tennis court resurfacing, pickleball court resurfacing, and basketball court refinishing in Central Texas. Process, cost guide, and FAQs from Pro Court Surfaces.",
-  keywords: "court resurfacing, tennis court resurfacing, pickleball court resurfacing, basketball court resurfacing, court refinishing, Central Texas",
+  title: "Court Resurfacing in Austin TX: Cost & Process | Pro Court Surfaces",
+  description: "Tennis court resurfacing cost guide for Central Texas (2026). Pickleball, basketball, and multi-sport court resurfacing process, pricing, and FAQs from Pro Court Surfaces.",
+  keywords: "court resurfacing, tennis court resurfacing, tennis court resurfacing cost, pickleball court resurfacing, basketball court resurfacing, court resurfacing Austin, court refinishing, Central Texas",
   openGraph: {
     title: "Tennis & Pickleball Court Resurfacing | Central Texas",
     description: "Tennis court resurfacing, pickleball court resurfacing, and basketball court refinishing in Central Texas.",
@@ -66,16 +66,30 @@ const serviceSchema = {
   "@type": "Service",
   name: "Court Resurfacing",
   provider: {
-    "@type": "Organization",
+    "@type": "LocalBusiness",
     name: "Pro Court Surfaces",
     url: "https://www.procourtsurfaces.com",
+    telephone: "(512) 893-0466",
+    address: { "@type": "PostalAddress", addressLocality: "Austin", addressRegion: "TX", addressCountry: "US" },
   },
-  areaServed: {
-    "@type": "State",
-    name: "Texas",
-  },
+  areaServed: [
+    { "@type": "City", name: "Austin", containedInPlace: { "@type": "State", name: "Texas" } },
+    { "@type": "City", name: "San Antonio", containedInPlace: { "@type": "State", name: "Texas" } },
+    { "@type": "City", name: "Round Rock", containedInPlace: { "@type": "State", name: "Texas" } },
+    { "@type": "City", name: "Cedar Park", containedInPlace: { "@type": "State", name: "Texas" } },
+    { "@type": "City", name: "Georgetown", containedInPlace: { "@type": "State", name: "Texas" } },
+  ],
   serviceType: "Sport Court Resurfacing",
   description: "Professional tennis, pickleball, basketball, and multi-sport court resurfacing in Central Texas using the ATS Sports Acrytech system.",
+  hasOfferCatalog: {
+    "@type": "OfferCatalog",
+    name: "Court Resurfacing Services",
+    itemListElement: [
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Tennis Court Resurfacing" }, priceSpecification: { "@type": "PriceSpecification", priceCurrency: "USD", minPrice: "6000", maxPrice: "12000" } },
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Pickleball Court Resurfacing" }, priceSpecification: { "@type": "PriceSpecification", priceCurrency: "USD", minPrice: "3500", maxPrice: "7000" } },
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Basketball Court Resurfacing" }, priceSpecification: { "@type": "PriceSpecification", priceCurrency: "USD", minPrice: "5000", maxPrice: "10000" } },
+    ],
+  },
 };
 
 const tocItems = [

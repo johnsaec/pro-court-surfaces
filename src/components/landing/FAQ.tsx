@@ -81,6 +81,14 @@ export function FAQ() {
                       </Link>.
                     </>
                   )}
+                  {faq.id === "duration" && (
+                    <>
+                      {" "}
+                      <Link href="/blog/court-resurfacing" className="text-brand-blue hover:underline">
+                        See our full resurfacing process guide
+                      </Link>.
+                    </>
+                  )}
                   {faq.id === "materials" && (
                     <>
                       {" "}
