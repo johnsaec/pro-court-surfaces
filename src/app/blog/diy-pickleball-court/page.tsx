@@ -44,8 +44,8 @@ const faqSchema = {
     { "@type": "Question", name: "How much does a DIY pickleball court cost?", acceptedAnswer: { "@type": "Answer", text: "A temporary setup (portable net + court tape) costs $200\u2013$500. A permanent court with a new concrete slab runs $12,000\u2013$25,000+ whether you DIY the surfacing or not, since you\u2019re hiring a concrete contractor regardless. Professional surfacing adds $6,000\u2013$12,000 but lasts 6\u20138+ years." } },
     { "@type": "Question", name: "Can I paint pickleball lines on my driveway?", acceptedAnswer: { "@type": "Answer", text: "Yes. Use court line paint (not house paint) for best results. Measure carefully \u2014 the playing area is 20\u2019 x 44\u2019 with a 7\u2019 non-volley zone on each side of the net. Lines should be 2 inches wide." } },
     { "@type": "Question", name: "What's the cheapest way to play pickleball at home?", acceptedAnswer: { "@type": "Answer", text: "A portable net system ($80\u2013$150) and court marking tape on any flat surface like a driveway or parking area. Total cost is around $200 and requires zero construction." } },
-    { "@type": "Question", name: "Can I resurface a court myself?", acceptedAnswer: { "@type": "Answer", text: "It\u2019s not recommended. Proper resurfacing requires acid etching or shot-blasting to remove laitance, bird bath fills per ASBA nickel tolerance standards, and 2\u20134 coats of acrylic applied with parallel squeegee technique. DIY attempts commonly result in adhesion failure, uneven texture, and premature coating failure within 1\u20132 years." } },
-    { "@type": "Question", name: "How long does a DIY court surface last vs professional?", acceptedAnswer: { "@type": "Answer", text: "A DIY acrylic surface application may fail in 1\u20132 years due to application errors. Professional surfacing with systems like ATS Acrytech, Laykold, or SportMaster lasts 6\u20138+ years with proper maintenance." } },
+    { "@type": "Question", name: "Can I resurface a court myself?", acceptedAnswer: { "@type": "Answer", text: "It\u2019s possible but involves a steep learning curve. Proper resurfacing requires acid etching or shot-blasting to remove laitance, bird bath fills per ASBA nickel tolerance standards, and 2\u20134 coats of acrylic applied with parallel squeegee technique. The more you understand the process, the better your results will be." } },
+    { "@type": "Question", name: "How long does a DIY court surface last vs professional?", acceptedAnswer: { "@type": "Answer", text: "Results vary based on application quality. Professional surfacing with systems like ATS Acrytech, Laykold, or SportMaster typically lasts 6\u20138+ years with proper maintenance. DIY longevity depends on how well the prep and application are executed." } },
     { "@type": "Question", name: "Do I need a permit to build a pickleball court?", acceptedAnswer: { "@type": "Answer", text: "In most cases, yes. Austin and Travis County typically require permits for concrete flatwork over a certain size (usually 200+ sq ft). Your concrete contractor usually handles the permit application. Check with your city and HOA before starting." } },
     { "@type": "Question", name: "Can I convert my driveway to a pickleball court?", acceptedAnswer: { "@type": "Answer", text: "Yes, if the driveway is flat, structurally sound, and at least 30\u2019 x 60\u2019. The concrete needs to be in good condition \u2014 no major cracks, heaving, or drainage problems. A professional can resurface it with acrylic coating and add regulation lines." } },
   ],
@@ -87,11 +87,11 @@ const serviceSchema = {
 const tocItems = [
   { href: "#can-you-diy", label: "Can you build a pickleball court yourself?" },
   { href: "#what-you-can-do", label: "What you CAN do yourself" },
-  { href: "#what-goes-wrong", label: "What usually goes wrong with DIY courts" },
+  { href: "#what-goes-wrong", label: "Common pitfalls to watch for" },
   { href: "#temporary-vs-permanent", label: "Temporary vs. permanent: choose your path" },
   { href: "#pro-process", label: "How professional surfacing actually works" },
   { href: "#cost-comparison", label: "The real cost comparison: DIY vs. pro" },
-  { href: "#when-to-call", label: "When to call a pro" },
+  { href: "#when-to-call", label: "When professional surfacing makes sense" },
   { href: "#faq", label: "DIY pickleball court FAQs" },
 ];
 
@@ -114,11 +114,11 @@ const faqItems = [
   },
   {
     question: "Can I resurface a court myself?",
-    answer: "It\u2019s not recommended. Proper resurfacing requires acid etching or shot-blasting to remove laitance, bird bath fills per ASBA nickel tolerance standards, and 2\u20134 coats of acrylic applied with parallel squeegee technique keeping a wet edge at all times. DIY attempts commonly result in adhesion failure, uneven texture, and premature coating failure within 1\u20132 years.",
+    answer: "It\u2019s possible but involves a steep learning curve. Proper resurfacing requires acid etching or shot-blasting to remove laitance, bird bath fills per ASBA nickel tolerance standards, and 2\u20134 coats of acrylic applied with parallel squeegee technique keeping a wet edge at all times. The more you understand the process before starting, the better your results will be.",
   },
   {
     question: "How long does a DIY court surface last vs professional?",
-    answer: "A DIY acrylic surface application may fail in 1\u20132 years due to application errors \u2014 uneven coats, wrong temperature at application, or improper mixing. Professional surfacing with a system like ATS Acrytech lasts 6\u20138+ years with basic maintenance.",
+    answer: "Results depend on how well the prep and application are done. Professional surfacing with a system like ATS Acrytech typically lasts 6\u20138+ years with basic maintenance. DIY longevity varies \u2014 proper surface prep, correct mixing, and good squeegee technique are the biggest factors.",
   },
   {
     question: "Do I need a permit to build a pickleball court?",
@@ -144,7 +144,7 @@ export default function DIYPickleballCourtPage() {
         readTime="10 min read"
         title="DIY Pickleball Court |"
         titleAccent="What You Can Do Yourself vs. What Needs a Pro"
-        subtitle="Honest guide to what homeowners can tackle themselves and where DIY pickleball court projects run into trouble. We won't talk you out of DIY — we'll help you do it right."
+        subtitle="Everything you need to know to plan a pickleball court project — what's straightforward to do yourself, what takes specialized knowledge, and how to get the best result either way."
       />
 
       <article className="max-w-3xl mx-auto px-6 py-12">
@@ -164,7 +164,7 @@ export default function DIYPickleballCourtPage() {
         </nav>
 
         {/* Intro */}
-        <p className="text-brand-text-muted leading-relaxed mb-8">You want a pickleball court in your backyard. The question is: how much of this can you actually do yourself? The honest answer is {"\u2014"} parts of it, absolutely. A temporary court on your driveway is a weekend project. But a permanent court with a poured slab and acrylic surfacing? That{"\u2019"}s where most DIY projects hit a wall. This guide breaks down exactly what you can handle yourself and where hiring a pro saves you money in the long run.</p>
+        <p className="text-brand-text-muted leading-relaxed mb-8">You want a pickleball court in your backyard. The question is: how much of this can you actually do yourself? A temporary court on your driveway is a weekend project. A permanent court with a poured slab and acrylic surfacing has more moving parts. This guide breaks down the full process so you know what to expect at every stage {"\u2014"} whether you do it yourself, hire it out, or a mix of both.</p>
 
         {/* Can You DIY? */}
         <section id="can-you-diy">
@@ -189,9 +189,9 @@ export default function DIYPickleballCourtPage() {
             <div className="p-5 bg-white border border-gray-200 rounded-xl">
               <div className="flex items-center gap-2 mb-2">
                 <h3 className="text-base font-semibold text-brand-text">Concrete slab + acrylic surfacing</h3>
-                <span className="text-xs font-semibold text-red-700 bg-red-100 px-2 py-0.5 rounded-full">Hire a pro</span>
+                <span className="text-xs font-semibold text-blue-700 bg-blue-100 px-2 py-0.5 rounded-full">Specialized work</span>
               </div>
-              <p className="text-sm text-brand-text-muted leading-relaxed">The concrete slab requires a contractor no matter what. The acrylic surfacing is where most DIYers get into trouble {"\u2014"} it requires specialized equipment, specific weather conditions, and experience to apply correctly. A bad application can ruin a $12,000+ slab.</p>
+              <p className="text-sm text-brand-text-muted leading-relaxed">The concrete slab requires a contractor either way. The acrylic surfacing requires specialized equipment, specific weather conditions, and technique that takes time to learn. Understanding the process helps you make the right call for your project and budget.</p>
             </div>
           </div>
         </section>
@@ -231,38 +231,38 @@ export default function DIYPickleballCourtPage() {
 
         {/* What Goes Wrong */}
         <section id="what-goes-wrong">
-          <h2 className="text-3xl font-bold text-brand-text mt-12 mb-4">What usually goes wrong with DIY courts</h2>
-          <p className="text-brand-text-muted leading-relaxed mb-6">We see failed DIY courts regularly. Here are the six most common problems {"\u2014"} and why they{"\u2019"}re expensive to fix.</p>
+          <h2 className="text-3xl font-bold text-brand-text mt-12 mb-4">Common pitfalls to watch for</h2>
+          <p className="text-brand-text-muted leading-relaxed mb-6">Whether you{"\u2019"}re doing the work yourself or managing a contractor, these are the six issues that cause the most problems with court projects. Knowing them upfront helps you avoid them.</p>
 
           <div className="space-y-4 my-8">
             <div className="p-5 bg-white border border-gray-200 rounded-xl">
               <h3 className="text-base font-semibold text-brand-text mb-2">1. Flat slab or bad site drainage</h3>
-              <p className="text-sm text-brand-text-muted leading-relaxed">The number one problem we see: the court is poured flat with no slope, or it{"\u2019"}s built in a low-lying area without being raised over a proper base or substrate. Without a minimum 1% slope, the court holds water {"\u2014"} forever. Standing water causes mold, accelerates surface failure, and makes the court unplayable for days after rain. In Central Texas, where we get sudden heavy downpours, drainage isn{"\u2019"}t optional.</p>
+              <p className="text-sm text-brand-text-muted leading-relaxed">The most common issue with any court project: the slab is poured flat with no slope, or it{"\u2019"}s built in a low-lying area without being raised over a proper base or substrate. You need a minimum 1% slope so water sheds off. Without it, the court holds water after every rain. In Central Texas, where we get sudden heavy downpours, this is worth getting right from the start.</p>
             </div>
             <div className="p-5 bg-white border border-gray-200 rounded-xl">
               <h3 className="text-base font-semibold text-brand-text mb-2">2. No vapor barrier</h3>
-              <p className="text-sm text-brand-text-muted leading-relaxed">If the slab wasn{"\u2019"}t prepped with a vapor barrier underneath, moisture will constantly emit through the concrete from below. This causes adhesion failure, bubbling, and delamination of the acrylic surface. There are topside vapor barrier solutions, but even those can still fail depending on how much moisture the slab is transmitting. This is extremely difficult to fix after the fact.</p>
+              <p className="text-sm text-brand-text-muted leading-relaxed">If the slab isn{"\u2019"}t prepped with a vapor barrier underneath, moisture emits through the concrete from below. This can cause adhesion issues, bubbling, and delamination of the acrylic surface over time. There are topside vapor barrier solutions, but results vary depending on how much moisture the slab is transmitting. Something to discuss with your concrete contractor before the pour.</p>
             </div>
             <div className="p-5 bg-white border border-gray-200 rounded-xl">
-              <h3 className="text-base font-semibold text-brand-text mb-2">3. Bad concrete</h3>
-              <p className="text-sm text-brand-text-muted leading-relaxed">Low PSI concrete, shitty mix design, or curing agents left in the concrete that destroy adhesion of the acrylic coating. The slab needs to be 4{"\u2033"} minimum at 3,000 PSI with proper rebar or wire mesh. Curing compounds are especially problematic {"\u2014"} they create a film on the surface that prevents the acrylic from bonding. A bad slab means the entire court fails, and you can{"\u2019"}t fix a slab without tearing it out.</p>
+              <h3 className="text-base font-semibold text-brand-text mb-2">3. Concrete spec matters</h3>
+              <p className="text-sm text-brand-text-muted leading-relaxed">The slab needs to be 4{"\u2033"} minimum at 3,000 PSI with proper rebar or wire mesh. Low PSI concrete, poor mix design, or curing agents left in the concrete can all affect adhesion of the acrylic coating. Curing compounds are especially worth asking your concrete contractor about {"\u2014"} they create a film on the surface that can prevent acrylic from bonding properly. Make sure your contractor knows the slab is getting a sport court coating.</p>
             </div>
             <div className="p-5 bg-white border border-gray-200 rounded-xl">
-              <h3 className="text-base font-semibold text-brand-text mb-2">4. Lack of proper surface prep</h3>
-              <p className="text-sm text-brand-text-muted leading-relaxed">An acid etch on a broom finish is generally THE MINIMUM acceptable prep. For concrete that{"\u2019"}s lower PSI or mixes that produce more laitance (the calcium layer that rises to the surface during curing), you need to grind or shot-blast it off. We do this to save headaches later {"\u2014"} if laitance is left on, the acrylic bonds to the laitance layer instead of the concrete, and eventually the whole coating delaminates in sheets. DIYers almost always skip this step.</p>
+              <h3 className="text-base font-semibold text-brand-text mb-2">4. Surface prep before coating</h3>
+              <p className="text-sm text-brand-text-muted leading-relaxed">An acid etch on a broom finish is generally THE MINIMUM acceptable prep before applying acrylic. For concrete that{"\u2019"}s lower PSI or mixes that produce more laitance (the calcium layer that rises to the surface during curing), you{"\u2019"}ll want to grind or shot-blast it off. If laitance is left on, the acrylic bonds to that weak layer instead of the concrete itself {"\u2014"} and over time the coating can delaminate in sheets. This step is easy to overlook but makes a big difference in longevity.</p>
             </div>
             <div className="p-5 bg-white border border-gray-200 rounded-xl">
-              <h3 className="text-base font-semibold text-brand-text mb-2">5. Skipping bird bath fills</h3>
-              <p className="text-sm text-brand-text-muted leading-relaxed">Per ASBA (American Sports Builders Association) standards, you flood the court, wait 40 minutes, and then fill any puddles that remain that are over a nickel high {"\u2014"} this is called {"\u201C"}nickel tolerance.{"\u201D"} Those small low spots may not look like much, but they hold water after rain and create the puddles that destroy your surface over time. DIYers either don{"\u2019"}t know about this step or skip it because it{"\u2019"}s tedious.</p>
+              <h3 className="text-base font-semibold text-brand-text mb-2">5. Bird bath fills (nickel tolerance)</h3>
+              <p className="text-sm text-brand-text-muted leading-relaxed">Per ASBA (American Sports Builders Association) standards, you flood the court, wait 40 minutes, and then fill any puddles that remain that are over a nickel high {"\u2014"} this is called {"\u201C"}nickel tolerance.{"\u201D"} Those small low spots may not look like much, but they hold water after rain and become the puddles that shorten your surface{"\u2019"}s life. It{"\u2019"}s tedious work but worth doing right.</p>
             </div>
             <div className="p-5 bg-white border border-gray-200 rounded-xl">
-              <h3 className="text-base font-semibold text-brand-text mb-2">6. Poor squeegee technique</h3>
-              <p className="text-sm text-brand-text-muted leading-relaxed">Squeegeeing acrylic coating is an art, not a science. You have to keep a wet edge at all times and make your passes parallel. Squeegee marks are inevitable {"\u2014"} even pros leave them {"\u2014"} but they need to be parallel so the finished surface looks clean and uniform. DIYers leave random, crossed squeegee marks that look terrible, create uneven texture, and affect ball bounce. This is one of those things that looks easy until you try it on a 1,800+ sq ft surface.</p>
+              <h3 className="text-base font-semibold text-brand-text mb-2">6. Squeegee technique</h3>
+              <p className="text-sm text-brand-text-muted leading-relaxed">Squeegeeing acrylic coating is an art, not a science. The key is keeping a wet edge at all times and making your passes parallel. Squeegee marks are inevitable {"\u2014"} even pros leave them {"\u2014"} but they need to be parallel so the finished surface looks clean and uniform. Random, crossed squeegee marks create uneven texture and affect ball bounce. It{"\u2019"}s one of those things that looks straightforward until you{"\u2019"}re doing it across 1,800+ sq ft.</p>
             </div>
           </div>
 
           <blockquote className="border-l-[3px] border-brand-blue pl-5 py-3 my-8 bg-blue-50 rounded-r-lg">
-            <p className="text-brand-text italic">The most expensive DIY pickleball court is the one you pay to build twice. We{"\u2019"}ve resurfaced dozens of courts where the homeowner tried DIY first and ended up spending more total than if they{"\u2019"}d hired a pro from the start.</p>
+            <p className="text-brand-text italic">The more you understand about the process upfront, the better your court will turn out {"\u2014"} whether you do it yourself or bring someone in. Most of these pitfalls come down to knowing what to look for before you start.</p>
           </blockquote>
         </section>
 
@@ -302,7 +302,7 @@ export default function DIYPickleballCourtPage() {
         {/* Pro Process */}
         <section id="pro-process">
           <h2 className="text-3xl font-bold text-brand-text mt-12 mb-4">How professional surfacing actually works</h2>
-          <p className="text-brand-text-muted leading-relaxed mb-6">Understanding the pro process helps explain why it{"\u2019"}s hard to replicate as a DIYer. Here{"\u2019"}s what a professional court surfacing crew does.</p>
+          <p className="text-brand-text-muted leading-relaxed mb-6">Here{"\u2019"}s what the full surfacing process looks like from start to finish, so you know what{"\u2019"}s involved at each stage.</p>
 
           <div className="space-y-6 my-8">
             {[
@@ -330,7 +330,7 @@ export default function DIYPickleballCourtPage() {
         {/* Cost Comparison */}
         <section id="cost-comparison">
           <h2 className="text-3xl font-bold text-brand-text mt-12 mb-4">The real cost comparison: DIY vs. pro</h2>
-          <p className="text-brand-text-muted leading-relaxed mb-6">Let{"\u2019"}s break down the actual numbers. The biggest misconception is that DIY saves a huge amount {"\u2014"} in reality, the savings are only on the surfacing portion, and they come with significant risk.</p>
+          <p className="text-brand-text-muted leading-relaxed mb-6">Here{"\u2019"}s what the numbers actually look like. The main cost difference between DIY and professional is in the surfacing portion {"\u2014"} the concrete slab is the same cost either way.</p>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 my-8">
             <div className="p-5 bg-white border border-gray-200 rounded-xl">
@@ -343,7 +343,7 @@ export default function DIYPickleballCourtPage() {
                 <li className="flex justify-between"><span>Wasted material (learning curve)</span><span className="font-semibold text-brand-text">$300{"\u2013"}$600</span></li>
                 <li className="flex justify-between border-t border-gray-200 pt-2 mt-2"><span className="font-semibold text-brand-text">DIY total</span><span className="font-bold text-brand-text">$1,500{"\u2013"}$3,000</span></li>
               </ul>
-              <p className="text-xs text-brand-text-muted mt-3">Risk: Surface may fail in 1{"\u2013"}2 years. No warranty.</p>
+              <p className="text-xs text-brand-text-muted mt-3">Results depend on application technique and conditions.</p>
             </div>
             <div className="p-5 bg-white border border-gray-200 rounded-xl">
               <h3 className="text-base font-semibold text-brand-text mb-3">Professional Surfacing</h3>
@@ -355,7 +355,7 @@ export default function DIYPickleballCourtPage() {
                 <li className="flex justify-between"><span>Equipment and labor</span><span className="font-semibold text-brand-text">Included</span></li>
                 <li className="flex justify-between border-t border-gray-200 pt-2 mt-2"><span className="font-semibold text-brand-text">Pro total</span><span className="font-bold text-brand-text">$6,000{"\u2013"}$12,000</span></li>
               </ul>
-              <p className="text-xs text-brand-text-muted mt-3">Done right the first time. Lasts 6{"\u2013"}8+ years with warranty.</p>
+              <p className="text-xs text-brand-text-muted mt-3">Typical lifespan: 6{"\u2013"}8+ years with basic maintenance.</p>
             </div>
           </div>
 
@@ -364,36 +364,36 @@ export default function DIYPickleballCourtPage() {
             <div className="space-y-2 text-sm text-brand-text-muted">
               <p><strong className="text-brand-text">Concrete slab:</strong> $12,000{"\u2013"}$25,000 either way {"\u2014"} you{"\u2019"}re hiring a concrete contractor regardless.</p>
               <p><strong className="text-brand-text">DIY surfacing saves:</strong> $4,000{"\u2013"}$8,000 upfront on the surfacing portion.</p>
-              <p><strong className="text-brand-text">The risk:</strong> A failed DIY surface means paying for professional resurfacing anyway {"\u2014"} plus stripping costs. You end up spending more total to get to the same result.</p>
+              <p><strong className="text-brand-text">Worth considering:</strong> If a DIY surface needs to be redone, stripping and resurfacing adds cost on top of the original materials. Factor that into your decision.</p>
             </div>
           </div>
 
-          <CalloutBox title="Think About It This Way">
-            <p>The concrete slab is the biggest investment in any court project ($12,000{"\u2013"}$25,000). Professional surfacing protects that investment for 6{"\u2013"}8+ years. DIY surfacing risks premature failure that can damage the slab itself through moisture intrusion and delamination. Saving $4K{"\u2013"}$8K on surfacing is not worth risking a $12K+ slab.</p>
+          <CalloutBox title="The Big Picture">
+            <p>The concrete slab is the biggest line item in any court project ($12,000{"\u2013"}$25,000). The surfacing is what protects it and gives you the playing surface. However you approach the surfacing {"\u2014"} DIY or professional {"\u2014"} make sure the prep work and application are done thoroughly. The surface is what takes all the weather, UV, and foot traffic.</p>
           </CalloutBox>
         </section>
 
         {/* When to Call a Pro */}
         <section id="when-to-call">
-          <h2 className="text-3xl font-bold text-brand-text mt-12 mb-4">When to call a pro</h2>
-          <p className="text-brand-text-muted leading-relaxed mb-6">Here{"\u2019"}s a simple decision framework.</p>
+          <h2 className="text-3xl font-bold text-brand-text mt-12 mb-4">When professional surfacing makes sense</h2>
+          <p className="text-brand-text-muted leading-relaxed mb-6">Here are the scenarios where most homeowners bring in a pro.</p>
 
           <div className="space-y-4 my-8">
             <div className="p-5 bg-white border border-gray-200 rounded-xl">
               <h3 className="text-base font-semibold text-brand-text mb-2">You have an existing slab that needs resurfacing</h3>
-              <p className="text-sm text-brand-text-muted leading-relaxed">Definitely hire a pro. Acrylic surfacing over existing concrete is the core of what we do. The prep work (crack filling, leveling, priming) and multi-coat application require professional equipment and technique. See our <Link href="/blog/pickleball-court-conversion" className="text-brand-blue hover:underline">conversion guide</Link> for what{"\u2019"}s involved.</p>
+              <p className="text-sm text-brand-text-muted leading-relaxed">Acrylic surfacing over existing concrete involves prep work (crack filling, leveling, priming) and multi-coat application that benefits from professional equipment and experience. See our <Link href="/blog/pickleball-court-conversion" className="text-brand-blue hover:underline">conversion guide</Link> for what{"\u2019"}s involved in the process.</p>
             </div>
             <div className="p-5 bg-white border border-gray-200 rounded-xl">
-              <h3 className="text-base font-semibold text-brand-text mb-2">You want a permanent court that lasts 8+ years</h3>
-              <p className="text-sm text-brand-text-muted leading-relaxed">Hire a pro. Professional acrylic systems applied correctly are built to last. We use ATS Acrytech, Laykold, and SportMaster {"\u2014"} all PPA-approved systems designed for the Texas climate.</p>
+              <h3 className="text-base font-semibold text-brand-text mb-2">You want maximum longevity</h3>
+              <p className="text-sm text-brand-text-muted leading-relaxed">Professional acrylic systems like ATS Acrytech, Laykold, and SportMaster are PPA-approved and designed for the Texas climate. Applied correctly, they{"\u2019"}re built to last 6{"\u2013"}8+ years.</p>
             </div>
             <div className="p-5 bg-white border border-gray-200 rounded-xl">
-              <h3 className="text-base font-semibold text-brand-text mb-2">You see cracks, delamination, or drainage issues</h3>
-              <p className="text-sm text-brand-text-muted leading-relaxed">Hire a pro. These are structural problems that need proper diagnosis and repair before any surfacing can happen. Painting over cracks just hides the problem temporarily. Our <Link href="/blog/court-repair" className="text-brand-blue hover:underline">court repair guide</Link> covers what to look for.</p>
+              <h3 className="text-base font-semibold text-brand-text mb-2">You{"\u2019"}re dealing with cracks, delamination, or drainage issues</h3>
+              <p className="text-sm text-brand-text-muted leading-relaxed">These are structural problems that need diagnosis and repair before any surfacing. Understanding what{"\u2019"}s causing them helps you choose the right fix. Our <Link href="/blog/court-repair" className="text-brand-blue hover:underline">court repair guide</Link> covers what to look for.</p>
             </div>
             <div className="p-5 bg-white border border-gray-200 rounded-xl">
-              <h3 className="text-base font-semibold text-brand-text mb-2">You just want to try pickleball</h3>
-              <p className="text-sm text-brand-text-muted leading-relaxed">Buy a portable net and play on your driveway first. Seriously. Spend $200, not $20,000. If you{"\u2019"}re still playing every week three months from now, then talk to us about a permanent court.</p>
+              <h3 className="text-base font-semibold text-brand-text mb-2">You{"\u2019"}re still deciding</h3>
+              <p className="text-sm text-brand-text-muted leading-relaxed">Start with a portable net on your driveway for $200. Play on it for a few months. If you{"\u2019"}re still out there every week, you{"\u2019"}ll know it{"\u2019"}s time to invest in a permanent court.</p>
             </div>
           </div>
         </section>
@@ -418,7 +418,7 @@ export default function DIYPickleballCourtPage() {
           </ul>
         </div>
 
-        <BlogCTA title="Ready for a Court That Lasts?" description="Get a free assessment from Pro Court Surfaces. We'll evaluate your space, recommend the right approach, and give you an honest quote. No pressure, no obligation." />
+        <BlogCTA title="Have Questions About Your Court Project?" description="We're happy to talk through your project — whether you're doing it yourself, hiring it out, or still deciding. Free assessment, no obligation." />
       </article>
 
       <CTABanner />
