@@ -371,6 +371,7 @@ export default function TennisCourtDimensionsPage() {
             <li><Link href="/blog/court-surface-types" className="text-brand-blue hover:underline">Compare court surface types: acrylic vs. clay vs. grass vs. synthetic</Link></li>
             <li><Link href="/blog/court-maintenance" className="text-brand-blue hover:underline">Court maintenance guide: cleaning schedules and pressure washing tips</Link></li>
             <li><Link href="/blog/court-repair" className="text-brand-blue hover:underline">Court repair: crack filling, patching, and structural fixes</Link></li>
+            <li><Link href="/blog/pickleball-court-dimensions" className="text-brand-blue hover:underline">Pickleball court dimensions: official size and spacing guide</Link></li>
           </ul>
         </div>
 

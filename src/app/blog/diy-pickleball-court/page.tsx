@@ -414,6 +414,7 @@ export default function DIYPickleballCourtPage() {
             <li><Link href="/blog/court-surface-types" className="text-brand-blue hover:underline">Compare court surface types: acrylic vs. tile vs. cushion vs. turf</Link></li>
             <li><Link href="/blog/court-maintenance" className="text-brand-blue hover:underline">Court maintenance guide: cleaning schedules and pressure washing tips</Link></li>
             <li><Link href="/blog/court-repair" className="text-brand-blue hover:underline">Court repair guide: cracks, delamination, and when to resurface</Link></li>
+            <li><Link href="/blog/pickleball-court-dimensions" className="text-brand-blue hover:underline">Pickleball court dimensions: official size and spacing guide</Link></li>
           </ul>
         </div>
 

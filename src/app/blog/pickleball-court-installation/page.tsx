@@ -283,6 +283,7 @@ export default function PickleballCourtInstallationPage() {
             <li><Link href="/blog/court-surface-types" className="text-brand-blue hover:underline">Compare court surface types: acrylic vs. tile vs. cushion vs. turf</Link></li>
             <li><Link href="/blog/backyard-pickleball-court" className="text-brand-blue hover:underline">Backyard pickleball court: cost, size, and build guide</Link></li>
             <li><Link href="/blog/pickleball-court-conversion" className="text-brand-blue hover:underline">Convert a tennis court to pickleball: layout, cost, and process</Link></li>
+            <li><Link href="/blog/pickleball-court-dimensions" className="text-brand-blue hover:underline">Pickleball court dimensions: official size and spacing guide</Link></li>
             <li><Link href="/commercial" className="text-brand-blue hover:underline">Request a court surfacing bid (48-hour turnaround)</Link></li>
           </ul>
         </div>

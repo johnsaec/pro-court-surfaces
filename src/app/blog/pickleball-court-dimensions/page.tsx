@@ -350,6 +350,8 @@ export default function PickleballCourtDimensionsPage() {
             <li><Link href="/blog/pickleball-court-conversion" className="text-brand-blue hover:underline">Pickleball court conversion: tennis and basketball court conversions</Link></li>
             <li><Link href="/blog/pickleball-court-installation" className="text-brand-blue hover:underline">Pickleball court installation: dimensions, specs, and pricing</Link></li>
             <li><Link href="/blog/court-surface-types" className="text-brand-blue hover:underline">Compare court surface types: acrylic vs. tile vs. cushion vs. turf</Link></li>
+            <li><Link href="/blog/diy-pickleball-court" className="text-brand-blue hover:underline">DIY pickleball court: what you can do yourself vs. what needs a pro</Link></li>
+            <li><Link href="/blog/tennis-court-dimensions" className="text-brand-blue hover:underline">Tennis court dimensions: official size, layout, and space requirements</Link></li>
           </ul>
         </div>
 

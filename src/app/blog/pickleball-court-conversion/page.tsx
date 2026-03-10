@@ -299,6 +299,8 @@ export default function PickleballCourtConversionPage() {
             <li><Link href="/blog/pickleball-court-installation" className="text-brand-blue hover:underline">Pickleball court installation: dimensions, specs, and pricing</Link></li>
             <li><Link href="/blog/backyard-pickleball-court" className="text-brand-blue hover:underline">Backyard pickleball court: cost, size, and build guide</Link></li>
             <li><Link href="/blog/court-construction-costs" className="text-brand-blue hover:underline">Court construction costs in Texas (2026)</Link></li>
+            <li><Link href="/blog/pickleball-court-dimensions" className="text-brand-blue hover:underline">Pickleball court dimensions: official size and spacing guide</Link></li>
+            <li><Link href="/blog/diy-pickleball-court" className="text-brand-blue hover:underline">DIY pickleball court: what you can do yourself vs. what needs a pro</Link></li>
           </ul>
         </div>
 
