@@ -24,6 +24,30 @@ const breadcrumbSchema = {
 
 const posts = [
   {
+    slug: "pickleball-court-conversion",
+    title: "Convert a Tennis Court to Pickleball: Cost, Layout & Process (2026)",
+    description: "How to convert a tennis or basketball court to pickleball. Costs, 4-court layouts, and what to expect from the conversion process in Austin, TX.",
+    date: "Mar 9, 2026",
+    readTime: "11 min read",
+    category: "Conversion Guide",
+  },
+  {
+    slug: "court-repair",
+    title: "Tennis & Pickleball Court Repair in Austin TX (2026)",
+    description: "Crack repair, delamination fixes, and low-spot leveling for tennis and pickleball courts. When to repair vs resurface in Austin, TX.",
+    date: "Mar 9, 2026",
+    readTime: "10 min read",
+    category: "Repair Guide",
+  },
+  {
+    slug: "court-maintenance",
+    title: "Tennis & Pickleball Court Maintenance Guide (2026)",
+    description: "Cleaning schedules, pressure washing tips, and seasonal maintenance for tennis and pickleball courts in Austin, TX.",
+    date: "Mar 9, 2026",
+    readTime: "9 min read",
+    category: "Maintenance Guide",
+  },
+  {
     slug: "backyard-pickleball-court",
     title: "Backyard Pickleball Court: Cost, Size & Build Guide (2026)",
     description: "How much does a backyard pickleball court cost? Full guide to sizing, surface options, concrete specs, and costs for homeowners in Austin and Central Texas.",
