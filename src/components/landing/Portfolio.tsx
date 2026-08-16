@@ -41,6 +41,30 @@ const projects = [
     caption: "Residential — Wimberley, TX",
     span: "",
   },
+  {
+    src: "https://res.cloudinary.com/dwyd4f7lz/image/upload/f_auto,q_auto,w_800/v1786902349/richardson_drone_finished_bht0ue.jpg",
+    alt: "Aerial drone view of a finished green and blue pickleball court conversion with crisp white lines in Richardson, Texas",
+    caption: "Tennis-to-Pickleball Conversion — Richardson, TX",
+    span: "sm:col-span-2",
+  },
+  {
+    src: "https://res.cloudinary.com/dwyd4f7lz/image/upload/f_auto,q_auto,w_800/v1786902350/wimberly_finishe_end_srsnsg.jpg",
+    alt: "Finished blue and green multi-sport basketball court with fresh striping in Wimberley, Texas",
+    caption: "Multi-Sport Court — Wimberley, TX",
+    span: "",
+  },
+  {
+    src: "https://res.cloudinary.com/dwyd4f7lz/image/upload/f_auto,q_auto,w_800/v1786902349/wahill_finished_side_vr6qqs.jpg",
+    alt: "Finished blue and gray residential backyard basketball court next to a pool with a stone and wood fence in Austin, Texas",
+    caption: "Backyard Basketball Court — Austin, TX",
+    span: "",
+  },
+  {
+    src: "https://res.cloudinary.com/dwyd4f7lz/image/upload/f_auto,q_auto,w_800/v1786902350/wimbrerly_primer_wje8rw.jpg",
+    alt: "Crew member applying primer coat during a court resurfacing project in Wimberley, Texas",
+    caption: "Resurfacing in Progress — Wimberley, TX",
+    span: "",
+  },
 ];
 
 export function Portfolio() {

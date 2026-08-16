@@ -29,6 +29,30 @@ const transformations = [
     },
     label: "Three-Color Custom Design",
   },
+  {
+    id: "wimberley-multisport",
+    before: {
+      src: "https://res.cloudinary.com/dwyd4f7lz/image/upload/f_auto,q_auto,w_800/v1786902349/wimberly_before_llpwkk.jpg",
+      alt: "Before photo of a worn, faded multi-sport tile court with cracked teal and maroon surface in Wimberley, Texas",
+    },
+    after: {
+      src: "https://res.cloudinary.com/dwyd4f7lz/image/upload/f_auto,q_auto,w_800/v1786902350/wimberly_finishe_end_srsnsg.jpg",
+      alt: "After photo of a freshly resurfaced blue and green multi-sport basketball court with crisp white lines in Wimberley, Texas",
+    },
+    label: "Multi-Sport Court — Wimberley, TX",
+  },
+  {
+    id: "richardson-pickleball",
+    before: {
+      src: "https://res.cloudinary.com/dwyd4f7lz/image/upload/f_auto,q_auto,w_800/v1786902350/richardson_before_side_f8mt9l.jpg",
+      alt: "Before photo of a weathered red and blue tennis court with faded surface before resurfacing in Richardson, Texas",
+    },
+    after: {
+      src: "https://res.cloudinary.com/dwyd4f7lz/image/upload/f_auto,q_auto,w_800/v1786902349/richardson_drone_finished_bht0ue.jpg",
+      alt: "Aerial drone view of a finished green and blue pickleball court conversion with fresh white striping in Richardson, Texas",
+    },
+    label: "Tennis-to-Pickleball Conversion — Richardson, TX",
+  },
 ];
 
 export function BeforeAfter() {
