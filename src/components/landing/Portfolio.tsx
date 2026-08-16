@@ -76,6 +76,13 @@ const projects: Project[] = [
     span: "sm:col-span-2",
     href: "/projects/georgetown-multi-sport-court",
   },
+  {
+    src: "https://res.cloudinary.com/dwyd4f7lz/image/upload/f_auto,q_auto,w_800/v1786904827/san_antonio_done_crlmsk.jpg",
+    alt: "Finished blue and gray pickleball court on a rural property near San Antonio, Texas",
+    caption: "Pickleball Court — San Antonio, TX",
+    span: "",
+    href: "/projects/san-antonio-pickleball-court",
+  },
 ];
 
 export function Portfolio() {

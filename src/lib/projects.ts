@@ -131,6 +131,46 @@ export const projects: Project[] = [
       "The finished layout combines a blue-and-gold basketball court with pickleball striping, wrapped in a gray border — built to hold up to Texas sun and daily play.",
     ],
   },
+  {
+    slug: "san-antonio-pickleball-court",
+    name: "San Antonio Pickleball Court",
+    location: "San Antonio, TX",
+    courtType: "Pickleball Court",
+    service: "New Surface Application",
+    category: "New Court Surface",
+    summary:
+      "A fresh slab on a rural San Antonio property surfaced into a tournament-blue pickleball court.",
+    metaTitle:
+      "New Pickleball Court Surface in San Antonio, TX | Pro Court Surfaces",
+    metaDescription:
+      "Case study: new acrylic pickleball court surface on a fresh concrete slab near San Antonio, TX. Tournament-blue playing surface with a gray surround and crisp striping.",
+    keywords:
+      "new pickleball court San Antonio TX, pickleball court installation San Antonio, pickleball court surfacing, acrylic court surface San Antonio, backyard pickleball court Texas",
+    hero: {
+      src: `${CL}/f_auto,q_auto,w_1600/v1786904827/san_antonio_done_crlmsk.jpg`,
+      alt: "Finished blue and gray pickleball court on a rural property near San Antonio, Texas",
+    },
+    before: {
+      src: `${CL}/f_auto,q_auto,w_1000/v1786904828/san_antonnio_before_xjwjv2.jpg`,
+      alt: "Primed blank concrete slab before pickleball court surfacing near San Antonio, Texas",
+    },
+    after: {
+      src: `${CL}/f_auto,q_auto,w_1000/v1786904827/san_antonio_done_crlmsk.jpg`,
+      alt: "Finished tournament-blue pickleball court with gray surround and white striping near San Antonio, Texas",
+    },
+    facts: [
+      { label: "Location", value: "San Antonio, TX" },
+      { label: "Court type", value: "Pickleball" },
+      { label: "Scope", value: "New surface application" },
+      { label: "Surface", value: "ATS Sports Acrytech acrylic" },
+      { label: "Timeline", value: "3–5 working days" },
+    ],
+    colors: ["Tournament Blue", "Gray", "White lines"],
+    body: [
+      "Out on a rural San Antonio property, the owner had a fresh slab ready for play. We ground and prepped the concrete, then built up the full acrylic surface.",
+      "The result is a clean tournament-blue pickleball court with a gray surround and crisp white lines — a regulation surface in the middle of Texas ranch country.",
+    ],
+  },
 ];
 
 export function getProject(slug: string): Project | undefined {
