@@ -23,18 +23,21 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJ...
 SUPABASE_SERVICE_ROLE_KEY=eyJ...
 STRIPE_SECRET_KEY=sk_test_... (real test key)
 NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_... (real test key)
-STRIPE_WEBHOOK_SECRET=whsec_9153291666c61eaab6fc12556f092826ee1d8c5c3408207a8f017214f13cf723
-RESEND_API_KEY=re_P3REV7rt_DsakgSyGQUeuKabhyFoVgVUP
+STRIPE_WEBHOOK_SECRET=whsec_... (see .env.local — do not commit real value)
+RESEND_API_KEY=re_... (see .env.local — do not commit real value)
 EMAIL_FROM=Pro Court Surfaces <quotes@procourtsurfaces.com>
 ```
 
-## Database Schema (19 migrations)
-Key tables: `customers`, `leads`, `projects`, `quotes`, `quote_packages`, `quote_line_items`, `quote_selections`, `quote_activity_log`
+## Database Schema (25 migrations)
+Key tables: `companies`, `customers`, `leads`, `quotes`, `quote_packages`, `quote_line_items`, `quote_selections`, `quote_activity_log`, `services_catalog`, `color_palette`
+
+> **NOTE:** The `projects` table was **dropped** in migration `00022` and its fields were flattened onto `quotes` (there is no `project_id` anymore). The `companies` account layer was added in `00025`.
 
 ### Important ENUMs
-- `quote_status`: draft, sent, viewed, accepted, declined, expired, deposit_paid, completed
-- `deal_stage`: new, contacted, qualified, proposal, negotiation, won, lost, converted
-- `project_type`: tennis_court, pickleball_court, basketball_court, multi_sport, other
+- `quote_status`: draft, sent, viewed, accepted, declined, expired, revised, deposit_paid, completed
+- `deal_stage`: cold, new_lead, qualified_lead, proposal_stage, proposal_sent, buyer_interested, won, lost, converted
+- `project_type`: new_court_full_build, new_court_surfacing_only, repair_resurfacing, conversion_tennis_to_pickleball, color_coating_only, crack_repair_only, other
+- `company_type`: general_contractor, builder, property_manager, hoa, school, municipality, homeowner, other
 
 ### Key Schema Details
 - `quotes` has BOTH `lead_id` (nullable) and `customer_id` (nullable) — one must be set (CHECK constraint)
@@ -45,16 +48,20 @@ Key tables: `customers`, `leads`, `projects`, `quotes`, `quote_packages`, `quote
 - `quotes.selected_package` — 'good', 'better', 'best' (set by customer on public page)
 - Court colors: `quotes.color_inside`, `quotes.color_outside`, `quotes.color_lines`
 - Pricing: `quotes.final_total` (after any adjustments to calculated total)
-- `leads` table has: first_name, last_name, email, phone, company, address_line1, city, state (default 'TX'), zip
+- `quotes.payment_schedule` JSONB — NULL = standard 50/50; array of `{label, amount}` = custom milestones
+- Court colors also include NVZ (kitchen): `quotes.color_nvz_id`, `quote_selections.color_nvz`
+- `leads` table has: first_name, last_name, email, phone, city, address_line1, state (default 'TX'), zip (NO `company` column — use `company_id` FK instead)
+- `leads` UTM attribution: first-touch `ft_*` and last-touch `lt_*` columns (source/medium/campaign/content/term/channel/referrer/landing_page/click_id/click_id_type/timestamp)
+- `companies` (account layer): `customers.company_id` and `leads.company_id` are nullable FKs → `companies.id`. One company → many contacts → many quotes. Quotes reach a company through their `customer`
 
 ## File Structure
 ```
 src/
 ├── app/
 │   ├── admin/
-│   │   ├── customers/          # Customer CRUD
+│   │   ├── companies/          # Company/account CRUD (GCs, builders, HOAs)
+│   │   ├── customers/          # Customer (contact) CRUD
 │   │   ├── leads/              # Lead management
-│   │   ├── projects/           # Project management
 │   │   └── quotes/
 │   │       ├── page.tsx        # Quotes list
 │   │       ├── new/page.tsx    # Create quote
@@ -96,7 +103,7 @@ src/
 ## Quote Builder Architecture
 The quote builder uses a **reducer pattern** with 8 phases:
 1. Customer/Lead Selection (tabs: Lead | Existing Customer)
-2. Project Details (court type, dimensions, location)
+2. Project Details (court type, dimensions, location) — these fields live directly on `quotes` now (the `projects` table was removed in 00022)
 3. Court Assessment (surface condition, repairs needed)
 4. Scope of Work (package tiers: Good/Better/Best)
 5. Line Items (per-package pricing, quantities, unit costs)
@@ -123,7 +130,7 @@ Each quote has 3 packages (Good, Better, Best) with different line items and tot
 8. Stripe webhook (`invoice.paid` for balance invoice) → updates quote status to `completed`
 
 ## What's Done (Sprints 1-5)
-- ✅ Full admin CRUD (customers, leads, projects, quotes)
+- ✅ Full admin CRUD (companies, customers, leads, quotes)
 - ✅ Quote Builder with 8 phases, 3 package tiers, line items
 - ✅ Customer-facing quote page at /q/[share_token]
 - ✅ Package selector and court color diagram on public page
@@ -144,9 +151,10 @@ Each quote has 3 packages (Good, Better, Best) with different line items and tot
 
 ## Development Notes
 - **Stripe CLI for webhooks:** Run `stripe listen --forward-to localhost:3000/api/stripe/webhook` in a separate terminal alongside `npm run dev`
-- **Supabase migrations:** Located in `/supabase/migrations/` — 19 migrations total. Run via Supabase CLI or dashboard SQL editor
+- **Supabase migrations:** Located in `/supabase/migrations/` — 25 migrations total. Run via Supabase CLI or dashboard SQL editor
 - **Column naming:** Use `color_inside`, `color_outside`, `color_lines` (not `interior_color` etc.) and `final_total` (not `total`)
 - **Lead vs Customer:** Most quotes are for leads. The `lead_id`/`customer_id` pattern with CHECK constraint enforces one must be set
+- **Company vs Customer:** A `customer` is a *person/contact*; a `company` is the *account* (GC, builder, HOA). A contact optionally belongs to a company via `customers.company_id`. Quotes always attach to a contact, never directly to a company
 - **Logo storage:** Put brand assets in `/public/` folder — served statically by Next.js
 
 ## Conventions

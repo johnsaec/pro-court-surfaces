@@ -24,6 +24,28 @@ export const DEAL_STAGE_COLORS: Record<string, string> = {
   converted: "bg-emerald-100 text-emerald-700",
 };
 
+export const COMPANY_TYPE_LABELS: Record<string, string> = {
+  general_contractor: "General Contractor",
+  builder: "Builder",
+  property_manager: "Property Manager",
+  hoa: "HOA",
+  school: "School",
+  municipality: "Municipality",
+  homeowner: "Homeowner",
+  other: "Other",
+};
+
+export const COMPANY_TYPE_COLORS: Record<string, string> = {
+  general_contractor: "bg-blue-100 text-blue-700",
+  builder: "bg-indigo-100 text-indigo-700",
+  property_manager: "bg-cyan-100 text-cyan-700",
+  hoa: "bg-teal-100 text-teal-700",
+  school: "bg-amber-100 text-amber-700",
+  municipality: "bg-purple-100 text-purple-700",
+  homeowner: "bg-gray-100 text-gray-700",
+  other: "bg-gray-100 text-gray-700",
+};
+
 export const LEAD_SOURCE_LABELS: Record<string, string> = {
   inbound: "Inbound",
   outbound: "Outbound",

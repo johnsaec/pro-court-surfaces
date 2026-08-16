@@ -3,10 +3,9 @@
 import { revalidatePath } from "next/cache";
 import { createServerClient } from "@/lib/supabase/server";
 
-export type CustomerFormData = {
-  display_name: string;
-  first_name?: string;
-  last_name?: string;
+export type CompanyFormData = {
+  name: string;
+  company_type?: string;
   email?: string;
   phone?: string;
   address_line1?: string;
@@ -14,19 +13,17 @@ export type CustomerFormData = {
   city?: string;
   state?: string;
   zip?: string;
-  company_id?: string | null;
   notes?: string;
   tags?: string[];
 };
 
-export async function createCustomer(
-  data: CustomerFormData
+export async function createCompany(
+  data: CompanyFormData
 ): Promise<{ success: boolean; error?: string }> {
   const supabase = createServerClient();
-  const { error } = await supabase.from("customers").insert({
-    display_name: data.display_name,
-    first_name: data.first_name || null,
-    last_name: data.last_name || null,
+  const { error } = await supabase.from("companies").insert({
+    name: data.name,
+    company_type: data.company_type || "other",
     email: data.email || null,
     phone: data.phone || null,
     address_line1: data.address_line1 || null,
@@ -34,27 +31,25 @@ export async function createCustomer(
     city: data.city || null,
     state: data.state || "TX",
     zip: data.zip || null,
-    company_id: data.company_id || null,
     notes: data.notes || null,
     tags: data.tags?.length ? data.tags : null,
   });
 
   if (error) return { success: false, error: error.message };
-  revalidatePath("/admin/customers");
+  revalidatePath("/admin/companies");
   return { success: true };
 }
 
-export async function updateCustomer(
+export async function updateCompany(
   id: string,
-  data: CustomerFormData
+  data: CompanyFormData
 ): Promise<{ success: boolean; error?: string }> {
   const supabase = createServerClient();
   const { error } = await supabase
-    .from("customers")
+    .from("companies")
     .update({
-      display_name: data.display_name,
-      first_name: data.first_name || null,
-      last_name: data.last_name || null,
+      name: data.name,
+      company_type: data.company_type || "other",
       email: data.email || null,
       phone: data.phone || null,
       address_line1: data.address_line1 || null,
@@ -62,24 +57,25 @@ export async function updateCustomer(
       city: data.city || null,
       state: data.state || "TX",
       zip: data.zip || null,
-      company_id: data.company_id || null,
       notes: data.notes || null,
       tags: data.tags?.length ? data.tags : null,
     })
     .eq("id", id);
 
   if (error) return { success: false, error: error.message };
-  revalidatePath("/admin/customers");
+  revalidatePath("/admin/companies");
+  revalidatePath(`/admin/companies/${id}`);
   return { success: true };
 }
 
-export async function deleteCustomer(
+export async function deleteCompany(
   id: string
 ): Promise<{ success: boolean; error?: string }> {
   const supabase = createServerClient();
-  const { error } = await supabase.from("customers").delete().eq("id", id);
+  // Contacts/leads keep their history; company_id is set NULL by the FK.
+  const { error } = await supabase.from("companies").delete().eq("id", id);
 
   if (error) return { success: false, error: error.message };
-  revalidatePath("/admin/customers");
+  revalidatePath("/admin/companies");
   return { success: true };
 }

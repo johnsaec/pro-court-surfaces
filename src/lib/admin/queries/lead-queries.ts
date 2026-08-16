@@ -38,6 +38,7 @@ export type Lead = {
   form_type: string | null;
   second_step_complete: boolean;
   customer_id: string | null;
+  company_id: string | null;
   converted_at: string | null;
   notion_page_id: string | null;
   address_line1: string | null;

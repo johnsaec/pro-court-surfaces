@@ -59,6 +59,7 @@ export async function acceptQuote(payload: AcceptPayload) {
         address_line1: lead.address_line1 ?? null,
         state: lead.state ?? "TX",
         zip: lead.zip ?? null,
+        company_id: lead.company_id ?? null,
       })
       .select("id")
       .single();

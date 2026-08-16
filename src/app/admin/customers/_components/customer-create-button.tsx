@@ -5,7 +5,11 @@ import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CustomerDialog } from "./customer-dialog";
 
-export function CustomerCreateButton() {
+export function CustomerCreateButton({
+  companies = [],
+}: {
+  companies?: { id: string; name: string }[];
+}) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -13,7 +17,11 @@ export function CustomerCreateButton() {
       <Button onClick={() => setOpen(true)}>
         <Plus /> Add Customer
       </Button>
-      <CustomerDialog open={open} onOpenChange={setOpen} />
+      <CustomerDialog
+        open={open}
+        onOpenChange={setOpen}
+        companies={companies}
+      />
     </>
   );
 }

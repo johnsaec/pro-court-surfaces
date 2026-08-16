@@ -24,6 +24,7 @@ export type LeadFormData = {
   deal_stage: string;
   lead_source?: string;
   lead_source_detail?: string;
+  company_id?: string | null;
 
   // Court details
   project_type?: string;
@@ -101,6 +102,7 @@ export async function updateLead(
       deal_stage: data.deal_stage,
       lead_source: data.lead_source || null,
       lead_source_detail: data.lead_source_detail || null,
+      company_id: data.company_id || null,
       project_type: data.project_type || null,
       sports: data.sports?.length ? data.sports : [],
       square_feet: parseNum(data.square_feet),

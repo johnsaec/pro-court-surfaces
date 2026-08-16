@@ -111,7 +111,9 @@ export function CustomerProjectSection({
               <SelectContent>
                 {customers.map((c) => (
                   <SelectItem key={c.id} value={c.id}>
-                    {c.display_name}
+                    {c.company_name
+                      ? `${c.display_name} — ${c.company_name}`
+                      : c.display_name}
                   </SelectItem>
                 ))}
               </SelectContent>

@@ -6,6 +6,7 @@ import {
   LayoutDashboard,
   Users,
   UserPlus,
+  Building2,
   Palette,
   BookOpen,
   FileText,
@@ -15,6 +16,7 @@ import { cn } from "@/lib/utils";
 
 const navItems = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
+  { href: "/admin/companies", label: "Companies", icon: Building2 },
   { href: "/admin/customers", label: "Customers", icon: Users },
   { href: "/admin/leads", label: "Leads", icon: UserPlus },
   { href: "/admin/catalog", label: "Services", icon: BookOpen },

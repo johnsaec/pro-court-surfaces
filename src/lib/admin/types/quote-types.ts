@@ -13,6 +13,7 @@ export type PaymentMilestone = {
 export type CustomerOption = {
   id: string;
   display_name: string;
+  company_name: string | null;
 };
 
 export type LeadOption = {
@@ -20,6 +21,7 @@ export type LeadOption = {
   display_name: string;
   email: string | null;
   phone: string | null;
+  company_id: string | null;
   // Pre-fill project creation from lead intake data
   project_type: string | null;
   square_feet: number | null;

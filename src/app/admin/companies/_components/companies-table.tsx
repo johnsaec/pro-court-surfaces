@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState, useTransition } from "react";
 import { Pencil, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -14,33 +15,41 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { ConfirmDialog } from "@/components/admin/confirm-dialog";
-import { CustomerDialog } from "./customer-dialog";
-import { deleteCustomer } from "@/lib/admin/actions/customer-actions";
-import type { Customer } from "@/lib/admin/queries/customer-queries";
+import { CompanyDialog } from "./company-dialog";
+import { deleteCompany } from "@/lib/admin/actions/company-actions";
+import { COMPANY_TYPE_LABELS, COMPANY_TYPE_COLORS } from "@/lib/constants";
+import type { Company } from "@/lib/admin/queries/company-queries";
 
-export function CustomersTable({
-  customers,
-  companies = [],
-}: {
-  customers: Customer[];
-  companies?: { id: string; name: string }[];
-}) {
-  const [editCustomer, setEditCustomer] = useState<Customer | null>(null);
-  const [deleteTarget, setDeleteTarget] = useState<Customer | null>(null);
+function TypeBadge({ type }: { type: string | null }) {
+  if (!type) return <span className="text-muted-foreground">—</span>;
+  return (
+    <span
+      className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${
+        COMPANY_TYPE_COLORS[type] ?? "bg-gray-100 text-gray-700"
+      }`}
+    >
+      {COMPANY_TYPE_LABELS[type] ?? type}
+    </span>
+  );
+}
+
+export function CompaniesTable({ companies }: { companies: Company[] }) {
+  const [editCompany, setEditCompany] = useState<Company | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<Company | null>(null);
   const [isPending, startTransition] = useTransition();
 
   function handleDelete() {
     if (!deleteTarget) return;
     startTransition(async () => {
-      await deleteCustomer(deleteTarget.id);
+      await deleteCompany(deleteTarget.id);
       setDeleteTarget(null);
     });
   }
 
-  if (customers.length === 0) {
+  if (companies.length === 0) {
     return (
       <div className="rounded-lg border border-dashed p-12 text-center text-muted-foreground">
-        No customers yet. Create your first customer to get started.
+        No companies yet. Add a GC, builder, or HOA to group their contacts and quotes.
       </div>
     );
   }
@@ -53,48 +62,47 @@ export function CustomersTable({
           <TableHeader>
             <TableRow>
               <TableHead>Name</TableHead>
+              <TableHead>Type</TableHead>
               <TableHead>Email</TableHead>
               <TableHead>Phone</TableHead>
               <TableHead>City</TableHead>
-              <TableHead>Tags</TableHead>
               <TableHead className="w-24">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {customers.map((customer) => (
-              <TableRow key={customer.id}>
+            {companies.map((company) => (
+              <TableRow key={company.id}>
                 <TableCell className="font-medium">
-                  {customer.display_name}
+                  <Link
+                    href={`/admin/companies/${company.id}`}
+                    className="hover:underline"
+                  >
+                    {company.name}
+                  </Link>
                 </TableCell>
-                <TableCell>{customer.email ?? "—"}</TableCell>
-                <TableCell>{customer.phone ?? "—"}</TableCell>
                 <TableCell>
-                  {customer.city
-                    ? `${customer.city}, ${customer.state ?? "TX"}`
+                  <TypeBadge type={company.company_type} />
+                </TableCell>
+                <TableCell>{company.email ?? "—"}</TableCell>
+                <TableCell>{company.phone ?? "—"}</TableCell>
+                <TableCell>
+                  {company.city
+                    ? `${company.city}, ${company.state ?? "TX"}`
                     : "—"}
-                </TableCell>
-                <TableCell>
-                  <div className="flex gap-1 flex-wrap">
-                    {customer.tags?.map((tag) => (
-                      <Badge key={tag} variant="secondary">
-                        {tag}
-                      </Badge>
-                    ))}
-                  </div>
                 </TableCell>
                 <TableCell>
                   <div className="flex gap-1">
                     <Button
                       variant="ghost"
                       size="icon-xs"
-                      onClick={() => setEditCustomer(customer)}
+                      onClick={() => setEditCompany(company)}
                     >
                       <Pencil className="size-3.5" />
                     </Button>
                     <Button
                       variant="ghost"
                       size="icon-xs"
-                      onClick={() => setDeleteTarget(customer)}
+                      onClick={() => setDeleteTarget(company)}
                     >
                       <Trash2 className="size-3.5 text-destructive" />
                     </Button>
@@ -108,42 +116,45 @@ export function CustomersTable({
 
       {/* Mobile cards */}
       <div className="space-y-3 md:hidden">
-        {customers.map((customer) => (
-          <Card key={customer.id}>
+        {companies.map((company) => (
+          <Card key={company.id}>
             <CardContent className="p-4">
               <div className="flex items-start justify-between gap-2">
                 <div className="min-w-0">
-                  <p className="font-medium">{customer.display_name}</p>
-                  {customer.email && (
-                    <p className="text-sm text-muted-foreground truncate mt-0.5">
-                      {customer.email}
-                    </p>
-                  )}
+                  <Link
+                    href={`/admin/companies/${company.id}`}
+                    className="font-medium hover:underline"
+                  >
+                    {company.name}
+                  </Link>
+                  <div className="mt-1">
+                    <TypeBadge type={company.company_type} />
+                  </div>
                 </div>
                 <div className="flex gap-1 shrink-0">
                   <Button
                     variant="ghost"
                     size="icon-xs"
-                    onClick={() => setEditCustomer(customer)}
+                    onClick={() => setEditCompany(company)}
                   >
                     <Pencil className="size-3.5" />
                   </Button>
                   <Button
                     variant="ghost"
                     size="icon-xs"
-                    onClick={() => setDeleteTarget(customer)}
+                    onClick={() => setDeleteTarget(company)}
                   >
                     <Trash2 className="size-3.5 text-destructive" />
                   </Button>
                 </div>
               </div>
               <div className="mt-2 text-sm text-muted-foreground">
-                {customer.phone ?? "No phone"}
-                {customer.city && ` · ${customer.city}, ${customer.state ?? "TX"}`}
+                {company.email ?? "No email"}
+                {company.city && ` · ${company.city}, ${company.state ?? "TX"}`}
               </div>
-              {customer.tags && customer.tags.length > 0 && (
+              {company.tags && company.tags.length > 0 && (
                 <div className="mt-2 flex gap-1 flex-wrap">
-                  {customer.tags.map((tag) => (
+                  {company.tags.map((tag) => (
                     <Badge key={tag} variant="secondary" className="text-xs">
                       {tag}
                     </Badge>
@@ -155,18 +166,17 @@ export function CustomersTable({
         ))}
       </div>
 
-      <CustomerDialog
-        open={!!editCustomer}
-        onOpenChange={(open) => !open && setEditCustomer(null)}
-        customer={editCustomer}
-        companies={companies}
+      <CompanyDialog
+        open={!!editCompany}
+        onOpenChange={(open) => !open && setEditCompany(null)}
+        company={editCompany}
       />
 
       <ConfirmDialog
         open={!!deleteTarget}
         onOpenChange={(open) => !open && setDeleteTarget(null)}
-        title="Delete Customer"
-        description={`Are you sure you want to delete "${deleteTarget?.display_name}"? This action cannot be undone.`}
+        title="Delete Company"
+        description={`Are you sure you want to delete "${deleteTarget?.name}"? Its contacts and quotes stay, but they'll be unlinked from this company.`}
         onConfirm={handleDelete}
         isPending={isPending}
       />

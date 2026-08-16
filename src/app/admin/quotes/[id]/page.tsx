@@ -2,12 +2,13 @@ import { notFound } from "next/navigation";
 import { PageHeader } from "@/components/admin/page-header";
 import { getQuoteById } from "@/lib/admin/queries/quote-queries";
 import { getCustomers } from "@/lib/admin/queries/customer-queries";
+import { getCompanies } from "@/lib/admin/queries/company-queries";
 import { getServices } from "@/lib/admin/queries/catalog-queries";
 import { getColors } from "@/lib/admin/queries/color-queries";
 import { getLeads } from "@/lib/admin/queries/lead-queries";
 import { QuoteBuilder } from "../_components/quote-builder";
 import { DownloadPdfButton } from "../_components/download-pdf-button";
-import type { LeadOption } from "@/lib/admin/types/quote-types";
+import type { CustomerOption, LeadOption } from "@/lib/admin/types/quote-types";
 
 export const dynamic = "force-dynamic";
 
@@ -18,19 +19,26 @@ export default async function EditQuotePage({
 }) {
   const { id } = await params;
 
-  const [quote, customers, services, colors, allLeads] = await Promise.all([
-    getQuoteById(id),
-    getCustomers(),
-    getServices(),
-    getColors(),
-    getLeads(),
-  ]);
+  const [quote, customers, companies, services, colors, allLeads] =
+    await Promise.all([
+      getQuoteById(id),
+      getCustomers(),
+      getCompanies(),
+      getServices(),
+      getColors(),
+      getLeads(),
+    ]);
 
   if (!quote) notFound();
 
-  const customerOptions = customers.map((c) => ({
+  const companyNameById = new Map(companies.map((co) => [co.id, co.name]));
+
+  const customerOptions: CustomerOption[] = customers.map((c) => ({
     id: c.id,
     display_name: c.display_name,
+    company_name: c.company_id
+      ? companyNameById.get(c.company_id) ?? null
+      : null,
   }));
 
   const leadOptions: LeadOption[] = allLeads
@@ -40,6 +48,7 @@ export default async function EditQuotePage({
       display_name: l.display_name,
       email: l.email,
       phone: l.phone,
+      company_id: l.company_id ?? null,
       project_type: l.project_type,
       square_feet: l.square_feet,
       number_of_courts: l.number_of_courts,

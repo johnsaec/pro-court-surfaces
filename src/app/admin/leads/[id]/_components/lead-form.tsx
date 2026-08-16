@@ -37,7 +37,15 @@ function SectionHeading({ title }: { title: string }) {
   );
 }
 
-export function LeadForm({ lead }: { lead: Lead }) {
+const NO_COMPANY = "__none__";
+
+export function LeadForm({
+  lead,
+  companies = [],
+}: {
+  lead: Lead;
+  companies?: { id: string; name: string }[];
+}) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
@@ -46,6 +54,9 @@ export function LeadForm({ lead }: { lead: Lead }) {
   // Select states
   const [dealStage, setDealStage] = useState(lead.deal_stage);
   const [leadSource, setLeadSource] = useState(lead.lead_source ?? "");
+  const [companyId, setCompanyId] = useState<string>(
+    lead.company_id ?? NO_COMPANY
+  );
   const [projectType, setProjectType] = useState(lead.project_type ?? "");
   const [sports, setSports] = useState<string[]>(lead.sports ?? []);
 
@@ -91,6 +102,7 @@ export function LeadForm({ lead }: { lead: Lead }) {
       deal_stage: dealStage,
       lead_source: leadSource || undefined,
       lead_source_detail: fd.get("lead_source_detail") as string,
+      company_id: companyId === NO_COMPANY ? null : companyId,
       project_type: projectType || undefined,
       sports,
       square_feet: parseNum("square_feet"),
@@ -195,6 +207,21 @@ export function LeadForm({ lead }: { lead: Lead }) {
               {Object.entries(LEAD_SOURCE_LABELS).map(([value, label]) => (
                 <SelectItem key={value} value={value}>
                   {label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </FormField>
+        <FormField label="Company" name="company_id">
+          <Select value={companyId} onValueChange={setCompanyId}>
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="No company" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value={NO_COMPANY}>No company</SelectItem>
+              {companies.map((co) => (
+                <SelectItem key={co.id} value={co.id}>
+                  {co.name}
                 </SelectItem>
               ))}
             </SelectContent>

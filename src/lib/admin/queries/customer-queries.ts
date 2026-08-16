@@ -14,6 +14,7 @@ export type Customer = {
   zip: string | null;
   stripe_customer_id: string | null;
   notion_page_id: string | null;
+  company_id: string | null;
   notes: string | null;
   tags: string[] | null;
   created_at: string;

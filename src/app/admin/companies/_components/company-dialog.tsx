@@ -21,44 +21,40 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
-  createCustomer,
-  updateCustomer,
-  type CustomerFormData,
-} from "@/lib/admin/actions/customer-actions";
-import type { Customer } from "@/lib/admin/queries/customer-queries";
+  createCompany,
+  updateCompany,
+  type CompanyFormData,
+} from "@/lib/admin/actions/company-actions";
+import { COMPANY_TYPE_LABELS } from "@/lib/constants";
+import type { Company } from "@/lib/admin/queries/company-queries";
 
-const NO_COMPANY = "__none__";
-
-interface CustomerDialogProps {
+interface CompanyDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  customer?: Customer | null;
-  companies?: { id: string; name: string }[];
+  company?: Company | null;
 }
 
-export function CustomerDialog({
+export function CompanyDialog({
   open,
   onOpenChange,
-  customer,
-  companies = [],
-}: CustomerDialogProps) {
-  const isEditing = !!customer;
+  company,
+}: CompanyDialogProps) {
+  const isEditing = !!company;
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
-  const [companyId, setCompanyId] = useState<string>(
-    customer?.company_id ?? NO_COMPANY
+  const [companyType, setCompanyType] = useState(
+    company?.company_type ?? "general_contractor"
   );
-  const [tags, setTags] = useState<string[]>(customer?.tags ?? []);
+  const [tags, setTags] = useState<string[]>(company?.tags ?? []);
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setError(null);
     const formData = new FormData(e.currentTarget);
 
-    const data: CustomerFormData = {
-      display_name: formData.get("display_name") as string,
-      first_name: formData.get("first_name") as string,
-      last_name: formData.get("last_name") as string,
+    const data: CompanyFormData = {
+      name: formData.get("name") as string,
+      company_type: companyType,
       email: formData.get("email") as string,
       phone: formData.get("phone") as string,
       address_line1: formData.get("address_line1") as string,
@@ -66,15 +62,14 @@ export function CustomerDialog({
       city: formData.get("city") as string,
       state: formData.get("state") as string,
       zip: formData.get("zip") as string,
-      company_id: companyId === NO_COMPANY ? null : companyId,
       notes: formData.get("notes") as string,
       tags,
     };
 
     startTransition(async () => {
       const result = isEditing
-        ? await updateCustomer(customer.id, data)
-        : await createCustomer(data);
+        ? await updateCompany(company.id, data)
+        : await createCompany(data);
 
       if (result.success) {
         onOpenChange(false);
@@ -89,80 +84,69 @@ export function CustomerDialog({
       <DialogContent className="sm:max-w-2xl">
         <DialogHeader>
           <DialogTitle>
-            {isEditing ? "Edit Customer" : "New Customer"}
+            {isEditing ? "Edit Company" : "New Company"}
           </DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <FormField
-              label="Display Name"
-              name="display_name"
+              label="Company Name"
+              name="name"
               required
-              defaultValue={customer?.display_name ?? ""}
-              placeholder="e.g. John Smith"
+              defaultValue={company?.name ?? ""}
+              placeholder="e.g. ABC Construction"
             />
-            <FormField
-              label="Email"
-              name="email"
-              type="email"
-              defaultValue={customer?.email ?? ""}
-            />
-            <FormField
-              label="First Name"
-              name="first_name"
-              defaultValue={customer?.first_name ?? ""}
-            />
-            <FormField
-              label="Last Name"
-              name="last_name"
-              defaultValue={customer?.last_name ?? ""}
-            />
-            <FormField
-              label="Phone"
-              name="phone"
-              type="tel"
-              defaultValue={customer?.phone ?? ""}
-            />
-            <FormField
-              label="Address Line 1"
-              name="address_line1"
-              defaultValue={customer?.address_line1 ?? ""}
-            />
-            <FormField
-              label="Address Line 2"
-              name="address_line2"
-              defaultValue={customer?.address_line2 ?? ""}
-            />
-            <FormField
-              label="City"
-              name="city"
-              defaultValue={customer?.city ?? ""}
-            />
-            <FormField
-              label="State"
-              name="state"
-              defaultValue={customer?.state ?? "TX"}
-            />
-            <FormField
-              label="ZIP"
-              name="zip"
-              defaultValue={customer?.zip ?? ""}
-            />
-            <FormField label="Company" name="company_id">
-              <Select value={companyId} onValueChange={setCompanyId}>
+            <FormField label="Type" name="company_type">
+              <Select value={companyType} onValueChange={setCompanyType}>
                 <SelectTrigger className="w-full">
-                  <SelectValue placeholder="No company" />
+                  <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value={NO_COMPANY}>No company</SelectItem>
-                  {companies.map((co) => (
-                    <SelectItem key={co.id} value={co.id}>
-                      {co.name}
+                  {Object.entries(COMPANY_TYPE_LABELS).map(([value, label]) => (
+                    <SelectItem key={value} value={value}>
+                      {label}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </FormField>
+            <FormField
+              label="Email"
+              name="email"
+              type="email"
+              defaultValue={company?.email ?? ""}
+            />
+            <FormField
+              label="Phone"
+              name="phone"
+              type="tel"
+              defaultValue={company?.phone ?? ""}
+            />
+            <FormField
+              label="Address Line 1"
+              name="address_line1"
+              defaultValue={company?.address_line1 ?? ""}
+            />
+            <FormField
+              label="Address Line 2"
+              name="address_line2"
+              defaultValue={company?.address_line2 ?? ""}
+            />
+            <FormField
+              label="City"
+              name="city"
+              defaultValue={company?.city ?? ""}
+            />
+            <FormField
+              label="State"
+              name="state"
+              defaultValue={company?.state ?? "TX"}
+            />
+            <FormField
+              label="ZIP"
+              name="zip"
+              defaultValue={company?.zip ?? ""}
+            />
           </div>
           <MultiSelectInput
             label="Tags"
@@ -176,7 +160,7 @@ export function CustomerDialog({
             <Textarea
               id="notes"
               name="notes"
-              defaultValue={customer?.notes ?? ""}
+              defaultValue={company?.notes ?? ""}
               rows={3}
             />
           </div>
@@ -195,7 +179,7 @@ export function CustomerDialog({
                 ? "Saving..."
                 : isEditing
                   ? "Save Changes"
-                  : "Create Customer"}
+                  : "Create Company"}
             </Button>
           </DialogFooter>
         </form>

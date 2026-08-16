@@ -1,24 +1,31 @@
 import { PageHeader } from "@/components/admin/page-header";
 import { getCustomers } from "@/lib/admin/queries/customer-queries";
+import { getCompanies } from "@/lib/admin/queries/company-queries";
 import { getServices } from "@/lib/admin/queries/catalog-queries";
 import { getColors } from "@/lib/admin/queries/color-queries";
 import { getLeads } from "@/lib/admin/queries/lead-queries";
 import { QuoteBuilder } from "../_components/quote-builder";
-import type { LeadOption } from "@/lib/admin/types/quote-types";
+import type { CustomerOption, LeadOption } from "@/lib/admin/types/quote-types";
 
 export const dynamic = "force-dynamic";
 
 export default async function NewQuotePage() {
-  const [customers, services, colors, allLeads] = await Promise.all([
+  const [customers, companies, services, colors, allLeads] = await Promise.all([
     getCustomers(),
+    getCompanies(),
     getServices(),
     getColors(),
     getLeads(),
   ]);
 
-  const customerOptions = customers.map((c) => ({
+  const companyNameById = new Map(companies.map((co) => [co.id, co.name]));
+
+  const customerOptions: CustomerOption[] = customers.map((c) => ({
     id: c.id,
     display_name: c.display_name,
+    company_name: c.company_id
+      ? companyNameById.get(c.company_id) ?? null
+      : null,
   }));
 
   const leadOptions: LeadOption[] = allLeads
@@ -28,6 +35,7 @@ export default async function NewQuotePage() {
       display_name: l.display_name,
       email: l.email,
       phone: l.phone,
+      company_id: l.company_id ?? null,
       project_type: l.project_type,
       square_feet: l.square_feet,
       number_of_courts: l.number_of_courts,
