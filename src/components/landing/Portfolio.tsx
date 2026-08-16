@@ -1,10 +1,19 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { SectionCTA } from "./SectionCTA";
 import { useScrollReveal } from "./useScrollReveal";
 
-const projects = [
+type Project = {
+  src: string;
+  alt: string;
+  caption: string;
+  span: string;
+  href?: string;
+};
+
+const projects: Project[] = [
   {
     src: "https://res.cloudinary.com/dwyd4f7lz/image/upload/f_auto,q_auto,w_800/v1769365125/DJI_0054_rgzy6p.jpg",
     alt: "Aerial view of two resurfaced tennis courts with blue and green acrylic surface at Yoakum City Park in Texas",
@@ -52,6 +61,7 @@ const projects = [
     alt: "Finished blue and green multi-sport basketball court with fresh striping in Wimberley, Texas",
     caption: "Multi-Sport Court — Wimberley, TX",
     span: "",
+    href: "/projects/wimberley-multi-sport-court",
   },
   {
     src: "https://res.cloudinary.com/dwyd4f7lz/image/upload/f_auto,q_auto,w_800/v1786902349/wahill_finished_side_vr6qqs.jpg",
@@ -87,25 +97,41 @@ export function Portfolio() {
 
         {/* Masonry-style grid */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 auto-rows-[280px] sm:auto-rows-[260px]">
-          {projects.map((project, i) => (
-            <div
-              key={i}
-              className={`reveal-item group relative overflow-hidden rounded-2xl cursor-pointer ${project.span}`}
-              style={{ transitionDelay: `${i * 80}ms` }}
-            >
-              <Image
-                src={project.src}
-                alt={project.alt}
-                width={800}
-                height={600}
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-              />
-              {/* Hover caption overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-5">
-                <p className="text-white text-sm font-medium">{project.caption}</p>
+          {projects.map((project, i) => {
+            const inner = (
+              <>
+                <Image
+                  src={project.src}
+                  alt={project.alt}
+                  width={800}
+                  height={600}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                />
+                {/* Hover caption overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-5">
+                  <p className="text-white text-sm font-medium">
+                    {project.caption}
+                    {project.href && (
+                      <span className="block text-brand-green text-xs font-semibold mt-0.5">
+                        View project &rarr;
+                      </span>
+                    )}
+                  </p>
+                </div>
+              </>
+            );
+            const className = `reveal-item group relative overflow-hidden rounded-2xl cursor-pointer ${project.span}`;
+            const style = { transitionDelay: `${i * 80}ms` };
+            return project.href ? (
+              <Link key={i} href={project.href} className={className} style={style}>
+                {inner}
+              </Link>
+            ) : (
+              <div key={i} className={className} style={style}>
+                {inner}
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
         <SectionCTA />
       </div>
