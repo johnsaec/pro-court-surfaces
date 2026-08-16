@@ -81,6 +81,7 @@ export function QuoteBuilder({
       customer_id: state.customer_id || null,
       lead_id: state.lead_id || null,
       project_type: state.project_type || null,
+      sports: state.sports.length ? state.sports : null,
       square_feet: state.square_feet ? parseFloat(state.square_feet) : null,
       number_of_courts: state.number_of_courts ? parseInt(state.number_of_courts) : null,
       city: state.city || null,

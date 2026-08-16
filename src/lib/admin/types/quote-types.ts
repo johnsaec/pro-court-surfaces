@@ -24,6 +24,7 @@ export type LeadOption = {
   company_id: string | null;
   // Pre-fill project creation from lead intake data
   project_type: string | null;
+  sports: string[] | null;
   square_feet: number | null;
   number_of_courts: number | null;
   city: string | null;
@@ -80,6 +81,7 @@ export type QuoteBuilderState = {
   lead_id: string;
   // Project fields (inline on quote)
   project_type: string;
+  sports: string[];
   square_feet: string;
   number_of_courts: string;
   city: string;
@@ -118,6 +120,7 @@ export type QuoteBuilderAction =
   | { type: "SET_CUSTOMER"; customer_id: string }
   | { type: "SET_LEAD"; lead_id: string }
   | { type: "SET_PROJECT_FIELD"; field: ProjectFieldKey; value: string }
+  | { type: "SET_SPORTS"; sports: string[] }
   | { type: "ADD_PACKAGE"; tier: string }
   | { type: "REMOVE_PACKAGE"; packageKey: string }
   | { type: "UPDATE_PACKAGE"; packageKey: string; field: string; value: string }
@@ -143,6 +146,7 @@ export type QuoteSavePayload = {
   customer_id: string | null;
   lead_id: string | null;
   project_type: string | null;
+  sports: string[] | null;
   square_feet: number | null;
   number_of_courts: number | null;
   city: string | null;

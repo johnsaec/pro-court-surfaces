@@ -20,6 +20,7 @@ export function createEmptyState(): QuoteBuilderState {
     customer_id: "",
     lead_id: "",
     project_type: "",
+    sports: [],
     square_feet: "",
     number_of_courts: "",
     city: "",
@@ -47,6 +48,7 @@ export function stateFromQuote(quote: QuoteDetail): QuoteBuilderState {
     customer_id: quote.customer_id ?? "",
     lead_id: quote.lead_id ?? "",
     project_type: quote.project_type ?? "",
+    sports: quote.sports ?? [],
     square_feet: quote.square_feet != null ? String(quote.square_feet) : "",
     number_of_courts: quote.number_of_courts != null ? String(quote.number_of_courts) : "",
     city: quote.city ?? "",
@@ -158,6 +160,7 @@ export function quoteBuilderReducer(
         customer_id: action.customer_id,
         lead_id: "",
         project_type: "",
+        sports: [],
         square_feet: "",
         number_of_courts: "",
         city: "",
@@ -173,6 +176,7 @@ export function quoteBuilderReducer(
         lead_id: action.lead_id,
         customer_id: "",
         project_type: "",
+        sports: [],
         square_feet: "",
         number_of_courts: "",
         city: "",
@@ -184,6 +188,9 @@ export function quoteBuilderReducer(
 
     case "SET_PROJECT_FIELD":
       return { ...state, [action.field]: action.value };
+
+    case "SET_SPORTS":
+      return { ...state, sports: action.sports };
 
     case "ADD_PACKAGE": {
       const tierLabel =

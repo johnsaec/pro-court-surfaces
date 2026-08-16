@@ -50,6 +50,7 @@ export default async function EditQuotePage({
       phone: l.phone,
       company_id: l.company_id ?? null,
       project_type: l.project_type,
+      sports: l.sports ?? null,
       square_feet: l.square_feet,
       number_of_courts: l.number_of_courts,
       city: l.city,

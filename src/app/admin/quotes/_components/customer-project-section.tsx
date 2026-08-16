@@ -12,7 +12,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { PROJECT_TYPE_LABELS } from "@/lib/constants";
+import { PROJECT_TYPE_LABELS, SPORT_TYPE_LABELS } from "@/lib/constants";
 import type {
   CustomerOption,
   LeadOption,
@@ -20,12 +20,22 @@ import type {
   QuoteBuilderAction,
 } from "@/lib/admin/types/quote-types";
 
-/** Default square footage by project type when not provided */
-const DEFAULT_SQFT: Record<string, number> = {
-  pickleball_court: 1800,
-  tennis_court: 7200,
-  basketball_court: 4200,
+/** Default square footage per single court, by sport (editable by admin) */
+const SPORT_SQFT: Record<string, number> = {
+  pickleball: 1800,
+  tennis: 7200,
+  basketball: 4200,
+  volleyball: 4000,
+  multi_sport: 7200,
 };
+
+/** Default sq ft for a sport × number of courts (min 1) */
+function defaultSqftFor(sport: string, courts: string): number | null {
+  const base = SPORT_SQFT[sport];
+  if (!base) return null;
+  const n = parseInt(courts) || 1;
+  return base * n;
+}
 
 interface CustomerProjectSectionProps {
   state: QuoteBuilderState;
@@ -67,11 +77,19 @@ export function CustomerProjectSection({
         dispatch({ type: "SET_PROJECT_FIELD", field: "bird_bath_count", value: String(lead.bird_bath_count) });
       }
 
-      // Use lead's sq ft if available, otherwise default by project type
+      const sports = lead.sports ?? [];
+      if (sports.length) {
+        dispatch({ type: "SET_SPORTS", sports });
+      }
+
+      // Use lead's sq ft if available, otherwise default from the primary sport
       if (lead.square_feet) {
         dispatch({ type: "SET_PROJECT_FIELD", field: "square_feet", value: String(lead.square_feet) });
-      } else if (lead.project_type && DEFAULT_SQFT[lead.project_type]) {
-        dispatch({ type: "SET_PROJECT_FIELD", field: "square_feet", value: String(DEFAULT_SQFT[lead.project_type]) });
+      } else if (sports[0]) {
+        const sqft = defaultSqftFor(sports[0], String(lead.number_of_courts ?? ""));
+        if (sqft) {
+          dispatch({ type: "SET_PROJECT_FIELD", field: "square_feet", value: String(sqft) });
+        }
       }
     },
     [dispatch]
@@ -161,19 +179,42 @@ export function CustomerProjectSection({
               <Label>Project Type</Label>
               <Select
                 value={state.project_type}
-                onValueChange={(v) => {
-                  dispatch({ type: "SET_PROJECT_FIELD", field: "project_type", value: v });
-                  // Default sq ft when empty
-                  if (!state.square_feet && DEFAULT_SQFT[v]) {
-                    dispatch({ type: "SET_PROJECT_FIELD", field: "square_feet", value: String(DEFAULT_SQFT[v]) });
-                  }
-                }}
+                onValueChange={(v) =>
+                  dispatch({ type: "SET_PROJECT_FIELD", field: "project_type", value: v })
+                }
               >
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Select type..." />
                 </SelectTrigger>
                 <SelectContent>
                   {Object.entries(PROJECT_TYPE_LABELS).map(([val, label]) => (
+                    <SelectItem key={val} value={val}>
+                      {label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-1.5">
+              <Label>Sport</Label>
+              <Select
+                value={state.sports[0] ?? ""}
+                onValueChange={(v) => {
+                  dispatch({ type: "SET_SPORTS", sports: [v] });
+                  // Default sq ft from the sport when empty
+                  if (!state.square_feet) {
+                    const sqft = defaultSqftFor(v, state.number_of_courts);
+                    if (sqft) {
+                      dispatch({ type: "SET_PROJECT_FIELD", field: "square_feet", value: String(sqft) });
+                    }
+                  }
+                }}
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select sport..." />
+                </SelectTrigger>
+                <SelectContent>
+                  {Object.entries(SPORT_TYPE_LABELS).map(([val, label]) => (
                     <SelectItem key={val} value={val}>
                       {label}
                     </SelectItem>

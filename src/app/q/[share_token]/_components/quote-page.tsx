@@ -140,11 +140,9 @@ export function QuotePage({ quote, colors }: QuotePageProps) {
     [selectedPackageId, selectedPackage, toggles, colorSelections, total, quote, router]
   );
 
-  // Detect court type from quote sports or project_type
+  // Detect court type from the quote's sports
   const courtType: "pickleball" | "tennis" =
-    quote.sports?.includes("pickleball") || quote.project_type === "pickleball_court"
-      ? "pickleball"
-      : "tennis";
+    quote.sports?.includes("pickleball") ? "pickleball" : "tennis";
 
   const contactName = quote.customer?.display_name ?? quote.lead?.display_name;
   const createdDate = new Date(quote.created_at).toLocaleDateString("en-US", {
