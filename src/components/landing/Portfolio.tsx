@@ -69,6 +69,13 @@ const projects: Project[] = [
     caption: "Backyard Basketball Court — Austin, TX",
     span: "",
   },
+  {
+    src: "https://res.cloudinary.com/dwyd4f7lz/image/upload/f_auto,q_auto,w_800/v1786904727/georgtown_drone_finoshed_rycfv7.jpg",
+    alt: "Aerial view of a finished blue and gold backyard basketball and pickleball court in Georgetown, Texas",
+    caption: "Multi-Sport Court — Georgetown, TX",
+    span: "sm:col-span-2",
+    href: "/projects/georgetown-multi-sport-court",
+  },
 ];
 
 export function Portfolio() {

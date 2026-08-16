@@ -91,6 +91,46 @@ export const projects: Project[] = [
       "The result: a clean two-tone blue-and-green court with crisp white striping — done inside a typical 3–5 day window.",
     ],
   },
+  {
+    slug: "georgetown-multi-sport-court",
+    name: "Georgetown Multi-Sport Court",
+    location: "Georgetown, TX",
+    courtType: "Multi-Sport Court",
+    service: "New Surface Application",
+    category: "New Court Surface",
+    summary:
+      "A fresh concrete slab in the Georgetown backyard turned into a blue-and-gold basketball and pickleball court.",
+    metaTitle:
+      "New Multi-Sport Court Surface in Georgetown, TX | Pro Court Surfaces",
+    metaDescription:
+      "Case study: new acrylic court surface on a fresh concrete slab in Georgetown, TX. Custom blue and gold basketball and pickleball court with crisp striping.",
+    keywords:
+      "new court surface Georgetown TX, backyard basketball court Georgetown, pickleball court installation Georgetown, multi-sport court surfacing Central Texas, acrylic court surface Georgetown",
+    hero: {
+      src: `${CL}/f_auto,q_auto,w_1600/v1786904727/georgtown_drone_finoshed_rycfv7.jpg`,
+      alt: "Aerial view of a finished blue and gold backyard basketball and pickleball court in Georgetown, Texas",
+    },
+    before: {
+      src: `${CL}/f_auto,q_auto,w_1000/v1786904727/georgetown_jgf0kx.jpg`,
+      alt: "Bare fresh concrete slab in a wooded backyard before court surfacing in Georgetown, Texas",
+    },
+    after: {
+      src: `${CL}/f_auto,q_auto,w_1000/v1786904727/georgtown_finished_courtside_fztqrn.jpg`,
+      alt: "Finished blue and gold multi-sport basketball and pickleball court with fresh white striping in Georgetown, Texas",
+    },
+    facts: [
+      { label: "Location", value: "Georgetown, TX" },
+      { label: "Court type", value: "Basketball + pickleball" },
+      { label: "Scope", value: "New surface application" },
+      { label: "Surface", value: "ATS Sports Acrytech acrylic" },
+      { label: "Timeline", value: "3–5 working days" },
+    ],
+    colors: ["Blue", "Gold", "Gray", "White lines"],
+    body: [
+      "The homeowner had a fresh concrete slab poured and ready — a blank canvas in the Hill Country backyard. We took it from bare gray concrete to a full acrylic sport surface.",
+      "The finished layout combines a blue-and-gold basketball court with pickleball striping, wrapped in a gray border — built to hold up to Texas sun and daily play.",
+    ],
+  },
 ];
 
 export function getProject(slug: string): Project | undefined {
