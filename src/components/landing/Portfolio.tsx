@@ -69,6 +69,7 @@ const projects: Project[] = [
     alt: "Finished blue and gray residential backyard basketball court next to a pool with a stone and wood fence in Austin, Texas",
     caption: "Backyard Basketball Court — Austin, TX",
     span: "",
+    href: "/projects/austin-backyard-basketball-court",
   },
   {
     src: "https://res.cloudinary.com/dwyd4f7lz/image/upload/f_auto,q_auto,w_800/v1786904727/georgtown_drone_finoshed_rycfv7.jpg",

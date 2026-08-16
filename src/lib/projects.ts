@@ -217,6 +217,46 @@ export const projects: Project[] = [
       "We resurfaced the full slab, laid down fresh green-and-blue color zones, and striped multiple regulation pickleball courts — turning one tired tennis court into a busy pickleball complex.",
     ],
   },
+  {
+    slug: "austin-backyard-basketball-court",
+    name: "Austin Backyard Basketball Court",
+    location: "Austin, TX",
+    courtType: "Backyard Basketball",
+    service: "New Surface Application",
+    category: "New Court Surface",
+    summary:
+      "A poolside concrete pad in an Austin backyard finished into a sharp blue-and-gray half-court.",
+    metaTitle:
+      "New Backyard Basketball Court Surface in Austin, TX | Pro Court Surfaces",
+    metaDescription:
+      "Case study: new acrylic basketball court surface on a poolside concrete pad in Austin, TX. Custom blue-and-gray half-court with crisp striping and a key.",
+    keywords:
+      "backyard basketball court Austin TX, basketball court surfacing Austin, new sport court surface Austin, poolside basketball court, acrylic basketball court Texas",
+    hero: {
+      src: `${CL}/f_auto,q_auto,w_1600/v1786902349/wahill_finished_side_vr6qqs.jpg`,
+      alt: "Finished blue and gray backyard basketball court next to a pool with a stone and wood fence in Austin, Texas",
+    },
+    before: {
+      src: `${CL}/f_auto,q_auto,w_1000/v1786905575/wahill_before_dbifri.jpg`,
+      alt: "Bare concrete pad in a stone-and-wood-fenced backyard before basketball court surfacing in Austin, Texas",
+    },
+    after: {
+      src: `${CL}/f_auto,q_auto,w_1000/v1786902349/wahill_finished_side_vr6qqs.jpg`,
+      alt: "Finished blue and gray backyard basketball half-court with fresh white striping beside a pool in Austin, Texas",
+    },
+    facts: [
+      { label: "Location", value: "Austin, TX" },
+      { label: "Court type", value: "Backyard basketball" },
+      { label: "Scope", value: "New surface application" },
+      { label: "Surface", value: "ATS Sports Acrytech acrylic" },
+      { label: "Timeline", value: "3–5 working days" },
+    ],
+    colors: ["Blue", "Gray", "White lines"],
+    body: [
+      "The homeowner had a poolside concrete pad and a hoop already standing — everything but a real playing surface. We took the bare gray pad and turned it into a finished acrylic basketball court.",
+      "A blue key on a gray surround with crisp white striping ties it into the backyard's stone-and-wood aesthetic — a clean half-court steps from the pool.",
+    ],
+  },
 ];
 
 export function getProject(slug: string): Project | undefined {
