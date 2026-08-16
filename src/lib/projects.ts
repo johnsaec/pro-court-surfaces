@@ -262,6 +262,16 @@ export const projects: Project[] = [
       { label: "Timeline", value: "5–7 working days" },
     ],
     colors: ["Green", "Blue", "White lines"],
+    gallery: [
+      {
+        src: `${CL}/f_auto,q_auto,w_1000/v1786907877/richardson_line_cracks_aieeng.jpg`,
+        alt: "The old tennis court resurfaced with a fresh gray base coat, prepped for new color zones, in Richardson, Texas",
+      },
+      {
+        src: `${CL}/f_auto,q_auto,w_1000/v1786907878/richardons_colors_lines_fkw3ke.jpg`,
+        alt: "Green surround and blue pickleball color zones laid down over the resurfaced court before final striping in Richardson, Texas",
+      },
+    ],
     body: [
       "This community tennis court had weathered years of play and Texas sun. Rather than a like-for-like resurface, the owner wanted more usable play — so we converted it into dedicated pickleball courts.",
       "We resurfaced the full slab, laid down fresh green-and-blue color zones, and striped multiple regulation pickleball courts — turning one tired tennis court into a busy pickleball complex.",
