@@ -1,4 +1,4 @@
-import { resend } from "@/lib/resend";
+import { getResend } from "@/lib/resend";
 import type { ReactElement } from "react";
 
 type SendEmailParams = {
@@ -18,7 +18,7 @@ export async function sendEmail({ to, subject, from, react, text, html }: SendEm
 
     if (html) {
       // Minimal HTML (e.g. plain text with hyperlinks)
-      result = await resend.emails.send({
+      result = await getResend().emails.send({
         from: sender,
         to,
         subject,
@@ -26,14 +26,14 @@ export async function sendEmail({ to, subject, from, react, text, html }: SendEm
       });
     } else if (text && !react) {
       // Pure plain text — no HTML at all
-      result = await resend.emails.send({
+      result = await getResend().emails.send({
         from: sender,
         to,
         subject,
         text,
       });
     } else if (react) {
-      result = await resend.emails.send({
+      result = await getResend().emails.send({
         from: sender,
         to,
         subject,

@@ -1,7 +1,7 @@
 import { notFound, redirect } from "next/navigation";
 import { getQuoteByShareToken } from "@/lib/quotes/public-queries";
 import { createServerClient } from "@/lib/supabase/server";
-import { stripe } from "@/lib/stripe";
+import { getStripe } from "@/lib/stripe";
 import { AcceptedPage } from "./_components/accepted-page";
 
 export default async function QuoteAcceptedPage({
@@ -40,7 +40,7 @@ export default async function QuoteAcceptedPage({
 
   if (quote.stripe_invoice_id) {
     try {
-      const invoice = await stripe.invoices.retrieve(quote.stripe_invoice_id);
+      const invoice = await getStripe().invoices.retrieve(quote.stripe_invoice_id);
       invoiceUrl = invoice.hosted_invoice_url ?? null;
       invoiceStatus = invoice.status ?? null;
       if (invoice.due_date) {

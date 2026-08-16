@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { createServerClient } from "@/lib/supabase/server";
-import { stripe } from "@/lib/stripe";
+import { getStripe } from "@/lib/stripe";
 import { sendEmail } from "@/lib/email/send-email";
 import { QuoteSentEmail } from "@/lib/email/templates/quote-sent";
 import { BalanceDueEmail } from "@/lib/email/templates/balance-due";
@@ -276,14 +276,14 @@ export async function collectBalance(
   if (quote.customer?.stripe_customer_id) {
     stripeCustomerId = quote.customer.stripe_customer_id;
   } else {
-    const existing = await stripe.customers.list({
+    const existing = await getStripe().customers.list({
       email: customerEmail,
       limit: 1,
     });
     if (existing.data.length > 0) {
       stripeCustomerId = existing.data[0].id;
     } else {
-      const stripeCustomer = await stripe.customers.create({
+      const stripeCustomer = await getStripe().customers.create({
         name: customerName,
         email: customerEmail,
       });
@@ -311,14 +311,14 @@ export async function collectBalance(
     : `Remaining Balance — Quote ${quote.quote_number}`;
 
   try {
-    const invoice = await stripe.invoices.create({
+    const invoice = await getStripe().invoices.create({
       customer: stripeCustomerId,
       collection_method: "send_invoice",
       days_until_due: quote.deposit_due_days ?? 7,
       metadata: { quote_id: quoteId, type: "balance" },
     });
 
-    await stripe.invoiceItems.create({
+    await getStripe().invoiceItems.create({
       customer: stripeCustomerId,
       invoice: invoice.id,
       amount: balanceAmount,
@@ -326,7 +326,7 @@ export async function collectBalance(
       description: balanceDescription,
     });
 
-    const finalizedInvoice = await stripe.invoices.finalizeInvoice(invoice.id);
+    const finalizedInvoice = await getStripe().invoices.finalizeInvoice(invoice.id);
 
     // 5. Store balance invoice ID on quote
     await supabase

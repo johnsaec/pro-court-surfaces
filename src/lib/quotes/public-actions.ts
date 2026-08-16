@@ -1,7 +1,7 @@
 "use server";
 
 import { createServerClient } from "@/lib/supabase/server";
-import { stripe } from "@/lib/stripe";
+import { getStripe } from "@/lib/stripe";
 import { headers } from "next/headers";
 import { sendEmail } from "@/lib/email/send-email";
 import { QuoteAcceptedEmail } from "@/lib/email/templates/quote-accepted";
@@ -98,7 +98,7 @@ export async function acceptQuote(payload: AcceptPayload) {
     if (quote.customer?.stripe_customer_id) {
       stripeCustomerId = quote.customer.stripe_customer_id;
     } else {
-      const existing = await stripe.customers.list({
+      const existing = await getStripe().customers.list({
         email: customerEmail,
         limit: 1,
       });
@@ -106,7 +106,7 @@ export async function acceptQuote(payload: AcceptPayload) {
       if (existing.data.length > 0) {
         stripeCustomerId = existing.data[0].id;
       } else {
-        const stripeCustomer = await stripe.customers.create({
+        const stripeCustomer = await getStripe().customers.create({
           name: payload.customer_name,
           email: customerEmail,
         });
@@ -140,14 +140,14 @@ export async function acceptQuote(payload: AcceptPayload) {
       ? `${firstMilestone.label} — Quote ${quote.quote_number}`
       : `50% Deposit — Quote ${quote.quote_number}`;
 
-    const invoice = await stripe.invoices.create({
+    const invoice = await getStripe().invoices.create({
       customer: stripeCustomerId,
       collection_method: "send_invoice",
       days_until_due: quote.deposit_due_days ?? 7,
       metadata: { quote_id: payload.quote_id },
     });
 
-    await stripe.invoiceItems.create({
+    await getStripe().invoiceItems.create({
       customer: stripeCustomerId,
       invoice: invoice.id,
       amount: depositAmount,
@@ -155,7 +155,7 @@ export async function acceptQuote(payload: AcceptPayload) {
       description: depositDescription,
     });
 
-    const finalizedInvoice = await stripe.invoices.finalizeInvoice(invoice.id);
+    const finalizedInvoice = await getStripe().invoices.finalizeInvoice(invoice.id);
     stripeInvoiceId = finalizedInvoice.id;
 
     // 5. Store stripe_invoice_id on quote
