@@ -201,6 +201,10 @@ export const projects: Project[] = [
         src: `${CL}/f_auto,q_auto,w_1000/v1786907096/SA_grey_only_dgfrvs.jpg`,
         alt: "Gray acrylic base coat applied to the pickleball court near San Antonio, Texas",
       },
+      {
+        src: `${CL}/f_auto,q_auto,w_1000/v1786907493/sa_colors_lines_set_out_in_tape_but_not_done_jjueuq.jpg`,
+        alt: "Pickleball court lines masked out in tape over the blue and gray surface before striping near San Antonio, Texas",
+      },
     ],
     body: [
       "Out on a rural San Antonio property, the owner had a fresh slab ready for play. We ground and prepped the concrete, filled the low spots, then built up the full acrylic surface.",
