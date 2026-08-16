@@ -171,9 +171,25 @@ export const projects: Project[] = [
         src: `${CL}/f_auto,q_auto,w_1000/v1786904828/san_antonio_progress_grinding_g4bkvk.jpg`,
         alt: "Crew grinding and prepping the concrete slab before pickleball court surfacing near San Antonio, Texas",
       },
+      {
+        src: `${CL}/f_auto,q_auto,w_1000/v1786907097/SA_crack_remediation_with_wood_scrooge_mop3xh.jpg`,
+        alt: "Leveling a low spot in the concrete slab with patching compound and a screed board near San Antonio, Texas",
+      },
+      {
+        src: `${CL}/f_auto,q_auto,w_1000/v1786907096/SA_low_spot_fill_black_over_zwwg9i.jpg`,
+        alt: "Repaired low spots sealed with black coating on the pickleball court slab near San Antonio, Texas",
+      },
+      {
+        src: `${CL}/f_auto,q_auto,w_1000/v1786907097/SA_primer_complete_bdyhb4.jpg`,
+        alt: "Concrete slab after the primer coat, ready for color, near San Antonio, Texas",
+      },
+      {
+        src: `${CL}/f_auto,q_auto,w_1000/v1786907096/SA_grey_only_dgfrvs.jpg`,
+        alt: "Gray acrylic base coat applied to the pickleball court near San Antonio, Texas",
+      },
     ],
     body: [
-      "Out on a rural San Antonio property, the owner had a fresh slab ready for play. We ground and prepped the concrete, then built up the full acrylic surface.",
+      "Out on a rural San Antonio property, the owner had a fresh slab ready for play. We ground and prepped the concrete, filled the low spots, then built up the full acrylic surface.",
       "The result is a clean tournament-blue pickleball court with a gray surround and crisp white lines — a regulation surface in the middle of Texas ranch country.",
     ],
   },
