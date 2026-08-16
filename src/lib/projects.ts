@@ -177,6 +177,46 @@ export const projects: Project[] = [
       "The result is a clean tournament-blue pickleball court with a gray surround and crisp white lines — a regulation surface in the middle of Texas ranch country.",
     ],
   },
+  {
+    slug: "richardson-pickleball-conversion",
+    name: "Richardson Tennis-to-Pickleball Conversion",
+    location: "Richardson, TX",
+    courtType: "Pickleball Conversion",
+    service: "Tennis-to-Pickleball Conversion",
+    category: "Court Conversion",
+    summary:
+      "A weathered apartment tennis court resurfaced and re-striped into a fresh multi-court pickleball complex.",
+    metaTitle:
+      "Tennis-to-Pickleball Court Conversion in Richardson, TX | Pro Court Surfaces",
+    metaDescription:
+      "Case study: converting a worn tennis court into dedicated pickleball courts in Richardson, TX. Full resurface, new green-and-blue color zones, and precision striping.",
+    keywords:
+      "tennis to pickleball conversion Richardson TX, pickleball court conversion, tennis court resurfacing Richardson, apartment pickleball courts, multi-court pickleball striping Texas",
+    hero: {
+      src: `${CL}/f_auto,q_auto,w_1600/v1786902349/richardson_drone_finished_bht0ue.jpg`,
+      alt: "Aerial drone view of a finished green and blue pickleball court conversion with crisp white lines in Richardson, Texas",
+    },
+    before: {
+      src: `${CL}/f_auto,q_auto,w_1000/v1786902350/richardson_before_side_f8mt9l.jpg`,
+      alt: "Weathered red and blue tennis court with a faded, worn surface before conversion in Richardson, Texas",
+    },
+    after: {
+      src: `${CL}/f_auto,q_auto,w_1000/v1786902349/richardson_drone_finished_bht0ue.jpg`,
+      alt: "Finished green and blue pickleball courts converted from a tennis court with fresh white striping in Richardson, Texas",
+    },
+    facts: [
+      { label: "Location", value: "Richardson, TX" },
+      { label: "Court type", value: "Tennis → pickleball" },
+      { label: "Scope", value: "Conversion + full resurface" },
+      { label: "Surface", value: "ATS Sports Acrytech acrylic" },
+      { label: "Timeline", value: "5–7 working days" },
+    ],
+    colors: ["Green", "Blue", "White lines"],
+    body: [
+      "This community tennis court had weathered years of play and Texas sun. Rather than a like-for-like resurface, the owner wanted more usable play — so we converted it into dedicated pickleball courts.",
+      "We resurfaced the full slab, laid down fresh green-and-blue color zones, and striped multiple regulation pickleball courts — turning one tired tennis court into a busy pickleball complex.",
+    ],
+  },
 ];
 
 export function getProject(slug: string): Project | undefined {

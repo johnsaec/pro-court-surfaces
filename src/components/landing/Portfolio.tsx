@@ -55,6 +55,7 @@ const projects: Project[] = [
     alt: "Aerial drone view of a finished green and blue pickleball court conversion with crisp white lines in Richardson, Texas",
     caption: "Tennis-to-Pickleball Conversion — Richardson, TX",
     span: "sm:col-span-2",
+    href: "/projects/richardson-pickleball-conversion",
   },
   {
     src: "https://res.cloudinary.com/dwyd4f7lz/image/upload/f_auto,q_auto,w_800/v1786902350/wimberly_finishe_end_srsnsg.jpg",
