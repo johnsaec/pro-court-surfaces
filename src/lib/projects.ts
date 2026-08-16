@@ -166,6 +166,12 @@ export const projects: Project[] = [
       { label: "Timeline", value: "3–5 working days" },
     ],
     colors: ["Tournament Blue", "Gray", "White lines"],
+    gallery: [
+      {
+        src: `${CL}/f_auto,q_auto,w_1000/v1786904828/san_antonio_progress_grinding_g4bkvk.jpg`,
+        alt: "Crew grinding and prepping the concrete slab before pickleball court surfacing near San Antonio, Texas",
+      },
+    ],
     body: [
       "Out on a rural San Antonio property, the owner had a fresh slab ready for play. We ground and prepped the concrete, then built up the full acrylic surface.",
       "The result is a clean tournament-blue pickleball court with a gray surround and crisp white lines — a regulation surface in the middle of Texas ranch country.",
