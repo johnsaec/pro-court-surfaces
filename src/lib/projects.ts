@@ -74,8 +74,24 @@ export const projects: Project[] = [
     },
     gallery: [
       {
+        src: `${CL}/f_auto,q_auto,w_1000/v1786907451/wimberly_grinding_rdoqa3.jpg`,
+        alt: "Grinding off the old failing surface down to the concrete before resurfacing in Wimberley, Texas",
+      },
+      {
         src: `${CL}/f_auto,q_auto,w_1000/v1786902350/wimbrerly_primer_wje8rw.jpg`,
-        alt: "Crew member applying primer coat during a court resurfacing project in Wimberley, Texas",
+        alt: "Crew member applying the primer coat during the court resurfacing in Wimberley, Texas",
+      },
+      {
+        src: `${CL}/f_auto,q_auto,w_1000/v1786907451/wimberly_black_cueoxt.jpg`,
+        alt: "Black acrylic base coat applied over the prepped court in Wimberley, Texas",
+      },
+      {
+        src: `${CL}/f_auto,q_auto,w_1000/v1786907452/wimberly_green_only_agjtfx.jpg`,
+        alt: "Green acrylic color coat going down on the resurfaced court in Wimberley, Texas",
+      },
+      {
+        src: `${CL}/f_auto,q_auto,w_1000/v1786907452/wimbnerly_blue_guys_painting_under_fence_x5dnqv.jpg`,
+        alt: "Crew applying the blue color coat and cutting in along the fence in Wimberley, Texas",
       },
     ],
     facts: [
