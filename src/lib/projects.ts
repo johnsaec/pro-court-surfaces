@@ -126,6 +126,20 @@ export const projects: Project[] = [
       { label: "Timeline", value: "3–5 working days" },
     ],
     colors: ["Blue", "Gold", "Gray", "White lines"],
+    gallery: [
+      {
+        src: `${CL}/f_auto,q_auto,w_1000/v1786907383/geoergowtn_grind_cropped_ryallr.png`,
+        alt: "Grinding and profiling the fresh concrete slab before surfacing in Georgetown, Texas",
+      },
+      {
+        src: `${CL}/f_auto,q_auto,w_1000/v1786907198/georgetown_primer_done_kpqmk5.jpg`,
+        alt: "Slab after crack prep and primer coat, ready for the base coat, in Georgetown, Texas",
+      },
+      {
+        src: `${CL}/f_auto,q_auto,w_1000/v1786907199/georgorwtown_black_side_angle_uz73yk.jpg`,
+        alt: "Black acrylic base coat applied over the prepped slab in Georgetown, Texas",
+      },
+    ],
     body: [
       "The homeowner had a fresh concrete slab poured and ready — a blank canvas in the Hill Country backyard. We took it from bare gray concrete to a full acrylic sport surface.",
       "The finished layout combines a blue-and-gold basketball court with pickleball striping, wrapped in a gray border — built to hold up to Texas sun and daily play.",
