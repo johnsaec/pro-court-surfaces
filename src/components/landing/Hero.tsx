@@ -29,7 +29,7 @@ export function Hero() {
         {/* Eyebrow */}
         <span className="inline-flex items-center gap-3 text-[0.7rem] font-semibold uppercase tracking-[0.2em] text-brand-green">
           <span className="w-8 h-px bg-brand-green" />
-          Austin, TX &bull; Court Resurfacing
+          Austin, TX &bull; Court Installations
         </span>
 
         {/* Headline */}
