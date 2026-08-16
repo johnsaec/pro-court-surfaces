@@ -302,6 +302,12 @@ export const projects: Project[] = [
       { label: "Timeline", value: "3–5 working days" },
     ],
     colors: ["Blue", "Gray", "White lines"],
+    gallery: [
+      {
+        src: `${CL}/f_auto,q_auto,w_1000/v1786907596/wahill_colors_no_lines_buhg9x.jpg`,
+        alt: "Blue key color coat going down over the gray backyard basketball court before striping in Austin, Texas",
+      },
+    ],
     body: [
       "The homeowner had a poolside concrete pad and a hoop already standing — everything but a real playing surface. We took the bare gray pad and turned it into a finished acrylic basketball court.",
       "A blue key on a gray surround with crisp white striping ties it into the backyard's stone-and-wood aesthetic — a clean half-court steps from the pool.",
