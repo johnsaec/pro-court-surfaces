@@ -59,12 +59,6 @@ const projects = [
     caption: "Backyard Basketball Court — Austin, TX",
     span: "",
   },
-  {
-    src: "https://res.cloudinary.com/dwyd4f7lz/image/upload/f_auto,q_auto,w_800/v1786902350/wimbrerly_primer_wje8rw.jpg",
-    alt: "Crew member applying primer coat during a court resurfacing project in Wimberley, Texas",
-    caption: "Resurfacing in Progress — Wimberley, TX",
-    span: "",
-  },
 ];
 
 export function Portfolio() {
