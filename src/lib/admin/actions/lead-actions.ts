@@ -2,6 +2,29 @@
 
 import { revalidatePath } from "next/cache";
 import { createServerClient } from "@/lib/supabase/server";
+import { updateNotionPipelineLead } from "@/lib/notion";
+
+// Best-effort push of a lead's current state to its linked Notion pipeline page.
+// No-op if the lead was never synced (no notion_page_id). Never throws — a Notion
+// failure must not break the Supabase write that already succeeded.
+async function syncLeadToNotion(
+  lead: { notion_page_id: string | null } | null,
+  fields: {
+    dealStage?: string;
+    phone?: string;
+    city?: string;
+    projectType?: string;
+    sports?: string[];
+    message?: string;
+  }
+): Promise<void> {
+  if (!lead?.notion_page_id) return;
+  try {
+    await updateNotionPipelineLead(lead.notion_page_id, fields);
+  } catch (err) {
+    console.error("[lead-actions] Notion sync failed:", err);
+  }
+}
 
 export type LeadCreateData = {
   display_name: string;
@@ -90,7 +113,7 @@ export async function updateLead(
   const parseNum = (v: number | null | undefined) =>
     v != null && !isNaN(v) ? v : null;
 
-  const { error } = await supabase
+  const { data: updated, error } = await supabase
     .from("leads")
     .update({
       display_name: data.display_name,
@@ -129,9 +152,21 @@ export async function updateLead(
       interested_in_financing: data.interested_in_financing ?? false,
       notes: data.notes || null,
     })
-    .eq("id", id);
+    .eq("id", id)
+    .select("notion_page_id")
+    .single();
 
   if (error) return { success: false, error: error.message };
+
+  await syncLeadToNotion(updated, {
+    dealStage: data.deal_stage,
+    phone: data.phone || undefined,
+    city: data.city || undefined,
+    projectType: data.project_type || undefined,
+    sports: data.sports?.length ? data.sports : undefined,
+    message: data.notes || undefined,
+  });
+
   revalidatePath("/admin/leads");
   revalidatePath(`/admin/leads/${id}`);
   return { success: true };
@@ -142,12 +177,17 @@ export async function updateLeadStage(
   deal_stage: string
 ): Promise<{ success: boolean; error?: string }> {
   const supabase = createServerClient();
-  const { error } = await supabase
+  const { data: updated, error } = await supabase
     .from("leads")
     .update({ deal_stage })
-    .eq("id", id);
+    .eq("id", id)
+    .select("notion_page_id")
+    .single();
 
   if (error) return { success: false, error: error.message };
+
+  await syncLeadToNotion(updated, { dealStage: deal_stage });
+
   revalidatePath("/admin/leads");
   return { success: true };
 }

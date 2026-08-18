@@ -23,7 +23,7 @@ export async function GET(req: NextRequest) {
   // Find leads not yet synced to Notion
   const { data: leads, error } = await supabase
     .from("leads")
-    .select("id, display_name, first_name, last_name, email, phone, city, project_type, sports, notes")
+    .select("id, display_name, first_name, last_name, email, phone, city, project_type, sports, notes, deal_stage")
     .is("notion_page_id", null)
     .order("created_at", { ascending: true })
     .limit(20);
@@ -51,6 +51,7 @@ export async function GET(req: NextRequest) {
         projectType: lead.project_type || undefined,
         sports: lead.sports?.length ? lead.sports : undefined,
         message: lead.notes || undefined,
+        dealStage: lead.deal_stage || undefined,
         supabaseId: lead.id,
       });
 

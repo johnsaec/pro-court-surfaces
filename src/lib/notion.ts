@@ -41,6 +41,7 @@ export async function createNotionPipelineLead(lead: {
   projectType?: string;
   sports?: string[];
   message?: string;
+  dealStage?: string;
   supabaseId: string;
 }): Promise<string | null> {
   if (!NOTION_API_KEY) {
@@ -53,7 +54,7 @@ export async function createNotionPipelineLead(lead: {
       title: [{ text: { content: lead.name } }],
     },
     "Deal Stage": {
-      select: { name: "New Lead" },
+      select: { name: notionDealStage(lead.dealStage) || "New Lead" },
     },
     "Lead Source": {
       multi_select: [{ name: "Website" }],
@@ -129,6 +130,26 @@ export async function createNotionPipelineLead(lead: {
   return data.id as string;
 }
 
+// Maps Supabase `deal_stage` enum values to the Notion "Deal Stage" select
+// option names. Notion has no "Converted" option, so a converted lead (accepted
+// quote → customer) maps to the closest terminal win state, "Won".
+const DEAL_STAGE_TO_NOTION: Record<string, string> = {
+  cold: "Cold",
+  new_lead: "New Lead",
+  qualified_lead: "Qualified Lead",
+  proposal_stage: "Proposal Stage",
+  proposal_sent: "Proposal Sent",
+  buyer_interested: "Buyer Interested",
+  won: "Won",
+  lost: "Lost",
+  converted: "Won",
+};
+
+export function notionDealStage(dealStage: string | null | undefined): string | undefined {
+  if (!dealStage) return undefined;
+  return DEAL_STAGE_TO_NOTION[dealStage];
+}
+
 export async function updateNotionPipelineLead(
   notionPageId: string,
   fields: {
@@ -137,6 +158,7 @@ export async function updateNotionPipelineLead(
     projectType?: string;
     sports?: string[];
     message?: string;
+    dealStage?: string;
   }
 ): Promise<boolean> {
   if (!NOTION_API_KEY) {
@@ -146,6 +168,12 @@ export async function updateNotionPipelineLead(
 
   const properties: Record<string, unknown> = {};
 
+  if (fields.dealStage) {
+    const stage = notionDealStage(fields.dealStage);
+    if (stage) {
+      properties["Deal Stage"] = { select: { name: stage } };
+    }
+  }
   if (fields.phone) {
     properties["Phone Number"] = { phone_number: fields.phone };
   }
