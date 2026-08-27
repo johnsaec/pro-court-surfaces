@@ -123,17 +123,24 @@ export function PackageSelector({
                         className="flex items-baseline justify-between gap-4"
                       >
                         <div className="flex-1 min-w-0">
-                          <span className="text-sm text-stone-700">
-                            {item.name}
-                          </span>
-                          {item.unit_of_measure &&
-                            item.unit_of_measure !== "flat_rate" && (
-                              <span className="text-xs text-stone-400 ml-2">
-                                {item.quantity} &times;{" "}
-                                {UNIT_OF_MEASURE_LABELS[item.unit_of_measure] ??
-                                  item.unit_of_measure}
-                              </span>
-                            )}
+                          <div>
+                            <span className="text-sm text-stone-700">
+                              {item.name}
+                            </span>
+                            {item.unit_of_measure &&
+                              item.unit_of_measure !== "flat_rate" && (
+                                <span className="text-xs text-stone-400 ml-2">
+                                  {item.quantity} &times;{" "}
+                                  {UNIT_OF_MEASURE_LABELS[item.unit_of_measure] ??
+                                    item.unit_of_measure}
+                                </span>
+                              )}
+                          </div>
+                          {item.description && (
+                            <p className="text-xs text-stone-400 mt-1 leading-relaxed">
+                              {item.description}
+                            </p>
+                          )}
                         </div>
                         <span className="text-sm font-medium tabular-nums text-stone-700 shrink-0">
                           ${item.total_price.toLocaleString("en-US", { minimumFractionDigits: 2 })}
