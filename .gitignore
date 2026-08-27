@@ -38,6 +38,9 @@ yarn-error.log*
 # vercel
 .vercel
 
+# generated client quote PDFs
+/quotes/
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
