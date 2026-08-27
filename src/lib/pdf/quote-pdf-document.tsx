@@ -102,7 +102,9 @@ const s = StyleSheet.create({
   tableRowAlt: {
     backgroundColor: LIGHT_GRAY,
   },
-  colName: { flex: 3 },
+  colName: { flex: 3, paddingRight: 8 },
+  itemName: { fontSize: 9 },
+  itemDesc: { fontSize: 7, color: MUTED, lineHeight: 1.4, marginTop: 2 },
   colQty: { width: 40, textAlign: "right" },
   colUnit: { width: 65, textAlign: "right" },
   colTotal: { width: 65, textAlign: "right" },
@@ -245,7 +247,12 @@ function PackageSection({ pkg, index }: { pkg: QuotePackageRow; index: number })
       </View>
       {pkg.quote_line_items.map((item, i) => (
         <View key={item.id} style={[s.tableRow, i % 2 === 1 ? s.tableRowAlt : {}]}>
-          <Text style={s.colName}>{item.name}</Text>
+          <View style={s.colName}>
+            <Text style={s.itemName}>{item.name}</Text>
+            {item.description ? (
+              <Text style={s.itemDesc}>{item.description}</Text>
+            ) : null}
+          </View>
           <Text style={s.colQty}>{item.quantity}</Text>
           <Text style={s.colUnit}>{fmt(item.unit_price)}</Text>
           <Text style={s.colTotal}>{fmt(item.total_price)}</Text>
@@ -414,43 +421,6 @@ export function QuotePdfDocument({ quote, selectedPackageId }: QuotePdfDocumentP
             </View>
           </>
         )}
-
-        {/* Pricing Summary */}
-        <View style={s.summaryBox}>
-          <View style={s.summaryRow}>
-            <Text style={s.summaryLabel}>Subtotal</Text>
-            <Text style={s.summaryValue}>{fmt(quote.subtotal)}</Text>
-          </View>
-          {(quote.discount_amount ?? 0) > 0 && (
-            <View style={s.summaryRow}>
-              <Text style={s.summaryLabel}>Discount</Text>
-              <Text style={s.summaryValue}>-{fmt(quote.discount_amount)}</Text>
-            </View>
-          )}
-          <View style={s.summaryTotal}>
-            <Text style={s.summaryTotalLabel}>Total</Text>
-            <Text style={s.summaryTotalValue}>{fmt(quote.total)}</Text>
-          </View>
-          {/* Payment schedule or default 50% deposit */}
-          {quote.payment_schedule && quote.payment_schedule.length > 0 ? (
-            <>
-              <View style={{ borderTop: `0.5px solid ${BORDER}`, marginTop: 4, paddingTop: 6 }}>
-                <Text style={{ fontSize: 8, fontFamily: "Helvetica-Bold", marginBottom: 4 }}>Payment Schedule</Text>
-              </View>
-              {quote.payment_schedule.map((m: { label: string; amount: number }, i: number) => (
-                <View key={i} style={s.summaryRow}>
-                  <Text style={s.summaryLabel}>{i + 1}. {m.label}</Text>
-                  <Text style={s.summaryValue}>{fmt(m.amount)}</Text>
-                </View>
-              ))}
-            </>
-          ) : (
-            <View style={[s.summaryRow, { marginTop: 6 }]}>
-              <Text style={s.summaryLabel}>50% Deposit Due</Text>
-              <Text style={s.summaryValue}>{fmt((quote.total ?? 0) / 2)}</Text>
-            </View>
-          )}
-        </View>
 
         {/* Terms & Conditions */}
         {quote.terms_and_conditions && (
