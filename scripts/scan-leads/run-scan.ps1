@@ -31,9 +31,20 @@ Procedure:
    email or phone) with --mode ingest.
 5. For anything UNSURE, do NOT write it — just list it in the final summary.
 
+6. FINALLY, send a report email via the Gmail send tool, FROM
+   patrick@procourtsurfaces.com TO patrick@procourtsurfaces.com. ALWAYS send it,
+   even if zero leads were added — it doubles as a heartbeat confirming the scan
+   ran. Subject: "Inbox Lead Scan — <today's date> — <N> new lead(s)". Body
+   (simple HTML): a one-line "Scan ran <date/time>." confirmation; a counts line
+   (threads scanned / candidates / written / already known / held); then, if any
+   leads were WRITTEN, a short list of each (name, phone/email, one-line project,
+   and that it synced to CRM + Notion); if none were written, say "No new leads
+   this run."; and briefly list any HELD-as-unsure items so they can be reviewed.
+   Keep it short and skimmable.
+
 End with a concise summary: threads scanned, candidate count, how many were
 already known (and where), which were written (names + emails), which were held
-as unsure, and any Notion sync failures.
+as unsure, whether the report email sent, and any Notion sync failures.
 '@
 
 Set-Location $proj

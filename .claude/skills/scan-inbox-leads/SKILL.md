@@ -77,6 +77,16 @@ known (and where), how many written, and any Notion sync failures (the lead is
 still safely in the DB; note it so Patrick can retry). Include names/emails so
 Patrick can eyeball the batch.
 
+## Step 6 — Email report (unattended runs only)
+When this runs unattended (the scheduled task, or the caller says so), send a
+report email via the Gmail send tool, from and to `patrick@procourtsurfaces.com`.
+**Always send it — even with zero new leads — so it also confirms the scan ran
+(heartbeat).** Subject `Inbox Lead Scan — <date> — <N> new lead(s)`; body is a
+short HTML summary: a "scan ran" line, the counts, the list of written leads
+(name, contact, one-line project, synced to CRM+Notion) or "No new leads this
+run.", and a brief list of held-unsure items. When invoked interactively by
+Patrick, skip the email — the in-chat summary is enough.
+
 ## Notes
 - The script reads `NEXT_PUBLIC_SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, and
   `NOTION_API_KEY` from `.env.local`. Run it from the repo root.
