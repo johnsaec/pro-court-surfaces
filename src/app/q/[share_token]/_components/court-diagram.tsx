@@ -197,8 +197,9 @@ function TennisCourt({
   activeZone,
   onZoneClick,
 }: CourtProps) {
-  // Tennis: 78' x 36' → viewBox 1560x720, with 80px padding (20px per foot)
-  const pad = 80;
+  // Tennis: 78' x 36' → 1560x720 (20px per foot). Extra padding = surround area, so
+  // overlay courts that extend past the tennis boundary have room ("zoomed out").
+  const pad = 280;
   const w = 1560;
   const h = 720;
   const vw = w + pad * 2;
@@ -215,15 +216,17 @@ function TennisCourt({
   const netX = pad + w / 2;
   const svcLeft = netX - serviceDepth; // tennis left service line
 
-  // Pickleball overlay — one court on the LEFT half. Blended-lines rule: the KITCHEN
-  // (non-volley-zone) line — the playing-box↔NVZ boundary — lands on the tennis
-  // service line, NOT the pickleball net. So the net sits 7' toward center of it.
+  // Pickleball overlay — a full 44'x20' court on the LEFT, extending past the tennis
+  // boundary into the surround. Blended-lines rule: the CENTER-facing kitchen line
+  // (playing-box↔NVZ boundary) lands on the tennis service line, NOT the net.
   const nvz = 7 * 20; // 140px = 7'
-  const pbNetX = svcLeft + nvz; // net is 7' center-side of the tennis service line
-  const pbX = svcLeft - 15 * 20; // outer baseline: 15' beyond the kitchen line
-  const pbW = netX - pbX; // extend to the tennis net (shared center edge)
-  const pbH = 400; // 20' playing width
+  const pbHalf = 22 * 20; // 440px = 22' (net to baseline)
+  const pbNetX = svcLeft - nvz; // net sits 7' outside (left of) the tennis service line
+  const pbX = pbNetX - pbHalf; // left baseline — lands in the surround
+  const pbW = pbHalf * 2; // 880 (44')
+  const pbH = 20 * 20; // 400 (20' playing width)
   const pbY = cy - pbH / 2;
+  // Kitchen lines are pbNetX ± nvz; the center-facing one (pbNetX + nvz) == svcLeft.
 
   // Basketball overlay — foul line only, on the RIGHT half (hoop on the sideline):
   // a free-throw line + arc. Ref: Goldstein layout ("basketball one side, foul line").

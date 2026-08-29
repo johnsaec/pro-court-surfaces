@@ -145,8 +145,7 @@ export function QuotePage({ quote, colors }: QuotePageProps) {
   // (no tennis) uses the pickleball base.
   const courtType: "pickleball" | "tennis" =
     quote.sports?.includes("tennis") ? "tennis" : "pickleball";
-  // Visual: show the base court only for now (overlay lines disabled — pricing unchanged).
-  const sports: string[] = [];
+  const sports = quote.sports ?? [];
 
   const contactName = quote.customer?.display_name ?? quote.lead?.display_name;
   const createdDate = new Date(quote.created_at).toLocaleDateString("en-US", {
