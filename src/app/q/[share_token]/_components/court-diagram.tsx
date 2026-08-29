@@ -215,15 +215,15 @@ function TennisCourt({
   const netX = pad + w / 2;
   const svcLeft = netX - serviceDepth; // tennis left service line
 
-  // Pickleball overlay — one court on the LEFT half, net vertical and ALIGNED to the
-  // tennis service line, kitchen (NVZ) lines flanking it (blended-lines technique).
-  const pbNetX = svcLeft; // pickleball net sits on the tennis service line
-  const pbHalfLen = 320; // court extends this far each side of its net
-  const pbX = pbNetX - pbHalfLen;
-  const pbW = pbHalfLen * 2;
+  // Pickleball overlay — one court on the LEFT half. Blended-lines rule: the KITCHEN
+  // (non-volley-zone) line — the playing-box↔NVZ boundary — lands on the tennis
+  // service line, NOT the pickleball net. So the net sits 7' toward center of it.
+  const nvz = 7 * 20; // 140px = 7'
+  const pbNetX = svcLeft + nvz; // net is 7' center-side of the tennis service line
+  const pbX = svcLeft - 15 * 20; // outer baseline: 15' beyond the kitchen line
+  const pbW = netX - pbX; // extend to the tennis net (shared center edge)
   const pbH = 400; // 20' playing width
   const pbY = cy - pbH / 2;
-  const nvz = 7 * 20; // 140px = 7'
 
   // Basketball overlay — foul line only, on the RIGHT half (hoop on the sideline):
   // a free-throw line + arc. Ref: Goldstein layout ("basketball one side, foul line").
