@@ -231,7 +231,7 @@ export function QuoteDetailsSection({
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="standard">Standard (50% Deposit)</SelectItem>
+                <SelectItem value="standard">Standard Deposit %</SelectItem>
                 <SelectItem value="custom">Custom Schedule</SelectItem>
               </SelectContent>
             </Select>
@@ -251,6 +251,46 @@ export function QuoteDetailsSection({
               min={1}
               placeholder="7"
             />
+          </div>
+          {state.payment_mode === "standard" && (
+            <div className="space-y-1.5">
+              <Label>Deposit %</Label>
+              <Input
+                type="number"
+                value={state.deposit_percent}
+                onChange={(e) =>
+                  dispatch({
+                    type: "SET_FIELD",
+                    field: "deposit_percent",
+                    value: parseInt(e.target.value) || 30,
+                  })
+                }
+                min={1}
+                max={100}
+                placeholder="30"
+              />
+              <p className="text-xs text-muted-foreground">
+                Deposit invoiced at acceptance; balance ({100 - (state.deposit_percent || 30)}%) at completion.
+              </p>
+            </div>
+          )}
+          <div className="flex items-center gap-2 pt-6">
+            <input
+              id="show_signature"
+              type="checkbox"
+              className="size-4"
+              checked={state.show_signature}
+              onChange={(e) =>
+                dispatch({
+                  type: "SET_FIELD",
+                  field: "show_signature",
+                  value: e.target.checked,
+                })
+              }
+            />
+            <Label htmlFor="show_signature" className="cursor-pointer">
+              Show signature block on PDF
+            </Label>
           </div>
         </div>
 

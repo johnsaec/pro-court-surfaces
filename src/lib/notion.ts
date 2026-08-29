@@ -134,6 +134,7 @@ export async function createNotionPipelineLead(lead: {
 // option names. Notion has no "Converted" option, so a converted lead (accepted
 // quote → customer) maps to the closest terminal win state, "Won".
 const DEAL_STAGE_TO_NOTION: Record<string, string> = {
+  talking: "Talking",
   cold: "Cold",
   new_lead: "New Lead",
   qualified_lead: "Qualified Lead",

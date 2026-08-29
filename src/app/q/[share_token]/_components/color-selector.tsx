@@ -12,6 +12,7 @@ const LINE_COLOR_NAMES = new Set(["white", "black", "gray", "yellow"]);
 
 interface ColorSelectorProps {
   courtType: "pickleball" | "tennis";
+  sports?: string[];
   colors: Color[];
   colorSelections: ColorSelections;
   onColorChange: (zone: CourtZone, colorId: string) => void;
@@ -20,6 +21,7 @@ interface ColorSelectorProps {
 
 export function ColorSelector({
   courtType,
+  sports = [],
   colors,
   colorSelections,
   onColorChange,
@@ -67,6 +69,7 @@ export function ColorSelector({
       <div className="rounded-lg border border-stone-200 bg-white p-5 sm:p-8">
         <CourtDiagram
           courtType={courtType}
+          sports={sports}
           outsideColor={outsideColor?.hex_code ?? "#8B9467"}
           insideColor={insideColor?.hex_code ?? "#4A7C59"}
           nvzColor={nvzColor?.hex_code ?? "#3B82F6"}
@@ -74,6 +77,12 @@ export function ColorSelector({
           activeZone={activeZone}
           onZoneClick={handleZoneClick}
         />
+
+        {courtType === "tennis" && (sports.includes("pickleball") || sports.includes("basketball")) && (
+          <p className="text-[11px] text-stone-400 text-center mt-3">
+            Solid lines: tennis · Dashed: {[sports.includes("pickleball") && "pickleball", sports.includes("basketball") && "basketball"].filter(Boolean).join(" + ")} overlay
+          </p>
+        )}
 
         {/* Color swatches row */}
         <div className="grid grid-cols-4 gap-3 sm:gap-6 mt-6 pt-5 border-t border-stone-100">

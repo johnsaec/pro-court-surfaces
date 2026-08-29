@@ -45,6 +45,8 @@ export async function saveQuote(
           internal_notes: payload.internal_notes,
           discount_amount: payload.discount_amount,
           deposit_due_days: payload.deposit_due_days,
+          deposit_percent: payload.deposit_percent,
+          show_signature: payload.show_signature,
           payment_schedule: payload.payment_schedule,
           subtotal: payload.subtotal,
           total: payload.total,
@@ -85,6 +87,8 @@ export async function saveQuote(
           internal_notes: payload.internal_notes,
           discount_amount: payload.discount_amount,
           deposit_due_days: payload.deposit_due_days,
+          deposit_percent: payload.deposit_percent,
+          show_signature: payload.show_signature,
           payment_schedule: payload.payment_schedule,
           subtotal: payload.subtotal,
           total: payload.total,
@@ -297,14 +301,15 @@ export async function collectBalance(
     Array.isArray(quote.payment_schedule) &&
     quote.payment_schedule.length > 1;
 
-  // Sum remaining milestones (all except first), or default 50%
+  // Sum remaining milestones (all except first), or the remaining balance after the deposit
+  const balancePct = 100 - Number(quote.deposit_percent ?? 30);
   const balanceAmount = hasCustomSchedule
     ? Math.round(
         (quote.payment_schedule as { label: string; amount: number }[])
           .slice(1)
           .reduce((sum: number, m: { amount: number }) => sum + m.amount, 0) * 100
       )
-    : Math.round(total * 50); // cents (50% of total in dollars)
+    : Math.round(total * balancePct); // cents (remaining % of total in dollars)
 
   const balanceDescription = hasCustomSchedule
     ? `Remaining Balance — Quote ${quote.quote_number}`

@@ -27,6 +27,7 @@ interface AcceptedPageProps {
   quote: QuoteDetail;
   selection: SelectionData;
   depositAmount: number;
+  depositPercent: number | null;
   invoiceUrl: string | null;
   invoiceStatus: string | null;
   invoiceDueDate: string | null;
@@ -36,6 +37,7 @@ export function AcceptedPage({
   quote,
   selection,
   depositAmount,
+  depositPercent,
   invoiceUrl,
   invoiceStatus,
   invoiceDueDate,
@@ -97,7 +99,9 @@ export function AcceptedPage({
               </p>
             </div>
             <div>
-              <p className="text-muted-foreground">50% Deposit Due</p>
+              <p className="text-muted-foreground">
+                {depositPercent ? `${depositPercent}% Deposit Due` : "Deposit Due"}
+              </p>
               <p className="font-semibold text-lg tabular-nums">
                 ${depositAmount.toFixed(2)}
               </p>

@@ -15,6 +15,7 @@ type QuoteAcceptedEmailProps = {
   customerEmail: string;
   packageTier: string;
   totalPrice: number;
+  depositPercent?: number;
 };
 
 export function QuoteAcceptedEmail({
@@ -23,6 +24,7 @@ export function QuoteAcceptedEmail({
   customerEmail,
   packageTier,
   totalPrice,
+  depositPercent = 30,
 }: QuoteAcceptedEmailProps) {
   return (
     <Html>
@@ -49,12 +51,12 @@ export function QuoteAcceptedEmail({
                 <strong>Total:</strong> ${totalPrice.toLocaleString("en-US", { minimumFractionDigits: 2 })}
               </Text>
               <Text style={detailRow}>
-                <strong>Deposit (50%):</strong> ${(totalPrice / 2).toLocaleString("en-US", { minimumFractionDigits: 2 })}
+                <strong>Deposit ({depositPercent}%):</strong> ${((totalPrice * depositPercent) / 100).toLocaleString("en-US", { minimumFractionDigits: 2 })}
               </Text>
             </Section>
             <Text style={paragraph}>
-              A Stripe invoice for the 50% deposit has been created and sent to
-              the customer. Log in to the admin dashboard to view details.
+              A Stripe invoice for the {depositPercent}% deposit has been created
+              and sent to the customer. Log in to the admin dashboard to view details.
             </Text>
           </Section>
           <Hr style={hr} />

@@ -1,6 +1,7 @@
 // Enum label maps for display in UI
 
 export const DEAL_STAGE_LABELS: Record<string, string> = {
+  talking: "Talking",
   cold: "Cold",
   new_lead: "New Lead",
   qualified_lead: "Qualified Lead",
@@ -13,6 +14,7 @@ export const DEAL_STAGE_LABELS: Record<string, string> = {
 };
 
 export const DEAL_STAGE_COLORS: Record<string, string> = {
+  talking: "bg-amber-100 text-amber-700",
   cold: "bg-gray-100 text-gray-700",
   new_lead: "bg-blue-100 text-blue-700",
   qualified_lead: "bg-indigo-100 text-indigo-700",

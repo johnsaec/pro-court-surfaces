@@ -1,7 +1,8 @@
 # Fix: lazy-init the Resend & Stripe clients
 
-_Status: planned → in progress. Hardening for the external-service clients so a
-missing/misconfigured API key can't crash a whole route or the build._
+_Status: ✅ done — shipped in commit `29658c1` (2026-08-16). Hardening for the
+external-service clients so a missing/misconfigured API key can't crash a whole
+route or the build._
 
 ---
 

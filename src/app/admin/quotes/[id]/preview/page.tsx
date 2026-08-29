@@ -53,7 +53,9 @@ export default async function QuotePreviewPage({
                       .slice(1)
                       .reduce((sum, m) => sum + m.amount, 0)
                   )
-                : Math.round((quote.total ?? 0) / 2)
+                : Math.round(
+                    ((quote.total ?? 0) * (100 - Number(quote.deposit_percent ?? 30))) / 100
+                  )
             }
           />
           <Button asChild>

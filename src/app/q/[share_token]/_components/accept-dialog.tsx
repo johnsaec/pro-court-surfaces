@@ -20,6 +20,7 @@ interface AcceptDialogProps {
   defaultEmail: string | null;
   total: number;
   paymentSchedule?: PaymentMilestone[] | null;
+  depositPercent?: number;
 }
 
 export function AcceptDialog({
@@ -29,6 +30,7 @@ export function AcceptDialog({
   defaultEmail,
   total,
   paymentSchedule,
+  depositPercent = 30,
 }: AcceptDialogProps) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState(defaultEmail ?? "");
@@ -38,10 +40,10 @@ export function AcceptDialog({
   const hasCustomSchedule = paymentSchedule && paymentSchedule.length > 0;
   const depositAmount = hasCustomSchedule
     ? paymentSchedule[0].amount
-    : total / 2;
+    : (total * depositPercent) / 100;
   const depositLabel = hasCustomSchedule
     ? paymentSchedule[0].label
-    : "50% Deposit";
+    : `${depositPercent}% Deposit`;
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -77,11 +79,11 @@ export function AcceptDialog({
                 </>
               ) : (
                 <>
-                  A 50% deposit of{" "}
+                  A {depositPercent}% deposit of{" "}
                   <span className="font-semibold tabular-nums text-stone-700">
                     ${depositAmount.toLocaleString("en-US", { minimumFractionDigits: 2 })}
                   </span>{" "}
-                  will be invoiced to your email.
+                  will be invoiced to your email. Total quote: ${total.toLocaleString("en-US", { minimumFractionDigits: 2 })}.
                 </>
               )}
             </DialogDescription>

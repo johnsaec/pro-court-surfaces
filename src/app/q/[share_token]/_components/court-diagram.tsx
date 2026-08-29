@@ -4,6 +4,7 @@ type CourtZone = "outside" | "inside" | "lines" | "nvz";
 
 interface CourtDiagramProps {
   courtType: "pickleball" | "tennis";
+  sports?: string[];
   outsideColor: string;
   insideColor: string;
   nvzColor: string;
@@ -16,6 +17,7 @@ const ZONE_HIGHLIGHT = "drop-shadow(0 0 6px rgba(59,130,246,0.6))";
 
 export function CourtDiagram({
   courtType,
+  sports = [],
   outsideColor,
   insideColor,
   nvzColor,
@@ -26,6 +28,7 @@ export function CourtDiagram({
   if (courtType === "pickleball") {
     return (
       <PickleballCourt
+        sports={sports}
         outsideColor={outsideColor}
         insideColor={insideColor}
         nvzColor={nvzColor}
@@ -38,6 +41,7 @@ export function CourtDiagram({
 
   return (
     <TennisCourt
+      sports={sports}
       outsideColor={outsideColor}
       insideColor={insideColor}
       nvzColor={nvzColor}
@@ -185,6 +189,7 @@ function PickleballCourt({
 }
 
 function TennisCourt({
+  sports = [],
   outsideColor,
   insideColor,
   // nvzColor not used for tennis courts
@@ -192,7 +197,7 @@ function TennisCourt({
   activeZone,
   onZoneClick,
 }: CourtProps) {
-  // Tennis: 78' x 36' → viewBox 1560x720, with 80px padding
+  // Tennis: 78' x 36' → viewBox 1560x720, with 80px padding (20px per foot)
   const pad = 80;
   const w = 1560;
   const h = 720;
@@ -203,6 +208,28 @@ function TennisCourt({
   const alley = 90;
   // Service box depth: 21' = 420px from net
   const serviceDepth = 420;
+
+  const showPickleball = sports.includes("pickleball");
+  const showBasketball = sports.includes("basketball");
+  const cy = pad + h / 2;
+  const netX = pad + w / 2;
+  const svcLeft = netX - serviceDepth; // tennis left service line
+
+  // Pickleball overlay — one court on the LEFT half, net vertical and ALIGNED to the
+  // tennis service line, kitchen (NVZ) lines flanking it (blended-lines technique).
+  const pbNetX = svcLeft; // pickleball net sits on the tennis service line
+  const pbHalfLen = 320; // court extends this far each side of its net
+  const pbX = pbNetX - pbHalfLen;
+  const pbW = pbHalfLen * 2;
+  const pbH = 400; // 20' playing width
+  const pbY = cy - pbH / 2;
+  const nvz = 7 * 20; // 140px = 7'
+
+  // Basketball overlay — foul line only, on the RIGHT half (hoop on the sideline):
+  // a free-throw line + arc. Ref: Goldstein layout ("basketball one side, foul line").
+  const bbCx = pad + w * 0.74;
+  const bbHalf = 120; // half the 12' lane
+  const bbArcR = 110;
 
   return (
     <svg
@@ -320,6 +347,27 @@ function TennisCourt({
           stroke={linesColor}
           strokeWidth={3}
         />
+
+        {/* Pickleball overlay — LEFT half, net vertical on the tennis service line,
+            kitchen (NVZ) lines flanking it, plus a center service line. Dashed. */}
+        {showPickleball && (
+          <g strokeDasharray="10 8" opacity={0.9} fill="none" stroke={linesColor} strokeWidth={3}>
+            <rect x={pbX} y={pbY} width={pbW} height={pbH} />
+            <line x1={pbNetX} y1={pbY} x2={pbNetX} y2={pbY + pbH} />
+            <line x1={pbNetX - nvz} y1={pbY} x2={pbNetX - nvz} y2={pbY + pbH} />
+            <line x1={pbNetX + nvz} y1={pbY} x2={pbNetX + nvz} y2={pbY + pbH} />
+            <line x1={pbX} y1={cy} x2={pbNetX - nvz} y2={cy} />
+            <line x1={pbNetX + nvz} y1={cy} x2={pbX + pbW} y2={cy} />
+          </g>
+        )}
+
+        {/* Basketball overlay — RIGHT side, foul line + free-throw arc, dashed */}
+        {showBasketball && (
+          <g strokeDasharray="10 8" opacity={0.9} fill="none" stroke={linesColor} strokeWidth={3}>
+            <line x1={bbCx - bbHalf} y1={cy} x2={bbCx + bbHalf} y2={cy} />
+            <path d={`M ${bbCx - bbArcR} ${cy} A ${bbArcR} ${bbArcR} 0 0 0 ${bbCx + bbArcR} ${cy}`} />
+          </g>
+        )}
       </g>
     </svg>
   );

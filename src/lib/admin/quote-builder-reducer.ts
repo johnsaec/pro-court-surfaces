@@ -38,6 +38,8 @@ export function createEmptyState(): QuoteBuilderState {
     internal_notes: "",
     discount_amount: 0,
     deposit_due_days: 7,
+    deposit_percent: 30,
+    show_signature: false,
     payment_mode: "standard",
     payment_schedule: [],
   };
@@ -87,6 +89,8 @@ export function stateFromQuote(quote: QuoteDetail): QuoteBuilderState {
     internal_notes: quote.internal_notes ?? "",
     discount_amount: quote.discount_amount ?? 0,
     deposit_due_days: quote.deposit_due_days ?? 7,
+    deposit_percent: quote.deposit_percent ?? 30,
+    show_signature: quote.show_signature ?? false,
     payment_mode: quote.payment_schedule ? "custom" : "standard",
     payment_schedule: quote.payment_schedule ?? [],
   };

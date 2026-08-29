@@ -8,6 +8,13 @@ export type PaymentMilestone = {
   amount: number;
 };
 
+// Resolved conditions/exclusions/warranty clause snapshot (see scripts/quotes/clauses.mjs)
+export type ConditionSection = {
+  section: string;
+  title: string;
+  body: string;
+};
+
 // ── Option types for dropdowns ──────────────────────────────────────
 
 export type CustomerOption = {
@@ -100,6 +107,8 @@ export type QuoteBuilderState = {
   internal_notes: string;
   discount_amount: number;
   deposit_due_days: number;
+  deposit_percent: number;
+  show_signature: boolean;
   payment_mode: "standard" | "custom";
   payment_schedule: PaymentMilestone[];
 };
@@ -135,7 +144,7 @@ export type QuoteBuilderAction =
     }
   | { type: "REMOVE_LINE_ITEM"; packageKey: string; itemKey: string }
   | { type: "SET_COLOR"; field: "color_inside_id" | "color_outside_id" | "color_lines_id" | "color_nvz_id"; value: string }
-  | { type: "SET_FIELD"; field: "cover_note" | "terms_and_conditions" | "internal_notes" | "discount_amount" | "deposit_due_days" | "payment_mode"; value: string | number }
+  | { type: "SET_FIELD"; field: "cover_note" | "terms_and_conditions" | "internal_notes" | "discount_amount" | "deposit_due_days" | "deposit_percent" | "show_signature" | "payment_mode"; value: string | number | boolean }
   | { type: "SET_PAYMENT_SCHEDULE"; schedule: PaymentMilestone[] }
   | { type: "LOAD_STATE"; state: QuoteBuilderState };
 
@@ -183,6 +192,8 @@ export type QuoteSavePayload = {
   internal_notes: string | null;
   discount_amount: number;
   deposit_due_days: number;
+  deposit_percent: number;
+  show_signature: boolean;
   payment_schedule: PaymentMilestone[] | null;
   subtotal: number;
   total: number;
@@ -268,6 +279,9 @@ export type QuoteDetail = {
   discount_amount: number | null;
   total: number | null;
   deposit_due_days: number | null;
+  deposit_percent: number | null;
+  show_signature: boolean | null;
+  conditions: ConditionSection[] | null;
   payment_schedule: PaymentMilestone[] | null;
   accepted_by_name: string | null;
   accepted_by_email: string | null;

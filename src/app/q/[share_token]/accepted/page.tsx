@@ -57,17 +57,17 @@ export default async function QuoteAcceptedPage({
     Array.isArray(quote.payment_schedule) &&
     quote.payment_schedule.length > 0;
 
+  const depositPct = Number(quote.deposit_percent ?? 30);
   const depositAmount = hasCustomSchedule
     ? (quote.payment_schedule as { label: string; amount: number }[])[0].amount
-    : selection?.final_total
-      ? selection.final_total / 2
-      : (quote.total ?? 0) / 2;
+    : ((selection?.final_total ?? quote.total ?? 0) * depositPct) / 100;
 
   return (
     <AcceptedPage
       quote={quote}
       selection={selection}
       depositAmount={depositAmount}
+      depositPercent={hasCustomSchedule ? null : depositPct}
       invoiceUrl={invoiceUrl}
       invoiceStatus={invoiceStatus}
       invoiceDueDate={invoiceDueDate}

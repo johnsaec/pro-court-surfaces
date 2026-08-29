@@ -132,13 +132,15 @@ export async function acceptQuote(payload: AcceptPayload) {
       ? (quote.payment_schedule as { label: string; amount: number }[])[0]
       : null;
 
+    const depositPct = Number(quote.deposit_percent ?? 30);
+
     const depositAmount = firstMilestone
       ? Math.round(firstMilestone.amount * 100) // custom milestone amount in cents
-      : Math.round(payload.total_price * 50); // 50% of total in cents
+      : Math.round(payload.total_price * depositPct); // deposit_percent% of total in cents
 
     const depositDescription = firstMilestone
       ? `${firstMilestone.label} — Quote ${quote.quote_number}`
-      : `50% Deposit — Quote ${quote.quote_number}`;
+      : `${depositPct}% Deposit — Quote ${quote.quote_number}`;
 
     const invoice = await getStripe().invoices.create({
       customer: stripeCustomerId,
@@ -258,6 +260,7 @@ export async function acceptQuote(payload: AcceptPayload) {
         customerEmail: payload.customer_email,
         packageTier: payload.package_id,
         totalPrice: payload.total_price,
+        depositPercent: Number(quote.deposit_percent ?? 30),
       }),
     });
   } catch (err) {

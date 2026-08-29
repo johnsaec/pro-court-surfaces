@@ -8,6 +8,7 @@ interface RunningTotalProps {
   onAcceptClick: () => void;
   readOnly?: boolean;
   paymentSchedule?: PaymentMilestone[] | null;
+  depositPercent?: number;
 }
 
 export function RunningTotal({
@@ -16,19 +17,20 @@ export function RunningTotal({
   onAcceptClick,
   readOnly,
   paymentSchedule,
+  depositPercent = 30,
 }: RunningTotalProps) {
   if (readOnly) return null;
 
-  // First milestone amount, or default 50%
+  // First milestone amount, or deposit_percent% of total
   const depositAmount =
     paymentSchedule && paymentSchedule.length > 0
       ? paymentSchedule[0].amount
-      : total / 2;
+      : (total * depositPercent) / 100;
 
   const depositLabel =
     paymentSchedule && paymentSchedule.length > 0
       ? paymentSchedule[0].label
-      : "50% Deposit";
+      : `${depositPercent}% Deposit`;
 
   return (
     <div className="fixed bottom-0 left-0 right-0 z-40 border-t border-stone-200 bg-white/95 backdrop-blur-sm supports-[backdrop-filter]:bg-white/90">

@@ -6,8 +6,8 @@ import {
   View,
   StyleSheet,
 } from "@react-pdf/renderer";
-import type { QuoteDetail, QuotePackageRow } from "@/lib/admin/types/quote-types";
-import { PROJECT_TYPE_LABELS, PACKAGE_TIER_LABELS } from "@/lib/constants";
+import type { QuoteDetail, QuotePackageRow, QuoteLineItemRow, ConditionSection } from "@/lib/admin/types/quote-types";
+import { PROJECT_TYPE_LABELS } from "@/lib/constants";
 
 const GREEN = "#1a5632";
 const LIGHT_GRAY = "#f3f4f6";
@@ -199,6 +199,93 @@ const s = StyleSheet.create({
     fontFamily: "Helvetica-Bold",
     color: GREEN,
   },
+  // Summary extras
+  perSqft: {
+    fontSize: 9,
+    color: MUTED,
+    textAlign: "right",
+    marginTop: 2,
+  },
+  depositRow: {
+    marginTop: 8,
+    paddingTop: 6,
+    borderTop: `1px solid ${BORDER}`,
+  },
+  depositText: {
+    fontSize: 9,
+    color: TEXT,
+  },
+  // Conditions / clauses
+  clause: {
+    marginBottom: 6,
+  },
+  clauseTitle: {
+    fontSize: 9,
+    fontFamily: "Helvetica-Bold",
+    color: TEXT,
+    marginBottom: 2,
+  },
+  clauseBody: {
+    fontSize: 8,
+    color: MUTED,
+    lineHeight: 1.5,
+  },
+  // Payment terms boxes
+  paymentTermsRow: {
+    flexDirection: "row",
+    gap: 10,
+    marginTop: 4,
+  },
+  paymentTermBox: {
+    flex: 1,
+    padding: 10,
+    backgroundColor: LIGHT_GRAY,
+    borderRadius: 4,
+  },
+  paymentTermPct: {
+    fontSize: 16,
+    fontFamily: "Helvetica-Bold",
+    color: GREEN,
+  },
+  paymentTermLabel: {
+    fontSize: 8,
+    color: MUTED,
+    marginTop: 2,
+  },
+  // Signature block
+  signatureBlock: {
+    marginTop: 18,
+  },
+  sigRow: {
+    flexDirection: "row",
+    gap: 24,
+    marginTop: 10,
+  },
+  sigCol: {
+    flex: 1,
+  },
+  sigLabel: {
+    fontSize: 9,
+    fontFamily: "Helvetica-Bold",
+    marginBottom: 22,
+  },
+  sigLine: {
+    borderTop: `1px solid ${TEXT}`,
+  },
+  sigCaption: {
+    fontSize: 7,
+    color: MUTED,
+    marginTop: 3,
+  },
+  // Optional add-ons
+  addonLabel: {
+    fontSize: 8,
+    fontFamily: "Helvetica-Bold",
+    color: MUTED,
+    marginTop: 8,
+    marginBottom: 2,
+    textTransform: "uppercase",
+  },
   // Terms
   terms: {
     fontSize: 8,
@@ -226,13 +313,31 @@ function fmt(amount: number | null | undefined): string {
   return `$${amount.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 }
 
+function LineItemRow({ item, i }: { item: QuoteLineItemRow; i: number }) {
+  return (
+    <View style={[s.tableRow, i % 2 === 1 ? s.tableRowAlt : {}]}>
+      <View style={s.colName}>
+        <Text style={s.itemName}>{item.name}</Text>
+        {item.description ? <Text style={s.itemDesc}>{item.description}</Text> : null}
+      </View>
+      <Text style={s.colQty}>{item.quantity}</Text>
+      <Text style={s.colUnit}>
+        {item.is_optional && item.total_price === 0 ? "" : fmt(item.unit_price)}
+      </Text>
+      <Text style={s.colTotal}>
+        {item.is_optional && item.total_price === 0 ? "On request" : fmt(item.total_price)}
+      </Text>
+    </View>
+  );
+}
+
 function PackageSection({ pkg, index }: { pkg: QuotePackageRow; index: number }) {
-  const tierLabel = PACKAGE_TIER_LABELS[pkg.tier] ?? pkg.tier;
+  const included = pkg.quote_line_items.filter((li) => !li.is_optional);
+  const addons = pkg.quote_line_items.filter((li) => li.is_optional);
   return (
     <View wrap={false}>
       <View style={s.packageHeader}>
         <View>
-          <Text style={s.packageTier}>{tierLabel}</Text>
           <Text style={s.packageName}>{pkg.name}</Text>
         </View>
         <Text style={s.packageSubtotal}>{fmt(pkg.subtotal)}</Text>
@@ -245,20 +350,50 @@ function PackageSection({ pkg, index }: { pkg: QuotePackageRow; index: number })
         <Text style={[s.tableHeaderText, s.colUnit]}>Unit Price</Text>
         <Text style={[s.tableHeaderText, s.colTotal]}>Total</Text>
       </View>
-      {pkg.quote_line_items.map((item, i) => (
-        <View key={item.id} style={[s.tableRow, i % 2 === 1 ? s.tableRowAlt : {}]}>
-          <View style={s.colName}>
-            <Text style={s.itemName}>{item.name}</Text>
-            {item.description ? (
-              <Text style={s.itemDesc}>{item.description}</Text>
-            ) : null}
-          </View>
-          <Text style={s.colQty}>{item.quantity}</Text>
-          <Text style={s.colUnit}>{fmt(item.unit_price)}</Text>
-          <Text style={s.colTotal}>{fmt(item.total_price)}</Text>
+      {included.map((item, i) => (
+        <LineItemRow key={item.id} item={item} i={i} />
+      ))}
+      {addons.length > 0 && (
+        <View>
+          <Text style={s.addonLabel}>Optional Add-Ons (not included in total)</Text>
+          {addons.map((item, i) => (
+            <LineItemRow key={item.id} item={item} i={i} />
+          ))}
+        </View>
+      )}
+    </View>
+  );
+}
+
+function ConditionsSections({ conditions }: { conditions: ConditionSection[] | null }) {
+  if (!conditions || conditions.length === 0) return null;
+  const groups: { section: string; items: ConditionSection[] }[] = [];
+  for (const c of conditions) {
+    let g = groups.find((x) => x.section === c.section);
+    if (!g) {
+      g = { section: c.section, items: [] };
+      groups.push(g);
+    }
+    g.items.push(c);
+  }
+  return (
+    <>
+      {groups.map((g) => (
+        <View key={g.section} wrap={false}>
+          <Text style={s.sectionTitle}>{g.section}</Text>
+          {g.items.map((c, i) => (
+            <View key={i} style={s.clause}>
+              {c.title !== g.section && <Text style={s.clauseTitle}>{c.title}</Text>}
+              {c.body.split("\n").map((line, j) => (
+                <Text key={j} style={s.clauseBody}>
+                  {line}
+                </Text>
+              ))}
+            </View>
+          ))}
         </View>
       ))}
-    </View>
+    </>
   );
 }
 
@@ -281,11 +416,22 @@ export function QuotePdfDocument({ quote, selectedPackageId }: QuotePdfDocumentP
     ? (PROJECT_TYPE_LABELS[quote.project_type] ?? quote.project_type)
     : null;
 
-  const createdDate = new Date(quote.created_at).toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
+  const fmtDate = (d: Date) =>
+    d.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
+  const createdDate = fmtDate(new Date(quote.created_at));
+  const validThrough = fmtDate(
+    quote.expires_at
+      ? new Date(quote.expires_at)
+      : new Date(new Date(quote.created_at).getTime() + 30 * 86400000)
+  );
+
+  const total = quote.total ?? 0;
+  const depositPct = Number(quote.deposit_percent ?? 30);
+  const depositAmount = (total * depositPct) / 100;
+  const balanceAmount = total - depositAmount;
+  const perSqft = quote.square_feet && quote.square_feet > 0 ? total / quote.square_feet : null;
+  const hasCustomSchedule =
+    Array.isArray(quote.payment_schedule) && quote.payment_schedule.length > 1;
 
   return (
     <Document title={`Quote ${quote.quote_number}`} author="Pro Court Surfaces">
@@ -299,6 +445,7 @@ export function QuotePdfDocument({ quote, selectedPackageId }: QuotePdfDocumentP
           <View style={s.headerRight}>
             <Text style={s.quoteNumber}>{quote.quote_number}</Text>
             <Text style={s.headerMeta}>{createdDate}</Text>
+            <Text style={s.headerMeta}>Valid through {validThrough}</Text>
             <Text style={s.headerMeta}>Version {quote.version}</Text>
           </View>
         </View>
@@ -377,6 +524,34 @@ export function QuotePdfDocument({ quote, selectedPackageId }: QuotePdfDocumentP
           <PackageSection key={pkg.id} pkg={pkg} index={i} />
         ))}
 
+        {/* Summary */}
+        <View style={s.summaryBox} wrap={false}>
+          <View style={s.summaryRow}>
+            <Text style={s.summaryLabel}>Subtotal</Text>
+            <Text style={s.summaryValue}>{fmt(quote.subtotal ?? total)}</Text>
+          </View>
+          {quote.discount_amount != null && quote.discount_amount > 0 && (
+            <View style={s.summaryRow}>
+              <Text style={s.summaryLabel}>Discount</Text>
+              <Text style={s.summaryValue}>-{fmt(quote.discount_amount)}</Text>
+            </View>
+          )}
+          <View style={s.summaryTotal}>
+            <Text style={s.summaryTotalLabel}>
+              Total{packages.length > 1 ? " (recommended)" : ""}
+            </Text>
+            <Text style={s.summaryTotalValue}>{fmt(total)}</Text>
+          </View>
+          {perSqft && <Text style={s.perSqft}>{fmt(perSqft)} per square foot</Text>}
+          {!hasCustomSchedule && total > 0 && (
+            <View style={s.depositRow}>
+              <Text style={s.depositText}>
+                Deposit ({depositPct}%): {fmt(depositAmount)} due at signing · Balance ({100 - depositPct}%): {fmt(balanceAmount)} at completion
+              </Text>
+            </View>
+          )}
+        </View>
+
         {/* Court Colors */}
         {(quote.color_inside || quote.color_outside || quote.color_nvz || quote.color_lines) && (
           <>
@@ -422,12 +597,51 @@ export function QuotePdfDocument({ quote, selectedPackageId }: QuotePdfDocumentP
           </>
         )}
 
-        {/* Terms & Conditions */}
+        {/* Payment Terms */}
+        {!hasCustomSchedule && total > 0 && (
+          <>
+            <Text style={s.sectionTitle}>Payment Terms</Text>
+            <View style={s.paymentTermsRow}>
+              <View style={s.paymentTermBox}>
+                <Text style={s.paymentTermPct}>{depositPct}%</Text>
+                <Text style={s.paymentTermLabel}>Deposit — due at contract execution</Text>
+              </View>
+              <View style={s.paymentTermBox}>
+                <Text style={s.paymentTermPct}>{100 - depositPct}%</Text>
+                <Text style={s.paymentTermLabel}>Balance — due at substantial completion</Text>
+              </View>
+            </View>
+          </>
+        )}
+
+        {/* Structured conditions / exclusions / warranty */}
+        <ConditionsSections conditions={quote.conditions} />
+
+        {/* Freeform terms (if any) */}
         {quote.terms_and_conditions && (
           <>
-            <Text style={s.sectionTitle}>Terms & Conditions</Text>
+            <Text style={s.sectionTitle}>Additional Terms</Text>
             <Text style={s.terms}>{quote.terms_and_conditions}</Text>
           </>
+        )}
+
+        {/* Signature block */}
+        {quote.show_signature && (
+          <View style={s.signatureBlock} wrap={false}>
+            <Text style={s.sectionTitle}>Acceptance</Text>
+            <View style={s.sigRow}>
+              <View style={s.sigCol}>
+                <Text style={s.sigLabel}>Accepted By</Text>
+                <View style={s.sigLine} />
+                <Text style={s.sigCaption}>Signature / Printed Name / Date</Text>
+              </View>
+              <View style={s.sigCol}>
+                <Text style={s.sigLabel}>Pro Court Surfaces</Text>
+                <View style={s.sigLine} />
+                <Text style={s.sigCaption}>Patrick Johnson, Owner / Date</Text>
+              </View>
+            </View>
+          </View>
         )}
 
         {/* Footer */}

@@ -140,9 +140,12 @@ export function QuotePage({ quote, colors }: QuotePageProps) {
     [selectedPackageId, selectedPackage, toggles, colorSelections, total, quote, router]
   );
 
-  // Detect court type from the quote's sports
+  // Base court = the largest sport present (tennis court is the base slab that
+  // pickleball / basketball lines overlay onto). Only a pure-pickleball job
+  // (no tennis) uses the pickleball base.
   const courtType: "pickleball" | "tennis" =
-    quote.sports?.includes("pickleball") ? "pickleball" : "tennis";
+    quote.sports?.includes("tennis") ? "tennis" : "pickleball";
+  const sports = quote.sports ?? [];
 
   const contactName = quote.customer?.display_name ?? quote.lead?.display_name;
   const createdDate = new Date(quote.created_at).toLocaleDateString("en-US", {
@@ -266,6 +269,7 @@ export function QuotePage({ quote, colors }: QuotePageProps) {
         <section className="animate-[fadeInUp_0.5s_ease-out_0.25s_both]">
           <ColorSelector
             courtType={courtType}
+            sports={sports}
             colors={colors}
             colorSelections={colorSelections}
             onColorChange={handleColorChange}
@@ -319,6 +323,7 @@ export function QuotePage({ quote, colors }: QuotePageProps) {
         onAcceptClick={() => setShowAcceptDialog(true)}
         readOnly={isAccepted}
         paymentSchedule={quote.payment_schedule}
+        depositPercent={Number(quote.deposit_percent ?? 30)}
       />
 
       {/* Accept dialog */}
@@ -329,6 +334,7 @@ export function QuotePage({ quote, colors }: QuotePageProps) {
         defaultEmail={quote.customer?.email ?? quote.lead?.email ?? null}
         total={total}
         paymentSchedule={quote.payment_schedule}
+        depositPercent={Number(quote.deposit_percent ?? 30)}
       />
     </div>
   );

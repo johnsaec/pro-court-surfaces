@@ -1,6 +1,6 @@
 "use client";
 
-import { PACKAGE_TIER_LABELS, UNIT_OF_MEASURE_LABELS } from "@/lib/constants";
+import { UNIT_OF_MEASURE_LABELS } from "@/lib/constants";
 import type { QuotePackageRow } from "@/lib/admin/types/quote-types";
 import { Check } from "lucide-react";
 
@@ -31,11 +31,11 @@ export function PackageSelector({
           const nonOptionalItems = pkg.quote_line_items.filter(
             (li) => !li.is_optional
           );
+          const optionalItems = pkg.quote_line_items.filter((li) => li.is_optional);
           const packageTotal = nonOptionalItems.reduce(
             (sum, li) => sum + li.total_price,
             0
           );
-          const tierLabel = PACKAGE_TIER_LABELS[pkg.tier] ?? pkg.tier;
 
           return (
             <div
@@ -90,13 +90,6 @@ export function PackageSelector({
                   )}
 
                   <div className="flex-1 min-w-0">
-                    {/* Tier badge */}
-                    {!isSinglePackage && (
-                      <span className="inline-block text-[10px] font-semibold uppercase tracking-[0.15em] text-[#1a5632] bg-[#1a5632]/8 px-2.5 py-0.5 rounded mb-2">
-                        {tierLabel}
-                      </span>
-                    )}
-
                     {/* Package name */}
                     <h3
                       className="text-xl sm:text-2xl text-stone-800"
@@ -148,6 +141,42 @@ export function PackageSelector({
                       </div>
                     ))}
                   </div>
+
+                  {/* Optional add-ons (not part of the total) */}
+                  {optionalItems.length > 0 && (
+                    <div className="mt-5 pt-4 border-t border-stone-100">
+                      <p className="text-xs font-semibold uppercase tracking-wide text-stone-400 mb-3">
+                        Optional add-ons (not included in total)
+                      </p>
+                      <div className="space-y-3">
+                        {optionalItems.map((item) => (
+                          <div key={item.id} className="flex items-baseline justify-between gap-4">
+                            <div className="flex-1 min-w-0">
+                              <div>
+                                <span className="text-sm text-stone-700">{item.name}</span>
+                                {item.unit_of_measure &&
+                                  item.unit_of_measure !== "flat_rate" && (
+                                    <span className="text-xs text-stone-400 ml-2">
+                                      {item.quantity} &times;{" "}
+                                      {UNIT_OF_MEASURE_LABELS[item.unit_of_measure] ??
+                                        item.unit_of_measure}
+                                    </span>
+                                  )}
+                              </div>
+                              {item.description && (
+                                <p className="text-xs text-stone-400 mt-1 leading-relaxed">
+                                  {item.description}
+                                </p>
+                              )}
+                            </div>
+                            <span className="text-sm font-medium tabular-nums text-stone-500 shrink-0">
+                              +${item.total_price.toLocaleString("en-US", { minimumFractionDigits: 2 })}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
 
                   {/* Package total */}
                   <div className="mt-5 pt-4 border-t border-stone-200 flex items-baseline justify-between">
