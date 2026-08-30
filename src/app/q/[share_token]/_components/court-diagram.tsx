@@ -211,7 +211,14 @@ function TennisCourt({
   const serviceDepth = 420;
 
   const showPickleball = sports.includes("pickleball");
+  const showBasketball = sports.includes("basketball");
   const cy = pad + h / 2;
+
+  // Basketball — just a single short grey ~3' free-throw line on the right, no
+  // alignment to the tennis court (roll-up hoop). 3' = 60px.
+  const bbCx = pad + w * 0.72;
+  const bbY = cy + 60;
+  const bbHalf = 30;
   const netX = pad + w / 2;
   const svcLeft = netX - serviceDepth; // tennis left service line
 
@@ -368,6 +375,19 @@ function TennisCourt({
               strokeLinecap="round"
             />
           </>
+        )}
+
+        {/* Basketball — one short grey free-throw line, no court alignment (roll-up hoop) */}
+        {showBasketball && (
+          <line
+            x1={bbCx - bbHalf}
+            y1={bbY}
+            x2={bbCx + bbHalf}
+            y2={bbY}
+            stroke="#9ca3af"
+            strokeWidth={6}
+            strokeLinecap="round"
+          />
         )}
 
       </g>
