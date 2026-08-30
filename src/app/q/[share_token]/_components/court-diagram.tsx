@@ -211,7 +211,6 @@ function TennisCourt({
   const serviceDepth = 420;
 
   const showPickleball = sports.includes("pickleball");
-  const showBasketball = sports.includes("basketball");
   const cy = pad + h / 2;
   const netX = pad + w / 2;
   const svcLeft = netX - serviceDepth; // tennis left service line
@@ -227,12 +226,6 @@ function TennisCourt({
   const pbH = 20 * 20; // 400 (20' playing width)
   const pbY = cy - pbH / 2;
   // Kitchen lines are pbNetX ± nvz; the center-facing one (pbNetX + nvz) == svcLeft.
-
-  // Basketball overlay — foul line only, on the RIGHT half (hoop on the sideline):
-  // a free-throw line + arc. Ref: Goldstein layout ("basketball one side, foul line").
-  const bbCx = pad + w * 0.74;
-  const bbHalf = 120; // half the 12' lane
-  const bbArcR = 110;
 
   return (
     <svg
@@ -377,13 +370,6 @@ function TennisCourt({
           </>
         )}
 
-        {/* Basketball overlay — RIGHT side, foul line + free-throw arc, dashed */}
-        {showBasketball && (
-          <g strokeDasharray="10 8" opacity={0.9} fill="none" stroke={linesColor} strokeWidth={3}>
-            <line x1={bbCx - bbHalf} y1={cy} x2={bbCx + bbHalf} y2={cy} />
-            <path d={`M ${bbCx - bbArcR} ${cy} A ${bbArcR} ${bbArcR} 0 0 0 ${bbCx + bbArcR} ${cy}`} />
-          </g>
-        )}
       </g>
     </svg>
   );

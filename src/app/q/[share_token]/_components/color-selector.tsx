@@ -78,9 +78,9 @@ export function ColorSelector({
           onZoneClick={handleZoneClick}
         />
 
-        {courtType === "tennis" && (sports.includes("pickleball") || sports.includes("basketball")) && (
+        {courtType === "tennis" && sports.includes("pickleball") && (
           <p className="text-[11px] text-stone-400 text-center mt-3">
-            Solid lines: tennis · Dashed: {[sports.includes("pickleball") && "pickleball", sports.includes("basketball") && "basketball"].filter(Boolean).join(" + ")} overlay
+            White lines: tennis · Grey with black dotted net: pickleball overlay
           </p>
         )}
 
