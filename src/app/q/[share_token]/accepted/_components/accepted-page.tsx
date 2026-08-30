@@ -68,7 +68,8 @@ export function AcceptedPage({
           <h1 className="text-2xl font-bold">Quote Accepted</h1>
           <p className="text-muted-foreground">
             Thank you{selection?.accepted_by_name ? `, ${selection.accepted_by_name}` : ""}!
-            Your quote has been accepted and a deposit invoice has been sent.
+            Your quote has been accepted
+            {invoiceUrl ? " and a deposit invoice has been sent." : "."}
           </p>
         </div>
 
@@ -129,6 +130,13 @@ export function AcceptedPage({
                 Pay Now — ${depositAmount.toFixed(2)}
               </a>
             </Button>
+          )}
+
+          {!invoiceUrl && !isDepositPaid && (
+            <p className="text-sm text-muted-foreground text-center pt-2">
+              Your deposit invoice will follow by email shortly. Thanks for choosing
+              Pro Court Surfaces — we&apos;ll be in touch to schedule your project.
+            </p>
           )}
 
           {isDepositPaid && (

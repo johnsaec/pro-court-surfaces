@@ -91,9 +91,13 @@ export async function acceptQuote(payload: AcceptPayload) {
   }
 
   // 3. Find/create Stripe Customer + Invoice
+  // Auto-invoicing is OFF by default while Stripe is on test keys — acceptance just
+  // records the quote + notifies Patrick, who invoices manually. Flip
+  // STRIPE_AUTO_INVOICE=true (with live keys) to resume automatic deposit invoices.
+  const autoInvoice = process.env.STRIPE_AUTO_INVOICE === "true";
   let stripeInvoiceId: string | null = null;
 
-  try {
+  if (autoInvoice) try {
     let stripeCustomerId: string | undefined;
     if (quote.customer?.stripe_customer_id) {
       stripeCustomerId = quote.customer.stripe_customer_id;
@@ -261,6 +265,7 @@ export async function acceptQuote(payload: AcceptPayload) {
         packageTier: payload.package_id,
         totalPrice: payload.total_price,
         depositPercent: Number(quote.deposit_percent ?? 30),
+        autoInvoiced: autoInvoice,
       }),
     });
   } catch (err) {

@@ -83,7 +83,7 @@ export function AcceptDialog({
                   <span className="font-semibold tabular-nums text-stone-700">
                     ${depositAmount.toLocaleString("en-US", { minimumFractionDigits: 2 })}
                   </span>{" "}
-                  will be invoiced to your email. Total quote: ${total.toLocaleString("en-US", { minimumFractionDigits: 2 })}.
+                  will be invoiced to your email to confirm your booking. Total quote: ${total.toLocaleString("en-US", { minimumFractionDigits: 2 })}.
                 </>
               )}
             </DialogDescription>
