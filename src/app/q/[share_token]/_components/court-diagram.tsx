@@ -2,9 +2,12 @@
 
 type CourtZone = "outside" | "inside" | "lines" | "nvz";
 
+type PbLayout = "service-line" | "net-aligned";
+
 interface CourtDiagramProps {
   courtType: "pickleball" | "tennis";
   sports?: string[];
+  pbLayout?: PbLayout;
   outsideColor: string;
   insideColor: string;
   nvzColor: string;
@@ -18,6 +21,7 @@ const ZONE_HIGHLIGHT = "drop-shadow(0 0 6px rgba(59,130,246,0.6))";
 export function CourtDiagram({
   courtType,
   sports = [],
+  pbLayout = "service-line",
   outsideColor,
   insideColor,
   nvzColor,
@@ -42,6 +46,7 @@ export function CourtDiagram({
   return (
     <TennisCourt
       sports={sports}
+      pbLayout={pbLayout}
       outsideColor={outsideColor}
       insideColor={insideColor}
       nvzColor={nvzColor}
@@ -190,6 +195,7 @@ function PickleballCourt({
 
 function TennisCourt({
   sports = [],
+  pbLayout = "service-line",
   outsideColor,
   insideColor,
   // nvzColor not used for tennis courts
@@ -227,8 +233,10 @@ function TennisCourt({
   // (playing-box↔NVZ boundary) lands on the tennis service line, NOT the net.
   const nvz = 7 * 20; // 140px = 7'
   const pbHalf = 22 * 20; // 440px = 22' (net to baseline)
-  const pbNetX = svcLeft - nvz; // net sits 7' outside (left of) the tennis service line
-  const pbX = pbNetX - pbHalf; // left baseline — lands in the surround
+  // Option 1 (service-line): center-facing kitchen line lands on the tennis service line.
+  // Option 2 (net-aligned): the pickleball net lands on the tennis net (centered).
+  const pbNetX = pbLayout === "net-aligned" ? netX : svcLeft - nvz;
+  const pbX = pbNetX - pbHalf; // left baseline
   const pbW = pbHalf * 2; // 880 (44')
   const pbH = 20 * 20; // 400 (20' playing width)
   const pbY = cy - pbH / 2;

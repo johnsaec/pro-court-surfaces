@@ -29,6 +29,8 @@ export function ColorSelector({
 }: ColorSelectorProps) {
   const [activeZone, setActiveZone] = useState<CourtZone | null>(null);
   const [sheetOpen, setSheetOpen] = useState(false);
+  const [pbLayout, setPbLayout] = useState<"service-line" | "net-aligned">("service-line");
+  const showLayoutToggle = courtType === "tennis" && sports.includes("pickleball");
 
   const insideColor = colors.find((c) => c.id === colorSelections.inside_id);
   const outsideColor = colors.find((c) => c.id === colorSelections.outside_id);
@@ -67,9 +69,33 @@ export function ColorSelector({
       </p>
 
       <div className="rounded-lg border border-stone-200 bg-white p-5 sm:p-8">
+        {showLayoutToggle && (
+          <div className="flex justify-center mb-4">
+            <div className="inline-flex rounded-lg border border-stone-200 p-0.5 bg-stone-50">
+              {([
+                ["service-line", "Option 1"],
+                ["net-aligned", "Option 2"],
+              ] as const).map(([val, label]) => (
+                <button
+                  key={val}
+                  onClick={() => setPbLayout(val)}
+                  className={[
+                    "px-4 py-1.5 text-xs font-medium rounded-md transition-colors",
+                    pbLayout === val
+                      ? "bg-white text-[#1a5632] shadow-sm"
+                      : "text-stone-500 hover:text-stone-700",
+                  ].join(" ")}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
         <CourtDiagram
           courtType={courtType}
           sports={sports}
+          pbLayout={pbLayout}
           outsideColor={outsideColor?.hex_code ?? "#8B9467"}
           insideColor={insideColor?.hex_code ?? "#4A7C59"}
           nvzColor={nvzColor?.hex_code ?? "#3B82F6"}
@@ -83,6 +109,13 @@ export function ColorSelector({
             White lines: tennis
             {sports.includes("pickleball") && " · Grey w/ black dotted net: pickleball"}
             {sports.includes("basketball") && " · Grey line: basketball free-throw"}
+          </p>
+        )}
+        {showLayoutToggle && (
+          <p className="text-[11px] text-stone-400 text-center mt-1">
+            {pbLayout === "service-line"
+              ? "Option 1 — pickleball kitchen aligned to the tennis service line"
+              : "Option 2 — pickleball net aligned to the tennis net (centered)"}
           </p>
         )}
 
