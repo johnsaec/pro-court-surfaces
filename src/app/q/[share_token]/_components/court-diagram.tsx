@@ -351,17 +351,30 @@ function TennisCourt({
           strokeWidth={3}
         />
 
-        {/* Pickleball overlay — LEFT half, net vertical on the tennis service line,
-            kitchen (NVZ) lines flanking it, plus a center service line. Dashed. */}
+        {/* Pickleball overlay — LEFT court. Grey play lines; the center line (the net)
+            is black dotted. Kitchen (NVZ) lines flank the net; center service lines
+            run from each baseline to the kitchen. */}
         {showPickleball && (
-          <g strokeDasharray="10 8" opacity={0.9} fill="none" stroke={linesColor} strokeWidth={3}>
-            <rect x={pbX} y={pbY} width={pbW} height={pbH} />
-            <line x1={pbNetX} y1={pbY} x2={pbNetX} y2={pbY + pbH} />
-            <line x1={pbNetX - nvz} y1={pbY} x2={pbNetX - nvz} y2={pbY + pbH} />
-            <line x1={pbNetX + nvz} y1={pbY} x2={pbNetX + nvz} y2={pbY + pbH} />
-            <line x1={pbX} y1={cy} x2={pbNetX - nvz} y2={cy} />
-            <line x1={pbNetX + nvz} y1={cy} x2={pbX + pbW} y2={cy} />
-          </g>
+          <>
+            <g opacity={0.9} fill="none" stroke="#9ca3af" strokeWidth={3}>
+              <rect x={pbX} y={pbY} width={pbW} height={pbH} />
+              <line x1={pbNetX - nvz} y1={pbY} x2={pbNetX - nvz} y2={pbY + pbH} />
+              <line x1={pbNetX + nvz} y1={pbY} x2={pbNetX + nvz} y2={pbY + pbH} />
+              <line x1={pbX} y1={cy} x2={pbNetX - nvz} y2={cy} />
+              <line x1={pbNetX + nvz} y1={cy} x2={pbX + pbW} y2={cy} />
+            </g>
+            {/* Net — black dotted center line */}
+            <line
+              x1={pbNetX}
+              y1={pbY}
+              x2={pbNetX}
+              y2={pbY + pbH}
+              stroke="#111111"
+              strokeWidth={4}
+              strokeDasharray="4 8"
+              strokeLinecap="round"
+            />
+          </>
         )}
 
         {/* Basketball overlay — RIGHT side, foul line + free-throw arc, dashed */}
