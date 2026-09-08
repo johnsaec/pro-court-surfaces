@@ -90,7 +90,7 @@ async function loadLead(supabase, leadId) {
   const { data, error } = await supabase
     .from("leads")
     .select(
-      "id, display_name, project_type, sports, square_feet, number_of_courts, city, address_line1, state, crack_length_ft, bird_bath_count, deal_stage"
+      "id, display_name, project_type, sports, square_feet, number_of_courts, city, address_line1, state, zip, crack_length_ft, bird_bath_count, deal_stage"
     )
     .eq("id", leadId)
     .maybeSingle();
@@ -256,7 +256,9 @@ function buildPackage(pkgBrief, catalog, lead, errors, missing) {
     const li = buildLineItem(step, catalog, lead, idx, errors, missing);
     if (li) { lineItems.push(li); idx += 1; }
   }
-  const subtotal = round2(lineItems.reduce((s, li) => s + li.total_price, 0));
+  // Optional add-ons are shown but not counted in the package total (the PDF
+  // labels them "not included in total").
+  const subtotal = round2(lineItems.filter((li) => !li.is_optional).reduce((s, li) => s + li.total_price, 0));
   return {
     tier: pkgBrief.tier,
     name: pkgBrief.name || template.title,
@@ -296,6 +298,7 @@ function assembleQuoteRow(brief, lead, colors, subtotal, total) {
     city: lead.city,
     address_line1: lead.address_line1,
     state: lead.state,
+    zip: lead.zip,
     crack_length_ft: lead.crack_length_ft,
     bird_bath_count: lead.bird_bath_count,
     // colors
@@ -339,7 +342,7 @@ async function writeBuild(supabase, brief, quoteRow, packages) {
         tier: pkg.tier,
         name: pkg.name,
         description: pkg.description,
-        subtotal: round2(pkg.line_items.reduce((s, li) => s + li.total_price, 0)),
+        subtotal: round2(pkg.line_items.filter((li) => !li.is_optional).reduce((s, li) => s + li.total_price, 0)),
         is_recommended: pkg.is_recommended,
         sort_order: pkg.sort_order,
       })

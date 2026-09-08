@@ -429,7 +429,6 @@ export function QuotePdfDocument({ quote, selectedPackageId }: QuotePdfDocumentP
   const depositPct = Number(quote.deposit_percent ?? 30);
   const depositAmount = (total * depositPct) / 100;
   const balanceAmount = total - depositAmount;
-  const perSqft = quote.square_feet && quote.square_feet > 0 ? total / quote.square_feet : null;
   const hasCustomSchedule =
     Array.isArray(quote.payment_schedule) && quote.payment_schedule.length > 1;
 
@@ -524,33 +523,35 @@ export function QuotePdfDocument({ quote, selectedPackageId }: QuotePdfDocumentP
           <PackageSection key={pkg.id} pkg={pkg} index={i} />
         ))}
 
-        {/* Summary */}
-        <View style={s.summaryBox} wrap={false}>
-          <View style={s.summaryRow}>
-            <Text style={s.summaryLabel}>Subtotal</Text>
-            <Text style={s.summaryValue}>{fmt(quote.subtotal ?? total)}</Text>
-          </View>
-          {quote.discount_amount != null && quote.discount_amount > 0 && (
+        {/* Summary — only for single-option quotes. For multi-option proposals a
+            single grand total / per-sqft / deposit is meaningless (it would mix one
+            option's total with another's square footage), so each package's own
+            subtotal stands alone and this block is suppressed. */}
+        {packages.length <= 1 && (
+          <View style={s.summaryBox} wrap={false}>
             <View style={s.summaryRow}>
-              <Text style={s.summaryLabel}>Discount</Text>
-              <Text style={s.summaryValue}>-{fmt(quote.discount_amount)}</Text>
+              <Text style={s.summaryLabel}>Subtotal</Text>
+              <Text style={s.summaryValue}>{fmt(quote.subtotal ?? total)}</Text>
             </View>
-          )}
-          <View style={s.summaryTotal}>
-            <Text style={s.summaryTotalLabel}>
-              Total{packages.length > 1 ? " (recommended)" : ""}
-            </Text>
-            <Text style={s.summaryTotalValue}>{fmt(total)}</Text>
+            {quote.discount_amount != null && quote.discount_amount > 0 && (
+              <View style={s.summaryRow}>
+                <Text style={s.summaryLabel}>Discount</Text>
+                <Text style={s.summaryValue}>-{fmt(quote.discount_amount)}</Text>
+              </View>
+            )}
+            <View style={s.summaryTotal}>
+              <Text style={s.summaryTotalLabel}>Total</Text>
+              <Text style={s.summaryTotalValue}>{fmt(total)}</Text>
+            </View>
+            {!hasCustomSchedule && total > 0 && (
+              <View style={s.depositRow}>
+                <Text style={s.depositText}>
+                  Deposit ({depositPct}%): {fmt(depositAmount)} due at signing · Balance ({100 - depositPct}%): {fmt(balanceAmount)} at completion
+                </Text>
+              </View>
+            )}
           </View>
-          {perSqft && <Text style={s.perSqft}>{fmt(perSqft)} per square foot</Text>}
-          {!hasCustomSchedule && total > 0 && (
-            <View style={s.depositRow}>
-              <Text style={s.depositText}>
-                Deposit ({depositPct}%): {fmt(depositAmount)} due at signing · Balance ({100 - depositPct}%): {fmt(balanceAmount)} at completion
-              </Text>
-            </View>
-          )}
-        </View>
+        )}
 
         {/* Court Colors */}
         {(quote.color_inside || quote.color_outside || quote.color_nvz || quote.color_lines) && (
