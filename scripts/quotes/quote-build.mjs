@@ -172,7 +172,7 @@ function buildLineItem(step, catalog, lead, sortOrder, errors, missing) {
   return {
     service_id: service.id,
     name: step.nameOverride || service.name,
-    description: service.description || null,
+    description: step.descriptionOverride !== undefined ? step.descriptionOverride : service.description || null,
     line_item_type: step.lineType || service.line_item_type,
     unit_of_measure: service.unit_of_measure,
     quantity: q.qty,
@@ -209,6 +209,14 @@ function applyOverrides(templateSteps, overrides, catalog, errors) {
         if (i < 0) { errors.push(`override setQty: step "${op.code}" not in template`); break; }
         steps[i].qtyRule = "fixed";
         steps[i].qty = Number(op.qty);
+        break;
+      }
+      case "rename": {
+        // Customer-facing name/description for a catalog line on this quote only.
+        const i = findIdx(op.code);
+        if (i < 0) { errors.push(`override rename: step "${op.code}" not in template`); break; }
+        if (op.name) steps[i].nameOverride = op.name;
+        if (op.description !== undefined) steps[i].descriptionOverride = op.description;
         break;
       }
       case "setOptional": {
@@ -291,8 +299,9 @@ function assembleQuoteRow(brief, lead, colors, subtotal, total) {
     customer_id: brief.customer_id || null,
     lead_id: brief.lead_id || null,
     // facts copied from the lead (single source of truth)
-    project_type: lead.project_type,
-    sports: lead.sports,
+    // brief.scope lets one lead carry several scoped options (e.g. tennis-only vs basketball)
+    project_type: brief.scope?.project_type ?? lead.project_type,
+    sports: brief.scope?.sports ?? lead.sports,
     square_feet: lead.square_feet,
     number_of_courts: lead.number_of_courts,
     city: lead.city,

@@ -53,14 +53,17 @@ Write a brief (decisions only — no facts):
     "primer": "latex",            // "solvent" (Acrytech Solvent Primer, adds adhesion-test + temp clauses) | "latex" (Acrylock)
     "moisture_barrier": "none",   // "known" | "unknown" (adds vapor-barrier clause) | "none"
     "facility": null,             // "religious" adds prayer-time coordination; "hoa"/"school"/null otherwise
-    "crack_repair": true          // a crack-repair line is on the quote (adds crack-scope clause)
+    "crack_repair": true,         // a crack-repair line is on the quote (adds crack-scope clause)
+    "slab_by_others": false,      // new slab poured by another contractor: adds Concrete Requirements (finish/curing spec), slab-by-others exclusions + warranty
+    "sleeves_by_others": false    // PCS furnishes net-post hardware, concrete contractor sets sleeves (adds Net-Post Sleeves clause)
   },
-  "deposit_due_days": 7, "discount_amount": 0
+  "deposit_due_days": 7, "discount_amount": 0,
+  "scope": { "project_type": "repair_resurfacing", "sports": ["tennis"] }  // optional: per-option override of the lead's project_type/sports
 }
 ```
 Derive `conditions_context` from the lead facts + scope: new slab vs existing (project_type/notes), which primer the chosen system uses (solvent on bare uncoated concrete, latex otherwise), whether a moisture barrier is known, the facility type, and whether the quote includes crack repair. `assembleConditions` (in `scripts/quotes/clauses.mjs`) turns this into the substrate-conditions / exclusions / warranty sections stored on the quote and rendered in the PDF.
 Override ops: `remove` · `reprice{unit_price}` · `setQty{qty}` ·
-`setOptional{optional}` · `add{code,qtyRule,qty?,optional?}` ·
+`setOptional{optional}` · `rename{name?,description?}` · `add{code,qtyRule,qty?,optional?}` ·
 `addCustom{name,line_item_type,unit_of_measure,quantity,unit_price}`.
 
 ## Step 4 — Preview (no writes)

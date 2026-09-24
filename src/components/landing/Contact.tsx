@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useState, type FormEvent } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import { Phone, Mail, ArrowRight, Loader2 } from "lucide-react";
 import { useScrollReveal } from "./useScrollReveal";
 import { trackEvent } from "@/lib/analytics";
@@ -24,12 +24,41 @@ const SPORT_OPTIONS = [
   { value: "multi_sport", label: "Multi-Sport" },
 ];
 
-export function Contact() {
+/** Fired by service CTAs to pre-fill the form before scrolling to #contact. */
+export const SELECT_SERVICE_EVENT = "pcs:select-service";
+export type SelectServiceDetail = { projectType: string; message?: string };
+
+export function selectService(detail: SelectServiceDetail) {
+  window.dispatchEvent(new CustomEvent(SELECT_SERVICE_EVENT, { detail }));
+}
+
+export function Contact({
+  formName = "homepage_contact",
+  heading = "How do I get a court resurfacing estimate?",
+  submitLabel = "Get a Free Estimate",
+}: {
+  formName?: string;
+  heading?: string;
+  submitLabel?: string;
+} = {}) {
   const router = useRouter();
+  const pathname = usePathname();
+  const [projectType, setProjectType] = useState("");
+  const [message, setMessage] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [selectedSports, setSelectedSports] = useState<string[]>([]);
   const ref = useScrollReveal();
+
+  useEffect(() => {
+    function onSelect(e: Event) {
+      const { projectType, message } = (e as CustomEvent<SelectServiceDetail>).detail;
+      setProjectType(projectType);
+      if (message) setMessage((prev) => prev || message);
+    }
+    window.addEventListener(SELECT_SERVICE_EVENT, onSelect);
+    return () => window.removeEventListener(SELECT_SERVICE_EVENT, onSelect);
+  }, []);
 
   function toggleSport(sport: string) {
     setSelectedSports((prev) =>
@@ -66,8 +95,8 @@ export function Contact() {
       }
 
       trackEvent("generate_lead", {
-        form_name: "homepage_contact",
-        page_path: "/",
+        form_name: formName,
+        page_path: pathname,
       });
       router.push("/post-submit");
     } catch (err) {
@@ -96,7 +125,7 @@ export function Contact() {
               Get Started
             </span>
             <h2 className="text-3xl sm:text-5xl font-bold leading-tight">
-              How do I get a court resurfacing estimate?
+              {heading}
             </h2>
             <p className="mt-5 text-white/60 text-lg max-w-md">
               Get a free, no-obligation estimate. We typically respond within 24
@@ -206,6 +235,8 @@ export function Contact() {
                     <select
                       id="projectType"
                       name="projectType"
+                      value={projectType}
+                      onChange={(e) => setProjectType(e.target.value)}
                       className="w-full rounded-lg border border-white/15 bg-white/10 px-4 py-3 text-white text-sm focus:outline-none focus:border-brand-green/50 focus:ring-1 focus:ring-brand-green/30 transition-colors appearance-none"
                     >
                       <option value="" className="bg-brand-navy">Select...</option>
@@ -249,6 +280,8 @@ export function Contact() {
                     id="message"
                     name="message"
                     rows={3}
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
                     className="w-full rounded-lg border border-white/15 bg-white/10 px-4 py-3 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-brand-green/50 focus:ring-1 focus:ring-brand-green/30 resize-none transition-colors"
                     placeholder="Anything else we should know..."
                   />
@@ -270,7 +303,7 @@ export function Contact() {
                     </>
                   ) : (
                     <>
-                      Get a Free Estimate
+                      {submitLabel}
                       <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                     </>
                   )}
