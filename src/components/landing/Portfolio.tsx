@@ -85,6 +85,20 @@ const projects: Project[] = [
     span: "",
     href: "/projects/san-antonio-pickleball-court",
   },
+  {
+    src: "https://res.cloudinary.com/dwyd4f7lz/image/upload/f_auto,q_auto,w_800/v1790213490/IMG_5067_xxv8d7.jpg",
+    alt: "Finished navy and light blue rooftop pickleball court with a green surround overlooking Lake Austin in Austin, Texas",
+    caption: "Rooftop Pickleball Court — Lake Austin, TX",
+    span: "",
+    href: "/projects/lake-austin-rooftop-pickleball-court",
+  },
+  {
+    src: "https://res.cloudinary.com/dwyd4f7lz/image/upload/f_auto,q_auto,w_800/v1790214785/unnamed_43_ypxra8.jpg",
+    alt: "Finished slate and gray backyard pickleball court with white lines in Sumner, Washington",
+    caption: "Backyard Pickleball Court — Sumner, WA",
+    span: "",
+    href: "/projects/sumner-backyard-pickleball-court",
+  },
 ];
 
 export function Portfolio() {

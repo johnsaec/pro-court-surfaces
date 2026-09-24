@@ -323,6 +323,130 @@ export const projects: Project[] = [
       "A blue key on a gray surround with crisp white striping ties it into the backyard's stone-and-wood aesthetic — a clean half-court steps from the pool.",
     ],
   },
+  {
+    slug: "lake-austin-rooftop-pickleball-court",
+    name: "Lake Austin Rooftop Pickleball Court",
+    location: "Austin, TX",
+    courtType: "Pickleball Court",
+    service: "New Surface Application",
+    category: "Rooftop Pickleball Court",
+    summary:
+      "A bare concrete roof deck on Lake Austin turned into a two-tone blue pickleball court with a green surround and a view of the water.",
+    metaTitle:
+      "Rooftop Pickleball Court on Lake Austin | Pro Court Surfaces",
+    metaDescription:
+      "Case study: new acrylic pickleball court surface on a concrete roof deck overlooking Lake Austin in Austin, TX. Navy playing boxes, light blue kitchen, green surround and crisp white striping.",
+    keywords:
+      "rooftop pickleball court Austin, roof deck pickleball court, pickleball court Lake Austin, waterfront pickleball court Austin TX, pickleball court surfacing Austin, acrylic pickleball court Texas",
+    hero: {
+      src: `${CL}/f_auto,q_auto,w_1600/v1790213490/IMG_5067_xxv8d7.jpg`,
+      alt: "Finished navy and light blue rooftop pickleball court with a green surround and glass railing overlooking Lake Austin in Austin, Texas",
+    },
+    before: {
+      src: `${CL}/f_auto,q_auto,w_1000/v1790213594/IMG_4958_irsw3g.jpg`,
+      alt: "Bare concrete roof deck with glass railing overlooking Lake Austin before pickleball court surfacing in Austin, Texas",
+    },
+    after: {
+      src: `${CL}/f_auto,q_auto,w_1000/v1790213490/IMG_5062_ipj9ch.jpg`,
+      alt: "Finished rooftop pickleball court with navy playing boxes, light blue kitchen and white lines on Lake Austin, Texas",
+    },
+    facts: [
+      { label: "Location", value: "Lake Austin — Austin, TX" },
+      { label: "Court type", value: "Rooftop pickleball" },
+      { label: "Scope", value: "New surface application" },
+      { label: "Surface", value: "ATS Sports Acrytech acrylic" },
+      { label: "Timeline", value: "3–5 working days" },
+    ],
+    colors: ["Navy Blue", "Light Blue", "Green", "White lines"],
+    gallery: [
+      {
+        src: `${CL}/f_auto,q_auto,w_1000/v1790213558/80991556873__A4E967AB-A24D-449A-BEC5-F92E177D194D_h7jjt3.jpg`,
+        alt: "Black acrylic base coat with the first blue color coat going down on the rooftop court deck on Lake Austin, Texas",
+      },
+      {
+        src: `${CL}/c_crop,g_north,h_0.77,w_1.0/f_auto,q_auto,w_1000/v1790213557/80997372794__30627A91-2C25-4503-B2C2-D1D80C29C795_lfntxq.jpg`,
+        alt: "Navy, light blue and green color coats down on the rooftop pickleball court before striping on Lake Austin, Texas",
+      },
+      {
+        src: `${CL}/f_auto,q_auto,w_1000/v1790213489/IMG_5048_xvkfyh.jpg`,
+        alt: "Finished rooftop pickleball court with a covered pavilion and Lake Austin hills in the background in Austin, Texas",
+      },
+    ],
+    body: [
+      "A bare concrete roof deck above Lake Austin, already wrapped in glass railing and court lighting — a one-of-a-kind spot for a court. We took the raw slab and built it up with a full acrylic system, starting from a black base coat.",
+      "Navy playing boxes, a light blue kitchen and a green surround with crisp white striping give the homeowner a tournament-look pickleball court on the roof, with the lake on every side.",
+    ],
+  },
+  {
+    slug: "sumner-backyard-pickleball-court",
+    name: "Sumner Backyard Pickleball Court",
+    location: "Sumner, WA",
+    courtType: "Pickleball Court",
+    service: "New Surface Application",
+    category: "Pickleball Court Surface",
+    summary:
+      "A bare concrete backyard court with painted-on lines turned into a slate-and-gray acrylic pickleball court in Sumner, Washington.",
+    metaTitle:
+      "Backyard Pickleball Court Surfacing in Sumner, WA | Pro Court Surfaces",
+    metaDescription:
+      "Case study: first acrylic court surface on an existing bare concrete pickleball court in Sumner, WA. Resurfacer plus two color coats, slate playing boxes, gray surround and crisp white striping.",
+    keywords:
+      "pickleball court surfacing Sumner WA, backyard pickleball court Washington, concrete pickleball court coating, acrylic pickleball court surface, pickleball court resurfacing Pacific Northwest",
+    hero: {
+      src: `${CL}/f_auto,q_auto,w_1600/v1790214785/unnamed_43_ypxra8.jpg`,
+      alt: "Finished slate and gray backyard pickleball court with white lines and a covered pavilion in Sumner, Washington",
+    },
+    before: {
+      src: `${CL}/f_auto,q_auto,w_1000/v1790214084/unnamed_41_rxa8ea.jpg`,
+      alt: "Bare concrete backyard pickleball court with painted-on black lines and a net before surfacing in Sumner, Washington",
+    },
+    after: {
+      src: `${CL}/f_auto,q_auto,w_1000/v1790214785/unnamed_43_ypxra8.jpg`,
+      alt: "Finished slate playing boxes with gray kitchen and surround and crisp white striping on a backyard pickleball court in Sumner, Washington",
+    },
+    facts: [
+      { label: "Location", value: "Sumner, WA" },
+      { label: "Court type", value: "Backyard pickleball" },
+      { label: "Court size", value: "25' × 55'" },
+      { label: "Scope", value: "Resurfacer + 2 color coats" },
+      { label: "Surface", value: "ATS Sports Acrytech acrylic" },
+    ],
+    colors: ["Slate", "Gray", "White lines"],
+    gallery: [
+      {
+        src: `${CL}/f_auto,q_auto,w_1000/v1790214102/unnamed_42_jcbcxc.jpg`,
+        alt: "Close-up of a painted line on rough bare concrete before surfacing in Sumner, Washington",
+      },
+      {
+        src: `${CL}/f_auto,q_auto,w_1000/v1790214238/IMG_4782_auwxis.jpg`,
+        alt: "Concrete court slab pressure-washed and cleaned before surfacing in Sumner, Washington",
+      },
+      {
+        src: `${CL}/f_auto,q_auto,w_1000/v1790214235/IMG_4784_1_siqawv.jpg`,
+        alt: "Old painted lines and slab joints filled and patched before the base coat in Sumner, Washington",
+      },
+      {
+        src: `${CL}/f_auto,q_auto,w_1000/v1790214240/IMG_4785_1_hvu1wj.jpg`,
+        alt: "Black acrylic resurfacer coat applied across the full concrete court in Sumner, Washington",
+      },
+      {
+        src: `${CL}/f_auto,q_auto,w_1000/v1790214240/IMG_4786_1_dbfpiu.jpg`,
+        alt: "Gray acrylic color coat applied over the full pickleball court in Sumner, Washington",
+      },
+      {
+        src: `${CL}/f_auto,q_auto,w_1000/v1790214239/IMG_4789_rxlgxt.jpg`,
+        alt: "Slate playing boxes applied inside the gray surround on the pickleball court in Sumner, Washington",
+      },
+      {
+        src: `${CL}/f_auto,q_auto,w_1000/v1790214238/IMG_4791_1_cvyfcg.jpg`,
+        alt: "Crew taping and painting crisp white pickleball lines on the slate and gray court in Sumner, Washington",
+      },
+    ],
+    body: [
+      "The homeowner had a concrete slab in the backyard with pickleball lines simply painted on — playable, but rough, stained and slick when wet. We cleaned the slab, filled the old painted lines and joints, and built a real acrylic court surface over it.",
+      "One coat of resurfacer and two color coats later, the court has slate playing boxes, a gray kitchen and surround, and crisp taped-and-painted white lines — a proper pickleball surface built for Pacific Northwest weather.",
+    ],
+  },
 ];
 
 export function getProject(slug: string): Project | undefined {

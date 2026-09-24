@@ -79,6 +79,33 @@ Page: https://www.procourtsurfaces.com/projects/austin-backyard-basketball-court
 | Reserve — before (alt angle) | `v1786907597/wahill_before_2_kneaii.jpg` | *(on Cloudinary, unused)* |
 | Reserve (local) | finished-center | — |
 
+### 🎾 Lake Austin Rooftop Pickleball Court (Rockliff) — New Surface Application
+Page: https://www.procourtsurfaces.com/projects/lake-austin-rooftop-pickleball-court
+
+| Stage | Public ID | Used as |
+|---|---|---|
+| Before (bare concrete roof deck) | `v1790213594/IMG_4958_irsw3g.jpg` | before |
+| Base + first blue coat | `v1790213558/80991556873__A4E967AB-A24D-449A-BEC5-F92E177D194D_h7jjt3.jpg` | gallery |
+| Color coats, no lines | `v1790213557/80997372794__30627A91-2C25-4503-B2C2-D1D80C29C795_lfntxq.jpg` | gallery (cropped `c_crop,g_north,h_0.77`) |
+| Finished (lake + light pole) | `v1790213490/IMG_5067_xxv8d7.jpg` | **hero** + Portfolio |
+| Finished (lake view) | `v1790213490/IMG_5062_ipj9ch.jpg` | after |
+| Finished (pavilion + hills) | `v1790213489/IMG_5048_xvkfyh.jpg` | gallery (photographer shadow lower-left) |
+
+### 🎾 Sumner Backyard Pickleball Court (Sumner, WA) — New Surface Application
+Page: https://www.procourtsurfaces.com/projects/sumner-backyard-pickleball-court
+
+| Stage | Public ID | Used as |
+|---|---|---|
+| Before (bare concrete, painted lines + net) | `v1790214084/unnamed_41_rxa8ea.jpg` | before |
+| Before (painted line close-up) | `v1790214102/unnamed_42_jcbcxc.jpg` | gallery |
+| Pressure-washed slab | `v1790214238/IMG_4782_auwxis.jpg` | gallery |
+| Old lines + joints patched | `v1790214235/IMG_4784_1_siqawv.jpg` | gallery |
+| Black resurfacer coat | `v1790214240/IMG_4785_1_hvu1wj.jpg` | gallery (photographer shadow) |
+| Gray color coat | `v1790214240/IMG_4786_1_dbfpiu.jpg` | gallery |
+| Slate boxes in | `v1790214239/IMG_4789_rxlgxt.jpg` | gallery |
+| Striping (taped lines, crew) | `v1790214238/IMG_4791_1_cvyfcg.jpg` | gallery |
+| Finished (corner, pavilion) | `v1790214785/unnamed_43_ypxra8.jpg` | **hero** + after |
+
 ---
 
 ## By type / stage (cross-index)
