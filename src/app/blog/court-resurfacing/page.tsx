@@ -317,6 +317,7 @@ export default function CourtResurfacingPage() {
             <li><Link href="/blog/court-surface-types" className="text-brand-blue hover:underline">Compare court surface types: acrylic vs. tile vs. cushion vs. turf</Link></li>
             <li><Link href="/blog/court-repair" className="text-brand-blue hover:underline">Court repair guide: cracks, delamination, and when to repair vs resurface</Link></li>
             <li><Link href="/blog/court-maintenance" className="text-brand-blue hover:underline">Court maintenance and cleaning: keep your surface lasting longer</Link></li>
+            <li><Link href="/court-resurfacing" className="text-brand-blue hover:underline">Get a free on-site court resurfacing quote in Austin</Link></li>
             <li><Link href="/commercial" className="text-brand-blue hover:underline">Request a court surfacing bid (48-hour turnaround)</Link></li>
           </ul>
         </div>
