@@ -1,4 +1,5 @@
 import { notFound, redirect } from "next/navigation";
+import { paymentSplit } from "@/lib/quotes/quote-format";
 import { getQuoteByShareToken } from "@/lib/quotes/public-queries";
 import { createServerClient } from "@/lib/supabase/server";
 import { getStripe } from "@/lib/stripe";
@@ -60,7 +61,7 @@ export default async function QuoteAcceptedPage({
   const depositPct = Number(quote.deposit_percent ?? 30);
   const depositAmount = hasCustomSchedule
     ? (quote.payment_schedule as { label: string; amount: number }[])[0].amount
-    : ((selection?.final_total ?? quote.total ?? 0) * depositPct) / 100;
+    : paymentSplit(selection?.final_total ?? quote.total ?? 0, depositPct).depositAmount;
 
   return (
     <AcceptedPage

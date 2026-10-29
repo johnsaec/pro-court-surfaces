@@ -62,17 +62,26 @@ Write a brief (decisions only — no facts):
 }
 ```
 Derive `conditions_context` from the lead facts + scope: new slab vs existing (project_type/notes), which primer the chosen system uses (solvent on bare uncoated concrete, latex otherwise), whether a moisture barrier is known, the facility type, and whether the quote includes crack repair. `assembleConditions` (in `scripts/quotes/clauses.mjs`) turns this into the substrate-conditions / exclusions / warranty sections stored on the quote and rendered in the PDF.
+The builder also derives clause context from the line items (`deriveLineContext` in
+`quote-build.mjs`): an included bird-bath line → `birdbaths_included`, a flat
+"included" crack line → `crack_repair_mode: "included"`, a haul-off line →
+`has_haul_off`. Keys you set explicitly in `conditions_context` win. For one-off
+clause wording, use `conditions_overrides: [{remove: "<code>"} | {replace: "<code>", body}]`.
 Override ops: `remove` · `reprice{unit_price}` · `setQty{qty}` ·
 `setOptional{optional}` · `rename{name?,description?}` · `add{code,qtyRule,qty?,optional?}` ·
-`addCustom{name,line_item_type,unit_of_measure,quantity,unit_price}`.
+`addCustom{name,line_item_type,unit_of_measure,quantity,unit_price,optional?}`.
+`unit_of_measure` must be one of `per_sqft`, `per_linear_ft`, `per_court`, `flat_rate`,
+`per_hour`, `each`. Don't use "mobilization" lines; fold small-job cost into the system rates.
 
-## Step 4 — Preview (no writes)
+## Step 4 — Preview + rules check (no writes)
 ```bash
 cat brief.json | node "scripts/quotes/quote-build.mjs" --mode preview
+cat brief.json | node "scripts/quotes/quote-check.mjs" --brief --text
 ```
 Review the per-package line items, totals, deposit %, and the resolved `conditions`
 list (section — title) with Patrick. If the builder reports missing facts, stop and
-route back to `pre-quote`.
+route back to `pre-quote`. **Errors from `quote-check` must be fixed in the brief, or
+explicitly waived by Patrick, before building.**
 
 ## Step 5 — Build
 ```bash
@@ -90,7 +99,14 @@ curl -s -w "%{http_code} %{content_type}\n" \
 ```
 Confirm `200 application/pdf`. If the server isn't up, tell Patrick to start it.
 
+## Step 7 — Full check
+Run the `quote-check` skill on the saved quote (rules pass + AI read of the PDF),
+which includes the PDF-vs-link parity check (`quote-parity`).
+Propose fixes and apply only the ones Patrick approves.
+
 ## Report
-Quote number + id, the `/q/<share_token>` customer URL, each package total, which
-tier is recommended, and the saved PDF path. Ask before sending — the `quote` skill
+Quote number + id, the full customer URL
+(`https://www.procourtsurfaces.com/q/<share_token>`), each package total, which
+tier is recommended, the saved PDF path, and the check result: **"Ready to send"**
+only when `quote-check` has no errors. Ask before sending — the `quote` skill
 does not email the customer.

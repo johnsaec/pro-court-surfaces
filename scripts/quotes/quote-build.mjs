@@ -21,7 +21,7 @@
 // Output: a single JSON object on stdout.
 
 import { readFileSync } from "node:fs";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 import { dirname, join } from "node:path";
 import { createClient } from "@supabase/supabase-js";
 import { SYSTEMS, listSystems } from "./systems.mjs";
@@ -30,9 +30,11 @@ import { assembleConditions } from "./clauses.mjs";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = join(__dirname, "..", "..");
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+// Mirrors the `unit_of_measure` enum (supabase/migrations/00001_create_enums.sql).
+const UNITS = new Set(["per_sqft", "per_linear_ft", "per_court", "flat_rate", "per_hour", "each"]);
 
 // ── env ──────────────────────────────────────────────────────────────
-function loadEnv() {
+export function loadEnv() {
   const envPath = join(REPO_ROOT, ".env.local");
   let raw;
   try {
@@ -137,6 +139,10 @@ function resolveQty(step, lead) {
 function buildLineItem(step, catalog, lead, sortOrder, errors, missing) {
   // Custom (non-catalog) line from an addCustom override.
   if (step.custom) {
+    if (step.unit_of_measure && !UNITS.has(step.unit_of_measure)) {
+      errors.push(`addCustom "${step.name}": unit_of_measure "${step.unit_of_measure}" is not one of ${[...UNITS].join(", ")}`);
+      return null;
+    }
     const qty = Number(step.quantity) || 0;
     const unit = Number(step.unit_price) || 0;
     return {
@@ -293,8 +299,33 @@ function resolveColors(briefColors, colorMap, warnings) {
   return out;
 }
 
+// ── conditions context from line items ───────────────────────────────
+// Clauses must agree with what's actually on the quote (e.g. don't exclude
+// "leveling of low spots" when bird-bath repair is an included line). Derived
+// keys are defaults; anything set explicitly in brief.conditions_context wins.
+export function deriveLineContext(packages) {
+  const lines = packages.flatMap((p) => p.line_items);
+  const included = lines.filter((li) => !li.is_optional);
+  const text = (li) => `${li.name} ${li.description || ""}`;
+  const ctx = {};
+  if (included.some((li) => /bird.?bath|low spot/i.test(text(li)))) ctx.birdbaths_included = true;
+  const crackLines = included.filter((li) => /crack|faultline/i.test(text(li)));
+  if (crackLines.length) {
+    ctx.crack_repair = true;
+    ctx.crack_repair_mode = crackLines.some((li) => li.unit_of_measure === "per_linear_ft") ? "linear_ft" : "included";
+  }
+  if (included.some((li) => /haul|disposal/i.test(text(li)))) ctx.has_haul_off = "included";
+  else if (lines.some((li) => /haul|disposal/i.test(text(li)))) ctx.has_haul_off = "optional";
+  return ctx;
+}
+
+export function resolveConditions(brief, packages) {
+  const ctx = { ...deriveLineContext(packages), ...(brief.conditions_context || {}) };
+  return assembleConditions(ctx, brief.conditions_overrides);
+}
+
 // ── quote row ────────────────────────────────────────────────────────
-function assembleQuoteRow(brief, lead, colors, subtotal, total) {
+function assembleQuoteRow(brief, lead, colors, subtotal, total, conditions) {
   return {
     customer_id: brief.customer_id || null,
     lead_id: brief.lead_id || null,
@@ -320,7 +351,7 @@ function assembleQuoteRow(brief, lead, colors, subtotal, total) {
     deposit_due_days: Number(brief.deposit_due_days) || 7,
     deposit_percent: brief.deposit_percent != null ? Number(brief.deposit_percent) : 30,
     show_signature: Boolean(brief.show_signature),
-    conditions: assembleConditions(brief.conditions_context || {}),
+    conditions,
     expires_at: new Date(Date.now() + 30 * 86400000).toISOString(),
     payment_schedule: brief.payment_schedule ?? null,
     subtotal,
@@ -374,21 +405,17 @@ async function writeBuild(supabase, brief, quoteRow, packages) {
   return finalRow;
 }
 
-// ── main ─────────────────────────────────────────────────────────────
-async function main() {
-  loadEnv();
-  const mode = (process.argv.includes("--mode")
-    ? process.argv[process.argv.indexOf("--mode") + 1]
-    : "preview"
-  ).toLowerCase();
-  if (mode !== "preview" && mode !== "build") fail(`Unknown --mode "${mode}" (use preview | build)`);
-
+// ── compute (no writes) ──────────────────────────────────────────────
+export function makeClient() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!url || !serviceKey) fail("Missing NEXT_PUBLIC_SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY in .env.local");
-  const supabase = createClient(url, serviceKey, { auth: { persistSession: false } });
+  return createClient(url, serviceKey, { auth: { persistSession: false } });
+}
 
-  const brief = await readBrief();
+// Everything `preview` shows, plus the full rows `build` writes. Shared with
+// quote-check.mjs so a brief can be checked before anything is written.
+export async function computeQuote(supabase, brief) {
   if (!brief.lead_id) fail("brief.lead_id is required as the fact source (MVP builds facts from the lead).");
   if (!Array.isArray(brief.packages) || brief.packages.length === 0) fail("brief.packages must be a non-empty array.");
 
@@ -424,6 +451,7 @@ async function main() {
   const total = Math.max(0, round2(subtotal - discount));
 
   const colors = resolveColors(brief.colors, colorMap, warnings);
+  const conditions = resolveConditions(brief, packages);
 
   const summary = {
     lead: { id: lead.id, name: lead.display_name, square_feet: lead.square_feet, number_of_courts: lead.number_of_courts },
@@ -438,20 +466,40 @@ async function main() {
     discount,
     total,
     deposit_percent: brief.deposit_percent != null ? Number(brief.deposit_percent) : 30,
-    conditions: assembleConditions(brief.conditions_context || {}).map((c) => `${c.section} — ${c.title}`),
+    conditions: conditions.map((c) => `${c.section} — ${c.title}`),
     warnings,
   };
+
+  const quoteRow = assembleQuoteRow(brief, lead, colors, subtotal, total, conditions);
+  return { lead, packages, quoteRow, summary };
+}
+
+// ── main ─────────────────────────────────────────────────────────────
+async function main() {
+  loadEnv();
+  const mode = (process.argv.includes("--mode")
+    ? process.argv[process.argv.indexOf("--mode") + 1]
+    : "preview"
+  ).toLowerCase();
+  if (mode !== "preview" && mode !== "build") fail(`Unknown --mode "${mode}" (use preview | build)`);
+
+  const supabase = makeClient();
+  const brief = await readBrief();
+  const { packages, quoteRow, summary } = await computeQuote(supabase, brief);
 
   if (mode === "preview") {
     process.stdout.write(JSON.stringify({ mode, ...summary }, null, 2) + "\n");
     return;
   }
 
-  const quoteRow = assembleQuoteRow(brief, lead, colors, subtotal, total);
   const quote = await writeBuild(supabase, brief, quoteRow, packages);
   process.stdout.write(
     JSON.stringify({ mode, quote, ...summary, admin_url: `/admin/quotes/${quote.id}`, public_url: `/q/${quote.share_token}` }, null, 2) + "\n"
   );
 }
 
-main().catch((e) => fail(e.stack || e.message));
+export { readBrief, fail };
+
+if (import.meta.url === pathToFileURL(process.argv[1] || "").href) {
+  main().catch((e) => fail(e.stack || e.message));
+}

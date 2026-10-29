@@ -23,9 +23,14 @@
 //     basketball:      boolean,                // basketball play on the surface (wear, no goals)
 //     blended_lines:   boolean,                // two sports' lines on one court (e.g. tennis + pickleball)
 //     birdbath_overlay:boolean,                // birdbaths unassessed on bare slab; concrete overlay may be recommended
+//     // Derived from the quote's line items by quote-build.mjs (deriveLineContext):
+//     birdbaths_included: boolean,             // bird-bath / low-spot repair is an included line
+//     crack_repair_mode: "linear_ft" | "included", // LF Faultline line vs a flat "included" crack line
+//     has_haul_off:    "included" | "optional" | false, // haul-off / disposal line on the quote
 //   }
 //
-// Body text may contain "• " bullet lines; renderers split on newlines.
+// Body text may contain "• " bullet lines; renderers split on newlines. A body may
+// also be a function (ctx) => string when one bullet depends on the job.
 
 export const SECTION_ORDER = [
   "Concrete Requirements",
@@ -165,7 +170,23 @@ export const CLAUSES = [
     title: "Crack Repair Scope",
     body:
       "Crack repair on this project uses the ATS Faultline glue-and-roll system: a reinforcing fiberglass membrane fully bonded over each prepared crack to bridge normal seasonal slab movement so it does not telegraph back through the new surface. The linear-foot quantity shown is our field estimate for cracking at or below 3/8\" width; cracking beyond that quantity or width, or any crack indicating significant structural movement, is handled by change order at the client's direction.",
-    appliesWhen: (c) => c.crack_repair === true,
+    appliesWhen: (c) => c.crack_repair === true && c.crack_repair_mode !== "included",
+  },
+  {
+    code: "crack-repair-included",
+    section: "Substrate Conditions",
+    title: "Crack Repair Scope",
+    body:
+      "Repair of the minor cracking observed at the site walk is included in the price shown. Cracks wider than 3/8\", cracks showing vertical displacement, new cracking that appears after the site walk, and any crack indicating significant structural movement are outside this allowance and handled by change order at the client's direction.",
+    appliesWhen: (c) => c.crack_repair === true && c.crack_repair_mode === "included",
+  },
+  {
+    code: "birdbath-included",
+    section: "Substrate Conditions",
+    title: "Birdbaths / Low Spots",
+    body:
+      "Filling the birdbaths observed at the site walk with patch binder is included in the price shown. This improves ponding but cannot re-establish slope or produce perfect drainage; depressions beyond what patch binder can correct will remain, and the finished surface follows the slab's existing pitch.",
+    appliesWhen: (c) => c.birdbaths_included === true && c.coated !== true && c.birdbath_overlay !== true,
   },
   {
     code: "cracking-substrate-movement-faultline",
@@ -173,7 +194,7 @@ export const CLAUSES = [
     title: "Cracking & Substrate Movement",
     body:
       "Cracks reinforced with the Faultline membrane are built to bridge the slab's normal seasonal expansion and contraction. Faultline is a semi-flexible reinforced repair, not a structural crack-suppression membrane: major new substrate movement, heaving, or settlement originates in the concrete and foundation rather than the coating, is outside the system's design, and remains the responsibility of the concrete and foundation contractor.",
-    appliesWhen: (c) => c.crack_repair === true,
+    appliesWhen: (c) => c.crack_repair === true && c.crack_repair_mode !== "included",
   },
   {
     code: "cracking-substrate-movement",
@@ -181,7 +202,8 @@ export const CLAUSES = [
     title: "Cracking & Substrate Movement",
     body:
       "Existing or future cracking originating in the substrate is not covered. Acrylic coatings are not crack-suppression systems and will not bridge or prevent substrate movement; filled cracks may reappear as the slab moves. Substrate performance remains the responsibility of the concrete and foundation contractor.",
-    appliesWhen: (c) => c.crack_repair !== true && c.coated !== true,
+    appliesWhen: (c) =>
+      (c.crack_repair !== true && c.coated !== true) || (c.crack_repair === true && c.crack_repair_mode === "included"),
   },
   {
     code: "surface-temperature",
@@ -213,7 +235,17 @@ export const CLAUSES = [
     title: "Hairline Cracking",
     body:
       "Cracks repaired with the Faultline system are covered as described above. Fine hairline and surface cracks that do not warrant a Faultline repair are filled as part of standard prep; on an older slab these may reappear through the new surface as the concrete moves with the seasons. Reappearing hairline cracks are not covered by the warranty and can be addressed by change order.",
-    appliesWhen: (c) => c.crack_repair === true && c.slab === "existing" && c.slab_by_others !== true,
+    appliesWhen: (c) =>
+      c.crack_repair === true && c.crack_repair_mode !== "included" && c.slab === "existing" && c.slab_by_others !== true,
+  },
+  {
+    code: "hairline-cracks-included",
+    section: "Substrate Conditions",
+    title: "Hairline Cracking",
+    body:
+      "Fine hairline and surface cracks are filled as part of standard prep. On an older slab these may reappear through the new surface as the concrete moves with the seasons. Reappearing hairline cracks are not covered by the warranty and can be addressed by change order.",
+    appliesWhen: (c) =>
+      c.crack_repair === true && c.crack_repair_mode === "included" && c.slab === "existing" && c.slab_by_others !== true,
   },
   {
     code: "tree-roots",
@@ -261,17 +293,25 @@ export const CLAUSES = [
     code: "exclusions",
     section: "Exclusions",
     title: "Exclusions",
-    body: [
-      "• Crack repair beyond the stated allowance or scope (see the crack repair and cracking clauses above for covered width)",
-      "• Structural repair, spall repair, or leveling of low spots",
-      "• Drainage correction or ponding remediation",
-      "• Fencing, windscreen, gates, or perimeter work, including painting of fences, posts, or structures",
-      "• Nets, goals, posts, sleeves, or hardware unless listed above",
-      "• Permits, bonds, testing, engineering, inspection, and traffic control",
-      "• Third-party moisture testing, if required — billed at cost",
-      "• Electrical, lighting, or site utilities",
-      "• Water and power, assumed available on site at no charge",
-    ].join("\n"),
+    body: (c) =>
+      [
+        "• Crack repair beyond the stated allowance or scope (see the crack repair and cracking clauses above for covered width)",
+        // Bird-bath repair on the quote: keep the structural/spall exclusion, drop the low-spot one.
+        c.birdbaths_included
+          ? "• Structural repair, spall repair, or leveling of low spots beyond the birdbath filling described above"
+          : "• Structural repair, spall repair, or leveling of low spots",
+        "• Drainage correction or ponding remediation",
+        // Haul-off offered as an add-on: say who owns the debris when it isn't selected.
+        ...(c.has_haul_off === "optional"
+          ? ["• Haul-off and disposal of removed surface material, unless the haul-off add-on is selected (otherwise disposal is by the owner or general contractor)"]
+          : []),
+        "• Fencing, windscreen, gates, or perimeter work, including painting of fences, posts, or structures",
+        "• Nets, goals, posts, sleeves, or hardware unless listed above",
+        "• Permits, bonds, testing, engineering, inspection, and traffic control",
+        "• Third-party moisture testing, if required — billed at cost",
+        "• Electrical, lighting, or site utilities",
+        "• Water and power, assumed available on site at no charge",
+      ].join("\n"),
     appliesWhen: (c) => c.slab_by_others !== true,
   },
   {
@@ -382,7 +422,10 @@ export const CLAUSES = [
 ];
 
 // Resolve the applicable clauses for a context into ordered snapshots.
-export function assembleConditions(context = {}) {
+// `overrides` (brief.conditions_overrides) handles one-off wording:
+//   { remove: "<code>" }                      drop a clause
+//   { replace: "<code>", body, title? }       swap a clause's text in place
+export function assembleConditions(context = {}, overrides = []) {
   const ctx = {
     slab: has(context.slab) ? context.slab : "existing",
     coated: has(context.coated) ? context.coated : false,
@@ -399,12 +442,22 @@ export function assembleConditions(context = {}) {
     grind_alternate: has(context.grind_alternate) ? context.grind_alternate : true,
     slab_by_others: has(context.slab_by_others) ? context.slab_by_others : false,
     sleeves_by_others: has(context.sleeves_by_others) ? context.sleeves_by_others : false,
+    birdbaths_included: has(context.birdbaths_included) ? context.birdbaths_included : false,
+    crack_repair_mode: has(context.crack_repair_mode) ? context.crack_repair_mode : null,
+    has_haul_off: has(context.has_haul_off) ? context.has_haul_off : false, // "included" | "optional" | false
   };
   const rank = (s) => {
     const i = SECTION_ORDER.indexOf(s);
     return i === -1 ? SECTION_ORDER.length : i;
   };
+  const removed = new Set();
+  const replaced = new Map();
+  for (const o of overrides || []) {
+    if (o?.remove) removed.add(o.remove);
+    else if (o?.replace) replaced.set(o.replace, o);
+  }
   return CLAUSES.filter((cl) => {
+    if (removed.has(cl.code)) return false;
     try {
       return cl.appliesWhen(ctx);
     } catch {
@@ -412,5 +465,9 @@ export function assembleConditions(context = {}) {
     }
   })
     .sort((a, b) => rank(a.section) - rank(b.section))
-    .map((cl) => ({ section: cl.section, title: cl.title, body: cl.body }));
+    .map((cl) => {
+      const r = replaced.get(cl.code);
+      const body = r?.body ?? (typeof cl.body === "function" ? cl.body(ctx) : cl.body);
+      return { code: cl.code, section: cl.section, title: r?.title ?? cl.title, body };
+    });
 }

@@ -294,8 +294,8 @@ export type QuoteDetail = {
   expires_at: string | null;
   created_at: string;
   updated_at: string;
-  customer: { display_name: string; email: string | null; phone: string | null } | null;
-  lead: { display_name: string; email: string | null; phone: string | null } | null;
+  customer: { display_name: string; email: string | null; phone: string | null; company?: { name: string } | null } | null;
+  lead: { display_name: string; email: string | null; phone: string | null; company?: { name: string } | null } | null;
   color_inside: { name: string; hex_code: string } | null;
   color_outside: { name: string; hex_code: string } | null;
   color_lines: { name: string; hex_code: string } | null;

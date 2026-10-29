@@ -8,6 +8,7 @@ import {
 } from "@react-pdf/renderer";
 import type { QuoteDetail, QuotePackageRow, QuoteLineItemRow, ConditionSection } from "@/lib/admin/types/quote-types";
 import { PROJECT_TYPE_LABELS } from "@/lib/constants";
+import { fmtMoney as fmt, fmtQty, quoteDates, paymentSplit, groupConditions } from "@/lib/quotes/quote-format";
 
 const GREEN = "#1a5632";
 const LIGHT_GRAY = "#f3f4f6";
@@ -308,11 +309,6 @@ const s = StyleSheet.create({
   },
 });
 
-function fmt(amount: number | null | undefined): string {
-  if (amount == null) return "$0.00";
-  return `$${amount.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-}
-
 function LineItemRow({ item, i }: { item: QuoteLineItemRow; i: number }) {
   return (
     <View style={[s.tableRow, i % 2 === 1 ? s.tableRowAlt : {}]}>
@@ -320,7 +316,7 @@ function LineItemRow({ item, i }: { item: QuoteLineItemRow; i: number }) {
         <Text style={s.itemName}>{item.name}</Text>
         {item.description ? <Text style={s.itemDesc}>{item.description}</Text> : null}
       </View>
-      <Text style={s.colQty}>{item.quantity}</Text>
+      <Text style={s.colQty}>{fmtQty(item.quantity)}</Text>
       <Text style={s.colUnit}>
         {item.is_optional && item.total_price === 0 ? "" : fmt(item.unit_price)}
       </Text>
@@ -367,15 +363,7 @@ function PackageSection({ pkg, index }: { pkg: QuotePackageRow; index: number })
 
 function ConditionsSections({ conditions }: { conditions: ConditionSection[] | null }) {
   if (!conditions || conditions.length === 0) return null;
-  const groups: { section: string; items: ConditionSection[] }[] = [];
-  for (const c of conditions) {
-    let g = groups.find((x) => x.section === c.section);
-    if (!g) {
-      g = { section: c.section, items: [] };
-      groups.push(g);
-    }
-    g.items.push(c);
-  }
+  const groups = groupConditions(conditions);
   return (
     <>
       {groups.map((g) => (
@@ -404,7 +392,7 @@ type QuotePdfDocumentProps = {
 
 export function QuotePdfDocument({ quote, selectedPackageId }: QuotePdfDocumentProps) {
   const contact = quote.customer ?? quote.lead;
-  const contactLabel = quote.customer ? "Customer" : "Lead";
+  const organization = contact?.company?.name ?? null;
   const isAccepted = ["accepted", "deposit_paid", "completed"].includes(quote.status);
 
   // Filter packages: only selected package for accepted quotes
@@ -416,19 +404,10 @@ export function QuotePdfDocument({ quote, selectedPackageId }: QuotePdfDocumentP
     ? (PROJECT_TYPE_LABELS[quote.project_type] ?? quote.project_type)
     : null;
 
-  const fmtDate = (d: Date) =>
-    d.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
-  const createdDate = fmtDate(new Date(quote.created_at));
-  const validThrough = fmtDate(
-    quote.expires_at
-      ? new Date(quote.expires_at)
-      : new Date(new Date(quote.created_at).getTime() + 30 * 86400000)
-  );
+  const { createdDate, validThrough } = quoteDates(quote);
 
   const total = quote.total ?? 0;
-  const depositPct = Number(quote.deposit_percent ?? 30);
-  const depositAmount = (total * depositPct) / 100;
-  const balanceAmount = total - depositAmount;
+  const { depositPct, depositAmount, balanceAmount } = paymentSplit(total, quote.deposit_percent);
   const hasCustomSchedule =
     Array.isArray(quote.payment_schedule) && quote.payment_schedule.length > 1;
 
@@ -453,8 +432,14 @@ export function QuotePdfDocument({ quote, selectedPackageId }: QuotePdfDocumentP
         {contact && (
           <>
             <Text style={s.sectionTitle}>Prepared For</Text>
+            {organization && (
+              <View style={s.row}>
+                <Text style={s.label}>Organization:</Text>
+                <Text style={s.value}>{organization}</Text>
+              </View>
+            )}
             <View style={s.row}>
-              <Text style={s.label}>{contactLabel}:</Text>
+              <Text style={s.label}>Contact:</Text>
               <Text style={s.value}>{contact.display_name}</Text>
             </View>
             {contact.email && (
@@ -519,6 +504,23 @@ export function QuotePdfDocument({ quote, selectedPackageId }: QuotePdfDocumentP
         <Text style={s.sectionTitle}>
           {packages.length === 1 ? "Selected Package" : "Package Options"}
         </Text>
+        {/* At-a-glance summary for multi-option quotes; full line items follow per package. */}
+        {packages.length > 1 && (
+          <View style={{ marginBottom: 12 }} wrap={false}>
+            {packages.map((pkg, i) => (
+              <View key={pkg.id} style={[s.tableRow, i % 2 === 1 ? s.tableRowAlt : {}]}>
+                <View style={s.colName}>
+                  <Text style={s.itemName}>
+                    {pkg.name}
+                    {pkg.is_recommended ? "  (Recommended)" : ""}
+                  </Text>
+                  {pkg.description ? <Text style={s.itemDesc}>{pkg.description}</Text> : null}
+                </View>
+                <Text style={s.colTotal}>{fmt(pkg.subtotal)}</Text>
+              </View>
+            ))}
+          </View>
+        )}
         {packages.map((pkg, i) => (
           <PackageSection key={pkg.id} pkg={pkg} index={i} />
         ))}

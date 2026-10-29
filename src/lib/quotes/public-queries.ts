@@ -9,8 +9,8 @@ export async function getQuoteByShareToken(
     .from("quotes")
     .select(
       `*,
-       customer:customers(display_name, email, phone),
-       lead:leads(display_name, email, phone),
+       customer:customers(display_name, email, phone, company:companies(name)),
+       lead:leads(display_name, email, phone, company:companies(name)),
        color_inside:color_palette!quotes_color_inside_id_fkey(name, hex_code),
        color_outside:color_palette!quotes_color_outside_id_fkey(name, hex_code),
        color_lines:color_palette!quotes_color_lines_id_fkey(name, hex_code),

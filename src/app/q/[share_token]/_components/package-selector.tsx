@@ -1,196 +1,192 @@
 "use client";
 
-import { UNIT_OF_MEASURE_LABELS } from "@/lib/constants";
-import type { QuotePackageRow } from "@/lib/admin/types/quote-types";
+import { Switch } from "@/components/ui/switch";
+import { fmtMoney, fmtQty } from "@/lib/quotes/quote-format";
+import type { QuotePackageRow, QuoteLineItemRow } from "@/lib/admin/types/quote-types";
 import { Check } from "lucide-react";
 
 interface PackageSelectorProps {
   packages: QuotePackageRow[];
   selectedPackageId: string | null;
   onSelect: (packageId: string) => void;
+  toggles: Map<string, boolean>;
+  onToggle: (lineItemId: string, enabled: boolean) => void;
   readOnly?: boolean;
+}
+
+// Same columns as the PDF line-item table: Item · Qty · Unit Price · Total.
+// On phones Qty × Unit Price drops under the item name.
+function LineRow({
+  item,
+  striped,
+  toggle,
+}: {
+  item: QuoteLineItemRow;
+  striped: boolean;
+  toggle?: { checked: boolean; onChange: (v: boolean) => void; disabled?: boolean };
+}) {
+  const onRequest = item.is_optional && item.total_price === 0;
+  return (
+    <div
+      className={[
+        "grid grid-cols-[1fr_auto] sm:grid-cols-[1fr_4rem_6rem_6.5rem] gap-x-3 px-3 py-2.5 border-b border-gray-300/70 text-sm",
+        striped ? "bg-gray-100" : "",
+      ].join(" ")}
+    >
+      <div className="min-w-0">
+        <div className="flex items-start gap-3">
+          {toggle && (
+            <Switch
+              id={`addon-${item.id}`}
+              checked={toggle.checked}
+              onCheckedChange={(v) => !toggle.disabled && toggle.onChange(!!v)}
+              disabled={toggle.disabled}
+              aria-label={`Add ${item.name}`}
+              className="mt-0.5 shrink-0 data-[state=checked]:bg-[#1a5632]"
+            />
+          )}
+          <div className="min-w-0">
+            <label htmlFor={toggle ? `addon-${item.id}` : undefined} className="text-gray-800">
+              {item.name}
+            </label>
+            {item.description && (
+              <p className="text-xs text-gray-500 mt-0.5 leading-snug">{item.description}</p>
+            )}
+            {!onRequest && (
+              <p className="sm:hidden text-xs text-gray-500 mt-1 tabular-nums">
+                {fmtQty(item.quantity)} × {fmtMoney(item.unit_price)}
+              </p>
+            )}
+          </div>
+        </div>
+      </div>
+      <span className="hidden sm:block text-right tabular-nums text-gray-700">{fmtQty(item.quantity)}</span>
+      <span className="hidden sm:block text-right tabular-nums text-gray-700">
+        {onRequest ? "" : fmtMoney(item.unit_price)}
+      </span>
+      <span className="text-right tabular-nums text-gray-800">
+        {onRequest ? "On request" : fmtMoney(item.total_price)}
+      </span>
+    </div>
+  );
 }
 
 export function PackageSelector({
   packages,
   selectedPackageId,
   onSelect,
+  toggles,
+  onToggle,
   readOnly,
 }: PackageSelectorProps) {
   const isSinglePackage = packages.length === 1;
 
   return (
-    <div className="space-y-5">
-      <p className="text-[11px] text-stone-400 uppercase tracking-[0.2em] font-medium">
-        {isSinglePackage ? "Your Proposal" : "Select Your Package"}
-      </p>
+    <div>
+      <h2 className="text-base font-bold text-[#1a5632] mb-3">
+        {isSinglePackage ? "Selected Package" : "Package Options"}
+      </h2>
 
-      <div className="space-y-4">
+      <div className="space-y-6">
         {packages.map((pkg) => {
           const isSelected = pkg.id === selectedPackageId;
-          const nonOptionalItems = pkg.quote_line_items.filter(
-            (li) => !li.is_optional
-          );
-          const optionalItems = pkg.quote_line_items.filter((li) => li.is_optional);
-          const packageTotal = nonOptionalItems.reduce(
-            (sum, li) => sum + li.total_price,
-            0
-          );
+          const selectable = !isSinglePackage && !readOnly;
+          const included = pkg.quote_line_items.filter((li) => !li.is_optional);
+          const addons = pkg.quote_line_items.filter((li) => li.is_optional);
 
           return (
             <div
               key={pkg.id}
-              role={isSinglePackage ? undefined : "radio"}
-              aria-checked={isSinglePackage ? undefined : isSelected}
-              tabIndex={isSinglePackage || readOnly ? undefined : 0}
-              onClick={() => !readOnly && !isSinglePackage && onSelect(pkg.id)}
-              onKeyDown={(e) => {
-                if (!readOnly && !isSinglePackage && (e.key === "Enter" || e.key === " ")) {
-                  e.preventDefault();
-                  onSelect(pkg.id);
-                }
-              }}
               className={[
-                "relative rounded-lg border bg-white transition-all duration-200",
-                !isSinglePackage && !readOnly && "cursor-pointer",
-                isSelected
-                  ? "border-[#1a5632] shadow-sm ring-1 ring-[#1a5632]/20"
-                  : "border-stone-200 hover:border-stone-300",
+                "rounded-md transition-shadow",
+                !isSinglePackage && isSelected ? "ring-2 ring-[#1a5632] ring-offset-4 ring-offset-white" : "",
                 readOnly && !isSelected ? "opacity-40" : "",
-              ]
-                .filter(Boolean)
-                .join(" ")}
+              ].join(" ")}
             >
-              {/* Recommended ribbon */}
-              {pkg.is_recommended && !isSinglePackage && (
-                <div className="absolute -top-3 right-6">
-                  <span className="inline-block bg-[#1a5632] text-white text-[10px] font-semibold uppercase tracking-widest px-3 py-1 rounded-full shadow-sm">
-                    Recommended
-                  </span>
-                </div>
-              )}
-
-              <div className="p-6 sm:p-8">
-                {/* Top row: radio + tier + package name */}
-                <div className="flex items-start gap-4">
-                  {/* Radio indicator (only for multi-package) */}
+              {/* Package header: grey bar with name + green subtotal, like the PDF */}
+              <div
+                role={selectable ? "radio" : undefined}
+                aria-checked={selectable ? isSelected : undefined}
+                tabIndex={selectable ? 0 : undefined}
+                onClick={() => selectable && onSelect(pkg.id)}
+                onKeyDown={(e) => {
+                  if (selectable && (e.key === "Enter" || e.key === " ")) {
+                    e.preventDefault();
+                    onSelect(pkg.id);
+                  }
+                }}
+                className={[
+                  "flex items-center justify-between gap-4 rounded-md bg-gray-100 px-4 py-3",
+                  selectable ? "cursor-pointer hover:bg-gray-200/70" : "",
+                ].join(" ")}
+              >
+                <div className="flex items-center gap-3 min-w-0">
                   {!isSinglePackage && (
-                    <div
+                    <span
                       className={[
-                        "mt-0.5 shrink-0 w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors",
-                        isSelected
-                          ? "border-[#1a5632] bg-[#1a5632]"
-                          : "border-stone-300",
+                        "shrink-0 w-5 h-5 rounded-full border-2 flex items-center justify-center",
+                        isSelected ? "border-[#1a5632] bg-[#1a5632]" : "border-gray-400 bg-white",
                       ].join(" ")}
                     >
-                      {isSelected && (
-                        <Check className="w-3 h-3 text-white" strokeWidth={3} />
-                      )}
-                    </div>
+                      {isSelected && <Check className="w-3 h-3 text-white" strokeWidth={3} />}
+                    </span>
                   )}
-
-                  <div className="flex-1 min-w-0">
-                    {/* Package name */}
-                    <h3
-                      className="text-xl sm:text-2xl text-stone-800"
-                      style={{ fontFamily: "var(--font-display), serif" }}
-                    >
+                  <div className="min-w-0">
+                    <p className="font-bold text-gray-800 leading-snug">
                       {pkg.name}
-                    </h3>
-
-                    {/* Description */}
-                    {pkg.description && (
-                      <p className="text-sm text-stone-500 mt-2 leading-relaxed">
-                        {pkg.description}
-                      </p>
-                    )}
-                  </div>
-                </div>
-
-                {/* Line items */}
-                <div className="mt-6 border-t border-stone-100 pt-5">
-                  <div className="space-y-3">
-                    {nonOptionalItems.map((item) => (
-                      <div
-                        key={item.id}
-                        className="flex items-baseline justify-between gap-4"
-                      >
-                        <div className="flex-1 min-w-0">
-                          <div>
-                            <span className="text-sm text-stone-700">
-                              {item.name}
-                            </span>
-                            {item.unit_of_measure &&
-                              item.unit_of_measure !== "flat_rate" && (
-                                <span className="text-xs text-stone-400 ml-2">
-                                  {item.quantity} &times;{" "}
-                                  {UNIT_OF_MEASURE_LABELS[item.unit_of_measure] ??
-                                    item.unit_of_measure}
-                                </span>
-                              )}
-                          </div>
-                          {item.description && (
-                            <p className="text-xs text-stone-400 mt-1 leading-relaxed">
-                              {item.description}
-                            </p>
-                          )}
-                        </div>
-                        <span className="text-sm font-medium tabular-nums text-stone-700 shrink-0">
-                          ${item.total_price.toLocaleString("en-US", { minimumFractionDigits: 2 })}
+                      {pkg.is_recommended && !isSinglePackage && (
+                        <span className="ml-2 align-middle text-[10px] font-semibold uppercase tracking-wider text-white bg-[#1a5632] px-2 py-0.5 rounded">
+                          Recommended
                         </span>
-                      </div>
-                    ))}
-                  </div>
-
-                  {/* Optional add-ons (not part of the total) */}
-                  {optionalItems.length > 0 && (
-                    <div className="mt-5 pt-4 border-t border-stone-100">
-                      <p className="text-xs font-semibold uppercase tracking-wide text-stone-400 mb-3">
-                        Optional add-ons (not included in total)
-                      </p>
-                      <div className="space-y-3">
-                        {optionalItems.map((item) => (
-                          <div key={item.id} className="flex items-baseline justify-between gap-4">
-                            <div className="flex-1 min-w-0">
-                              <div>
-                                <span className="text-sm text-stone-700">{item.name}</span>
-                                {item.unit_of_measure &&
-                                  item.unit_of_measure !== "flat_rate" && (
-                                    <span className="text-xs text-stone-400 ml-2">
-                                      {item.quantity} &times;{" "}
-                                      {UNIT_OF_MEASURE_LABELS[item.unit_of_measure] ??
-                                        item.unit_of_measure}
-                                    </span>
-                                  )}
-                              </div>
-                              {item.description && (
-                                <p className="text-xs text-stone-400 mt-1 leading-relaxed">
-                                  {item.description}
-                                </p>
-                              )}
-                            </div>
-                            <span className="text-sm font-medium tabular-nums text-stone-500 shrink-0">
-                              +${item.total_price.toLocaleString("en-US", { minimumFractionDigits: 2 })}
-                            </span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Package total */}
-                  <div className="mt-5 pt-4 border-t border-stone-200 flex items-baseline justify-between">
-                    <span className="text-sm font-medium text-stone-500">
-                      Package Total
-                    </span>
-                    <span
-                      className="text-2xl font-semibold tabular-nums text-stone-800"
-                      style={{ fontFamily: "var(--font-display), serif" }}
-                    >
-                      ${packageTotal.toLocaleString("en-US", { minimumFractionDigits: 2 })}
-                    </span>
+                      )}
+                    </p>
                   </div>
                 </div>
+                <span className="font-bold text-[#1a5632] tabular-nums shrink-0">
+                  {fmtMoney(pkg.subtotal)}
+                </span>
+              </div>
+              {pkg.description && (
+                <p className="text-xs text-gray-500 mt-2 px-1">{pkg.description}</p>
+              )}
+
+              {/* Line items table */}
+              <div className="mt-2">
+                <div className="grid grid-cols-[1fr_auto] sm:grid-cols-[1fr_4rem_6rem_6.5rem] gap-x-3 rounded-sm bg-[#1a5632] px-3 py-2 text-xs font-bold text-white">
+                  <span>Item</span>
+                  <span className="hidden sm:block text-right">Qty</span>
+                  <span className="hidden sm:block text-right">Unit Price</span>
+                  <span className="text-right">Total</span>
+                </div>
+                {included.map((item, i) => (
+                  <LineRow key={item.id} item={item} striped={i % 2 === 1} />
+                ))}
+                {addons.length > 0 && (
+                  <>
+                    <p className="text-xs font-bold uppercase text-gray-500 mt-3 mb-1 px-1">
+                      Optional Add-Ons (not included in total)
+                      {isSelected && !readOnly && (
+                        <span className="normal-case font-normal"> · switch on to add</span>
+                      )}
+                    </p>
+                    {addons.map((item, i) => (
+                      <LineRow
+                        key={item.id}
+                        item={item}
+                        striped={i % 2 === 1}
+                        toggle={
+                          isSelected
+                            ? {
+                                checked: toggles.get(item.id) ?? false,
+                                onChange: (v) => onToggle(item.id, v),
+                                disabled: readOnly,
+                              }
+                            : undefined
+                        }
+                      />
+                    ))}
+                  </>
+                )}
               </div>
             </div>
           );

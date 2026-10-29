@@ -2,13 +2,15 @@
 
 import { useState, useMemo, useCallback } from "react";
 import { useRouter } from "next/navigation";
+import { Download } from "lucide-react";
 import { PackageSelector } from "./package-selector";
-import { AddonToggles } from "./addon-toggles";
 import { ColorSelector } from "./color-selector";
 import { RunningTotal } from "./running-total";
 import { AcceptDialog } from "./accept-dialog";
 import { acceptQuote } from "@/lib/quotes/public-actions";
 import { computePackageTotal } from "@/lib/quotes/quote-calculator";
+import { fmtMoney, quoteDates, paymentSplit, groupConditions } from "@/lib/quotes/quote-format";
+import { PROJECT_TYPE_LABELS } from "@/lib/constants";
 import type { ColorSelections } from "@/lib/quotes/quote-calculator";
 import type { QuoteDetail } from "@/lib/admin/types/quote-types";
 import type { Color } from "@/lib/admin/queries/color-queries";
@@ -18,6 +20,22 @@ type CourtZone = "outside" | "inside" | "lines" | "nvz";
 interface QuotePageProps {
   quote: QuoteDetail;
   colors: Color[];
+}
+
+// Layout mirrors the PDF (src/lib/pdf/quote-pdf-document.tsx) section for section:
+// header · Prepared For · Project Details · Note · Package · Summary · Colors ·
+// Payment Terms · Conditions/Exclusions/Warranty · Acceptance.
+function SectionTitle({ children }: { children: React.ReactNode }) {
+  return <h2 className="text-base font-bold text-[#1a5632] mb-2">{children}</h2>;
+}
+
+function InfoRow({ label, value }: { label: string; value: React.ReactNode }) {
+  return (
+    <div className="grid grid-cols-[7.5rem_1fr] text-sm leading-6">
+      <span className="font-bold text-gray-800">{label}:</span>
+      <span className="text-gray-800 break-words">{value}</span>
+    </div>
+  );
 }
 
 export function QuotePage({ quote, colors }: QuotePageProps) {
@@ -60,18 +78,20 @@ export function QuotePage({ quote, colors }: QuotePageProps) {
     [quote.quote_packages, selectedPackageId]
   );
 
-  // Get optional items from selected package
-  const optionalItems = useMemo(
+  const selectedAddons = useMemo(
     () =>
-      selectedPackage?.quote_line_items.filter((li) => li.is_optional) ?? [],
-    [selectedPackage]
+      selectedPackage?.quote_line_items.filter(
+        (li) => li.is_optional && toggles.get(li.id)
+      ) ?? [],
+    [selectedPackage, toggles]
   );
 
-  // Compute total
+  // Compute total (the quote-level discount comes off the selected package)
   const total = useMemo(() => {
     if (!selectedPackage) return 0;
-    return computePackageTotal(selectedPackage, toggles, colorSelections, colors);
-  }, [selectedPackage, toggles, colorSelections, colors]);
+    const gross = computePackageTotal(selectedPackage, toggles, colorSelections, colors);
+    return Math.max(0, Math.round((gross - (quote.discount_amount ?? 0)) * 100) / 100);
+  }, [selectedPackage, toggles, colorSelections, colors, quote.discount_amount]);
 
   // Handlers
   const handlePackageSelect = useCallback(
@@ -147,174 +167,234 @@ export function QuotePage({ quote, colors }: QuotePageProps) {
     quote.sports?.includes("tennis") ? "tennis" : "pickleball";
   const sports = quote.sports ?? [];
 
-  const contactName = quote.customer?.display_name ?? quote.lead?.display_name;
-  const createdDate = new Date(quote.created_at).toLocaleDateString("en-US", {
-    month: "long",
-    day: "numeric",
-    year: "numeric",
-  });
+  const contact = quote.customer ?? quote.lead;
+  const organization = contact?.company?.name ?? null;
+  const projectType = quote.project_type
+    ? (PROJECT_TYPE_LABELS[quote.project_type] ?? quote.project_type)
+    : null;
+  const { createdDate, validThrough } = quoteDates(quote);
+  const hasCustomSchedule =
+    Array.isArray(quote.payment_schedule) && quote.payment_schedule.length > 1;
+  const isMultiPackage = quote.quote_packages.length > 1;
+  const baseSubtotal = selectedPackage?.subtotal ?? 0;
+  const { depositPct, depositAmount, balancePct, balanceAmount } = paymentSplit(
+    total,
+    quote.deposit_percent
+  );
+  const conditionGroups = groupConditions(quote.conditions);
+  const pdfHref = `/q/${quote.share_token}/pdf`;
 
   return (
-    <div className="min-h-screen bg-[#faf8f5]">
-      {/* Brand accent bar */}
-      <div className="h-1.5 bg-[#1a5632]" />
-
-      {/* Header */}
-      <header className="border-b border-stone-200 bg-white">
-        <div className="max-w-2xl mx-auto px-6 py-8 sm:py-10">
-          <div className="flex items-start justify-between gap-4">
+    <div className="min-h-screen bg-gray-50 sm:py-8">
+      <div className="max-w-3xl mx-auto bg-white sm:rounded-md sm:shadow-sm sm:border sm:border-gray-200">
+        <main className="px-4 sm:px-12 pt-8 sm:pt-12 pb-40 space-y-7">
+          {/* Header — brand left, quote number/dates right, green rule */}
+          <header className="flex items-start justify-between gap-4 border-b-2 border-[#1a5632] pb-4">
             <div>
-              <h1
-                className="text-2xl sm:text-3xl text-[#1a5632]"
-                style={{ fontFamily: "var(--font-display), serif" }}
-              >
+              <h1 className="text-2xl sm:text-3xl font-bold text-[#1a5632] leading-tight">
                 Pro Court Surfaces
               </h1>
-              <p className="text-sm text-stone-400 mt-1 tracking-wide">
-                Austin, Texas
-              </p>
+              <p className="text-sm text-gray-500 mt-0.5">Austin, TX</p>
             </div>
             <div className="text-right shrink-0">
-              <p className="text-sm font-semibold text-stone-700 tracking-wide">
-                {quote.quote_number}
-              </p>
-              <p className="text-xs text-stone-400 mt-1">{createdDate}</p>
-              {quote.version > 1 && (
-                <p className="text-xs text-stone-400">v{quote.version}</p>
-              )}
+              <p className="text-lg sm:text-xl font-bold text-gray-800">{quote.quote_number}</p>
+              <p className="text-xs text-gray-500 mt-0.5">{createdDate}</p>
+              <p className="text-xs text-gray-500">Valid through {validThrough}</p>
+              <p className="text-xs text-gray-500">Version {quote.version}</p>
             </div>
-          </div>
-        </div>
-      </header>
+          </header>
 
-      {/* Main content */}
-      <main className="max-w-2xl mx-auto px-6 py-10 sm:py-14 space-y-10 pb-36">
-        {/* Prepared for + project summary */}
-        <section
-          className="animate-[fadeInUp_0.5s_ease-out_both]"
-        >
-          <p className="text-[11px] text-stone-400 uppercase tracking-[0.2em] font-medium mb-3">
-            Prepared for
-          </p>
-          {contactName && (
-            <p
-              className="text-2xl text-stone-800"
-              style={{ fontFamily: "var(--font-display), serif" }}
+          <div className="flex justify-end -mt-4">
+            <a
+              href={pdfHref}
+              target="_blank"
+              rel="noopener"
+              className="inline-flex items-center gap-1.5 text-xs font-medium text-[#1a5632] hover:underline"
             >
-              {contactName}
-            </p>
-          )}
-          {(quote.city || quote.address_line1) && (
-            <p className="text-sm text-stone-500 mt-1.5">
-              {quote.address_line1 && `${quote.address_line1}, `}
-              {quote.city}
-              {quote.state ? `, ${quote.state}` : ""}
-              {quote.zip ? ` ${quote.zip}` : ""}
-            </p>
-          )}
-          {(quote.square_feet || quote.number_of_courts) && (
-            <div className="flex gap-6 mt-4 text-sm text-stone-500">
-              {quote.number_of_courts && (
-                <span>
-                  {quote.number_of_courts} court{quote.number_of_courts > 1 ? "s" : ""}
-                </span>
-              )}
-              {quote.square_feet && (
-                <span>{quote.square_feet.toLocaleString()} sq ft</span>
-              )}
-            </div>
-          )}
-        </section>
+              <Download className="w-3.5 h-3.5" /> Download PDF
+            </a>
+          </div>
 
-        {/* Cover note */}
-        {quote.cover_note && (
-          <section
-            className="border-l-2 border-[#1a5632]/30 pl-6 animate-[fadeInUp_0.5s_ease-out_0.1s_both]"
-          >
-            <p className="text-stone-600 whitespace-pre-wrap leading-relaxed">
-              {quote.cover_note}
-            </p>
-          </section>
-        )}
-
-        <hr className="border-stone-200" />
-
-        {/* Package selector */}
-        <section className="animate-[fadeInUp_0.5s_ease-out_0.15s_both]">
-          <PackageSelector
-            packages={quote.quote_packages}
-            selectedPackageId={selectedPackageId}
-            onSelect={handlePackageSelect}
-            readOnly={isAccepted}
-          />
-        </section>
-
-        {/* Add-ons */}
-        {optionalItems.length > 0 && (
-          <>
-            <hr className="border-stone-200" />
-            <section className="animate-[fadeInUp_0.5s_ease-out_0.2s_both]">
-              <AddonToggles
-                optionalItems={optionalItems}
-                toggles={toggles}
-                onToggle={handleToggle}
-                readOnly={isAccepted}
-              />
+          {/* Prepared For */}
+          {contact && (
+            <section>
+              <SectionTitle>Prepared For</SectionTitle>
+              {organization && <InfoRow label="Organization" value={organization} />}
+              <InfoRow label="Contact" value={contact.display_name} />
+              {contact.email && <InfoRow label="Email" value={contact.email} />}
+              {contact.phone && <InfoRow label="Phone" value={contact.phone} />}
             </section>
-          </>
-        )}
+          )}
 
-        {/* Color selector */}
-        <hr className="border-stone-200" />
-        <section className="animate-[fadeInUp_0.5s_ease-out_0.25s_both]">
-          <ColorSelector
-            courtType={courtType}
-            sports={sports}
-            colors={colors}
-            colorSelections={colorSelections}
-            onColorChange={handleColorChange}
-            readOnly={isAccepted}
-          />
-        </section>
+          {/* Project Details */}
+          {(projectType || quote.city || quote.square_feet) && (
+            <section>
+              <SectionTitle>Project Details</SectionTitle>
+              {quote.address_line1 && (
+                <InfoRow
+                  label="Address"
+                  value={[quote.address_line1, quote.city, quote.state, quote.zip]
+                    .filter(Boolean)
+                    .join(", ")}
+                />
+              )}
+              {projectType && <InfoRow label="Type" value={projectType} />}
+              {quote.number_of_courts && <InfoRow label="Courts" value={quote.number_of_courts} />}
+              {quote.square_feet && (
+                <InfoRow label="Square Feet" value={quote.square_feet.toLocaleString()} />
+              )}
+            </section>
+          )}
 
-        {/* Terms */}
-        {quote.terms_and_conditions && (
-          <>
-            <hr className="border-stone-200" />
-            <section className="animate-[fadeInUp_0.5s_ease-out_0.3s_both]">
-              <p className="text-[11px] text-stone-400 uppercase tracking-[0.2em] font-medium mb-3">
-                Terms & Conditions
+          {/* Cover note */}
+          {quote.cover_note && (
+            <section>
+              <SectionTitle>Note</SectionTitle>
+              <p className="rounded-md bg-gray-100 px-4 py-3 text-sm italic text-gray-800 whitespace-pre-wrap leading-relaxed">
+                {quote.cover_note}
               </p>
-              <p className="text-xs text-stone-400 whitespace-pre-wrap leading-relaxed">
+            </section>
+          )}
+
+          {/* Packages + inline add-on switches */}
+          <section>
+            <PackageSelector
+              packages={quote.quote_packages}
+              selectedPackageId={selectedPackageId}
+              onSelect={handlePackageSelect}
+              toggles={toggles}
+              onToggle={handleToggle}
+              readOnly={isAccepted}
+            />
+          </section>
+
+          {/* Summary — subtotal, chosen add-ons, total, deposit/balance */}
+          <section className="rounded-md bg-gray-100 px-4 py-3 text-sm">
+            <div className="flex justify-between py-1">
+              <span className="text-gray-800">
+                Subtotal{isMultiPackage && selectedPackage ? ` (${selectedPackage.name})` : ""}
+              </span>
+              <span className="font-bold tabular-nums text-gray-800">{fmtMoney(baseSubtotal)}</span>
+            </div>
+            {selectedAddons.map((li) => (
+              <div key={li.id} className="flex justify-between py-1">
+                <span className="text-gray-800">+ {li.name}</span>
+                <span className="font-bold tabular-nums text-gray-800">{fmtMoney(li.total_price)}</span>
+              </div>
+            ))}
+            {quote.discount_amount != null && quote.discount_amount > 0 && (
+              <div className="flex justify-between py-1">
+                <span className="text-gray-800">Discount</span>
+                <span className="font-bold tabular-nums text-gray-800">-{fmtMoney(quote.discount_amount)}</span>
+              </div>
+            )}
+            <div className="flex justify-between border-t border-gray-300 mt-1 pt-2">
+              <span className="text-lg font-bold text-gray-800">Total</span>
+              <span className="text-lg font-bold tabular-nums text-[#1a5632]">{fmtMoney(total)}</span>
+            </div>
+            {!hasCustomSchedule && total > 0 && (
+              <p className="border-t border-gray-300 mt-2 pt-2 text-gray-800">
+                Deposit ({depositPct}%): {fmtMoney(depositAmount)} due at signing · Balance (
+                {balancePct}%): {fmtMoney(balanceAmount)} at completion
+              </p>
+            )}
+          </section>
+
+          {/* Court colors (interactive) */}
+          <section>
+            <ColorSelector
+              courtType={courtType}
+              sports={sports}
+              colors={colors}
+              colorSelections={colorSelections}
+              onColorChange={handleColorChange}
+              readOnly={isAccepted}
+            />
+          </section>
+
+          {/* Payment Terms */}
+          {hasCustomSchedule ? (
+            <section>
+              <SectionTitle>Payment Schedule</SectionTitle>
+              <div className="rounded-md bg-gray-100 px-4 py-3 space-y-1.5">
+                {quote.payment_schedule!.map((m, i) => (
+                  <div key={i} className="flex justify-between text-sm">
+                    <span className="text-gray-800">
+                      {i + 1}. {m.label}
+                    </span>
+                    <span className="tabular-nums font-bold text-gray-800">{fmtMoney(m.amount)}</span>
+                  </div>
+                ))}
+              </div>
+            </section>
+          ) : (
+            total > 0 && (
+              <section>
+                <SectionTitle>Payment Terms</SectionTitle>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="rounded-md bg-gray-100 px-4 py-3">
+                    <p className="text-2xl font-bold text-[#1a5632]">{depositPct}%</p>
+                    <p className="text-xs text-gray-500 mt-0.5">Deposit — due at contract execution</p>
+                  </div>
+                  <div className="rounded-md bg-gray-100 px-4 py-3">
+                    <p className="text-2xl font-bold text-[#1a5632]">{balancePct}%</p>
+                    <p className="text-xs text-gray-500 mt-0.5">Balance — due at substantial completion</p>
+                  </div>
+                </div>
+              </section>
+            )
+          )}
+
+          {/* Substrate conditions / exclusions / warranty — same clauses as the PDF */}
+          {conditionGroups.map((g) => (
+            <section key={g.section}>
+              <h2 className="text-lg font-bold text-[#1a5632] mb-2">{g.section}</h2>
+              <div className="space-y-3">
+                {g.items.map((c, i) => (
+                  <div key={i}>
+                    {c.title !== g.section && (
+                      <h3 className="text-sm font-bold text-gray-800">{c.title}</h3>
+                    )}
+                    {c.body.split("\n").map((line, j) => (
+                      <p key={j} className="text-[13px] text-gray-500 leading-relaxed">
+                        {line}
+                      </p>
+                    ))}
+                  </div>
+                ))}
+              </div>
+            </section>
+          ))}
+
+          {/* Freeform terms (if any) */}
+          {quote.terms_and_conditions && (
+            <section>
+              <SectionTitle>Additional Terms</SectionTitle>
+              <p className="text-[13px] text-gray-500 whitespace-pre-wrap leading-relaxed">
                 {quote.terms_and_conditions}
               </p>
             </section>
-          </>
-        )}
-      </main>
+          )}
 
-      {/* Payment schedule (shown above running total if custom) */}
-      {quote.payment_schedule && quote.payment_schedule.length > 1 && (
-        <div className="max-w-2xl mx-auto px-6 pb-4">
-          <div className="rounded-lg border border-stone-200 bg-white p-5">
-            <p className="text-[11px] text-stone-400 uppercase tracking-[0.2em] font-medium mb-3">
-              Payment Schedule
-            </p>
-            <div className="space-y-2">
-              {quote.payment_schedule.map((m, i) => (
-                <div key={i} className="flex justify-between text-sm">
-                  <span className="text-stone-600">
-                    {i + 1}. {m.label}
-                  </span>
-                  <span className="tabular-nums font-medium text-stone-700">
-                    ${m.amount.toLocaleString("en-US", { minimumFractionDigits: 2 })}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
+          {/* Acceptance — online acceptance replaces the PDF signature lines */}
+          {!isAccepted && (
+            <section className="border-t border-gray-200 pt-6">
+              <SectionTitle>Acceptance</SectionTitle>
+              <p className="text-sm text-gray-600 leading-relaxed">
+                Review the scope, conditions, and exclusions above. Clicking{" "}
+                <span className="font-semibold text-gray-800">Accept &amp; Pay Deposit</span>{" "}
+                records your acceptance of this estimate (your typed name serves as your
+                signature). Your {depositPct}% deposit invoice follows.
+              </p>
+            </section>
+          )}
+
+          <footer className="flex justify-between border-t border-gray-300 pt-2 text-xs text-gray-500">
+            <span>Pro Court Surfaces — Austin, TX</span>
+            <span>{quote.quote_number}</span>
+          </footer>
+        </main>
+      </div>
 
       {/* Running total bar */}
       <RunningTotal

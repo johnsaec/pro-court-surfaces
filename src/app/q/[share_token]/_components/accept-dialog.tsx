@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { paymentSplit } from "@/lib/quotes/quote-format";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -40,7 +41,7 @@ export function AcceptDialog({
   const hasCustomSchedule = paymentSchedule && paymentSchedule.length > 0;
   const depositAmount = hasCustomSchedule
     ? paymentSchedule[0].amount
-    : (total * depositPercent) / 100;
+    : paymentSplit(total, depositPercent).depositAmount;
   const depositLabel = hasCustomSchedule
     ? paymentSchedule[0].label
     : `${depositPercent}% Deposit`;
