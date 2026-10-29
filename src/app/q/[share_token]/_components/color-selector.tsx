@@ -64,7 +64,7 @@ export function ColorSelector({
 
   return (
     <div className="space-y-5">
-      <p className="text-base font-bold text-[#1a5632]">
+      <p className="text-lg font-bold text-[#1a5632]">
         Court Colors
       </p>
 

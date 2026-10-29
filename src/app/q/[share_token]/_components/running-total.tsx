@@ -37,7 +37,7 @@ export function RunningTotal({
     <div className="fixed bottom-0 left-0 right-0 z-40 border-t-2 border-[#1a5632] bg-white/95 backdrop-blur-sm supports-[backdrop-filter]:bg-white/90">
       <div className="max-w-3xl mx-auto px-4 sm:px-12 py-3 sm:py-4 flex items-center justify-between gap-4">
         <div>
-          <p className="text-xs text-gray-500 mb-0.5">Total</p>
+          <p className="text-xs text-stone-500 mb-0.5">Total</p>
           <p className="text-xl sm:text-2xl font-bold tabular-nums text-[#1a5632]">
             ${total.toLocaleString("en-US", { minimumFractionDigits: 2 })}
           </p>

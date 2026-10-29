@@ -29,8 +29,8 @@ function LineRow({
   return (
     <div
       className={[
-        "grid grid-cols-[1fr_auto] sm:grid-cols-[1fr_4rem_6rem_6.5rem] gap-x-3 px-3 py-2.5 border-b border-gray-300/70 text-sm",
-        striped ? "bg-gray-100" : "",
+        "grid grid-cols-[1fr_auto] sm:grid-cols-[1fr_4rem_6rem_6.5rem] gap-x-3 px-3 py-2.5 border-b border-stone-200 text-sm",
+        striped ? "bg-stone-50" : "",
       ].join(" ")}
     >
       <div className="min-w-0">
@@ -46,25 +46,25 @@ function LineRow({
             />
           )}
           <div className="min-w-0">
-            <label htmlFor={toggle ? `addon-${item.id}` : undefined} className="text-gray-800">
+            <label htmlFor={toggle ? `addon-${item.id}` : undefined} className="text-stone-800">
               {item.name}
             </label>
             {item.description && (
-              <p className="text-xs text-gray-500 mt-0.5 leading-snug">{item.description}</p>
+              <p className="text-xs text-stone-500 mt-0.5 leading-snug">{item.description}</p>
             )}
             {!onRequest && (
-              <p className="sm:hidden text-xs text-gray-500 mt-1 tabular-nums">
+              <p className="sm:hidden text-xs text-stone-500 mt-1 tabular-nums">
                 {fmtQty(item.quantity)} × {fmtMoney(item.unit_price)}
               </p>
             )}
           </div>
         </div>
       </div>
-      <span className="hidden sm:block text-right tabular-nums text-gray-700">{fmtQty(item.quantity)}</span>
-      <span className="hidden sm:block text-right tabular-nums text-gray-700">
+      <span className="hidden sm:block text-right tabular-nums text-stone-700">{fmtQty(item.quantity)}</span>
+      <span className="hidden sm:block text-right tabular-nums text-stone-700">
         {onRequest ? "" : fmtMoney(item.unit_price)}
       </span>
-      <span className="text-right tabular-nums text-gray-800">
+      <span className="text-right tabular-nums text-stone-800">
         {onRequest ? "On request" : fmtMoney(item.total_price)}
       </span>
     </div>
@@ -83,7 +83,7 @@ export function PackageSelector({
 
   return (
     <div>
-      <h2 className="text-base font-bold text-[#1a5632] mb-3">
+      <h2 className="text-lg font-bold text-[#1a5632] mb-3">
         {isSinglePackage ? "Selected Package" : "Package Options"}
       </h2>
 
@@ -98,7 +98,7 @@ export function PackageSelector({
             <div
               key={pkg.id}
               className={[
-                "rounded-md transition-shadow",
+                "rounded-lg transition-shadow",
                 !isSinglePackage && isSelected ? "ring-2 ring-[#1a5632] ring-offset-4 ring-offset-white" : "",
                 readOnly && !isSelected ? "opacity-40" : "",
               ].join(" ")}
@@ -116,8 +116,8 @@ export function PackageSelector({
                   }
                 }}
                 className={[
-                  "flex items-center justify-between gap-4 rounded-md bg-gray-100 px-4 py-3",
-                  selectable ? "cursor-pointer hover:bg-gray-200/70" : "",
+                  "flex items-center justify-between gap-4 rounded-lg border border-stone-200 bg-stone-50 px-4 py-3.5",
+                  selectable ? "cursor-pointer hover:bg-stone-100" : "",
                 ].join(" ")}
               >
                 <div className="flex items-center gap-3 min-w-0">
@@ -125,14 +125,14 @@ export function PackageSelector({
                     <span
                       className={[
                         "shrink-0 w-5 h-5 rounded-full border-2 flex items-center justify-center",
-                        isSelected ? "border-[#1a5632] bg-[#1a5632]" : "border-gray-400 bg-white",
+                        isSelected ? "border-[#1a5632] bg-[#1a5632]" : "border-stone-400 bg-white",
                       ].join(" ")}
                     >
                       {isSelected && <Check className="w-3 h-3 text-white" strokeWidth={3} />}
                     </span>
                   )}
                   <div className="min-w-0">
-                    <p className="font-bold text-gray-800 leading-snug">
+                    <p className="font-bold text-stone-800 leading-snug">
                       {pkg.name}
                       {pkg.is_recommended && !isSinglePackage && (
                         <span className="ml-2 align-middle text-[10px] font-semibold uppercase tracking-wider text-white bg-[#1a5632] px-2 py-0.5 rounded">
@@ -147,12 +147,12 @@ export function PackageSelector({
                 </span>
               </div>
               {pkg.description && (
-                <p className="text-xs text-gray-500 mt-2 px-1">{pkg.description}</p>
+                <p className="text-xs text-stone-500 mt-2 px-1">{pkg.description}</p>
               )}
 
               {/* Line items table */}
               <div className="mt-2">
-                <div className="grid grid-cols-[1fr_auto] sm:grid-cols-[1fr_4rem_6rem_6.5rem] gap-x-3 rounded-sm bg-[#1a5632] px-3 py-2 text-xs font-bold text-white">
+                <div className="grid grid-cols-[1fr_auto] sm:grid-cols-[1fr_4rem_6rem_6.5rem] gap-x-3 rounded-t-md bg-[#1a5632] px-3 py-2 text-xs font-semibold tracking-wide text-white">
                   <span>Item</span>
                   <span className="hidden sm:block text-right">Qty</span>
                   <span className="hidden sm:block text-right">Unit Price</span>
@@ -163,7 +163,7 @@ export function PackageSelector({
                 ))}
                 {addons.length > 0 && (
                   <>
-                    <p className="text-xs font-bold uppercase text-gray-500 mt-3 mb-1 px-1">
+                    <p className="text-xs font-bold uppercase text-stone-500 mt-3 mb-1 px-1">
                       Optional Add-Ons (not included in total)
                       {isSelected && !readOnly && (
                         <span className="normal-case font-normal"> · switch on to add</span>

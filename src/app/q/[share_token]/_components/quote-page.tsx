@@ -24,16 +24,21 @@ interface QuotePageProps {
 
 // Layout mirrors the PDF (src/lib/pdf/quote-pdf-document.tsx) section for section:
 // header · Prepared For · Project Details · Note · Package · Summary · Colors ·
-// Payment Terms · Conditions/Exclusions/Warranty · Acceptance.
+// Payment Terms · Conditions/Exclusions/Warranty · Acceptance. Styling leans
+// mostly PDF: PDF structure and bold-sans type, with the site's warm stone
+// palette and rounded cards.
+
 function SectionTitle({ children }: { children: React.ReactNode }) {
-  return <h2 className="text-base font-bold text-[#1a5632] mb-2">{children}</h2>;
+  return (
+    <h2 className="text-lg font-bold text-[#1a5632] mb-2">{children}</h2>
+  );
 }
 
 function InfoRow({ label, value }: { label: string; value: React.ReactNode }) {
   return (
-    <div className="grid grid-cols-[7.5rem_1fr] text-sm leading-6">
-      <span className="font-bold text-gray-800">{label}:</span>
-      <span className="text-gray-800 break-words">{value}</span>
+    <div className="grid grid-cols-[6.25rem_1fr] text-sm leading-6">
+      <span className="font-semibold text-stone-700">{label}:</span>
+      <span className="text-stone-800 min-w-0 [overflow-wrap:anywhere]">{value}</span>
     </div>
   );
 }
@@ -185,26 +190,30 @@ export function QuotePage({ quote, colors }: QuotePageProps) {
   const pdfHref = `/q/${quote.share_token}/pdf`;
 
   return (
-    <div className="min-h-screen bg-gray-50 sm:py-8">
-      <div className="max-w-3xl mx-auto bg-white sm:rounded-md sm:shadow-sm sm:border sm:border-gray-200">
-        <main className="px-4 sm:px-12 pt-8 sm:pt-12 pb-40 space-y-7">
+    <div className="min-h-screen bg-[#faf8f5] sm:py-10">
+      <div className="max-w-3xl mx-auto bg-white sm:rounded-xl sm:shadow-sm sm:border sm:border-stone-200 overflow-hidden">
+        {/* Brand accent bar */}
+        <div className="h-1.5 bg-[#1a5632]" />
+        <main className="px-4 sm:px-12 pt-8 sm:pt-10 pb-40 space-y-8">
           {/* Header — brand left, quote number/dates right, green rule */}
           <header className="flex items-start justify-between gap-4 border-b-2 border-[#1a5632] pb-4">
             <div>
               <h1 className="text-2xl sm:text-3xl font-bold text-[#1a5632] leading-tight">
                 Pro Court Surfaces
               </h1>
-              <p className="text-sm text-gray-500 mt-0.5">Austin, TX</p>
+              <p className="text-sm text-stone-500 mt-0.5 tracking-wide">Austin, TX</p>
             </div>
             <div className="text-right shrink-0">
-              <p className="text-lg sm:text-xl font-bold text-gray-800">{quote.quote_number}</p>
-              <p className="text-xs text-gray-500 mt-0.5">{createdDate}</p>
-              <p className="text-xs text-gray-500">Valid through {validThrough}</p>
-              <p className="text-xs text-gray-500">Version {quote.version}</p>
+              <p className="text-lg sm:text-xl font-semibold text-stone-800 tracking-wide">
+                {quote.quote_number}
+              </p>
+              <p className="text-xs text-stone-500 mt-0.5">{createdDate}</p>
+              <p className="text-xs text-stone-500">Valid through {validThrough}</p>
+              <p className="text-xs text-stone-500">Version {quote.version}</p>
             </div>
           </header>
 
-          <div className="flex justify-end -mt-4">
+          <div className="flex justify-end -mt-5">
             <a
               href={pdfHref}
               target="_blank"
@@ -215,42 +224,42 @@ export function QuotePage({ quote, colors }: QuotePageProps) {
             </a>
           </div>
 
-          {/* Prepared For */}
-          {contact && (
-            <section>
-              <SectionTitle>Prepared For</SectionTitle>
-              {organization && <InfoRow label="Organization" value={organization} />}
-              <InfoRow label="Contact" value={contact.display_name} />
-              {contact.email && <InfoRow label="Email" value={contact.email} />}
-              {contact.phone && <InfoRow label="Phone" value={contact.phone} />}
-            </section>
-          )}
-
-          {/* Project Details */}
-          {(projectType || quote.city || quote.square_feet) && (
-            <section>
-              <SectionTitle>Project Details</SectionTitle>
-              {quote.address_line1 && (
-                <InfoRow
-                  label="Address"
-                  value={[quote.address_line1, quote.city, quote.state, quote.zip]
-                    .filter(Boolean)
-                    .join(", ")}
-                />
-              )}
-              {projectType && <InfoRow label="Type" value={projectType} />}
-              {quote.number_of_courts && <InfoRow label="Courts" value={quote.number_of_courts} />}
-              {quote.square_feet && (
-                <InfoRow label="Square Feet" value={quote.square_feet.toLocaleString()} />
-              )}
-            </section>
-          )}
+          {/* Prepared For + Project Details, side by side on desktop */}
+          <div className="grid gap-6 sm:grid-cols-[1.35fr_1fr] sm:gap-x-10">
+            {contact && (
+              <section>
+                <SectionTitle>Prepared For</SectionTitle>
+                {organization && <InfoRow label="Organization" value={organization} />}
+                <InfoRow label="Contact" value={contact.display_name} />
+                {contact.email && <InfoRow label="Email" value={contact.email} />}
+                {contact.phone && <InfoRow label="Phone" value={contact.phone} />}
+              </section>
+            )}
+            {(projectType || quote.city || quote.square_feet) && (
+              <section>
+                <SectionTitle>Project Details</SectionTitle>
+                {quote.address_line1 && (
+                  <InfoRow
+                    label="Address"
+                    value={[quote.address_line1, quote.city, quote.state, quote.zip]
+                      .filter(Boolean)
+                      .join(", ")}
+                  />
+                )}
+                {projectType && <InfoRow label="Type" value={projectType} />}
+                {quote.number_of_courts && <InfoRow label="Courts" value={quote.number_of_courts} />}
+                {quote.square_feet && (
+                  <InfoRow label="Square Feet" value={quote.square_feet.toLocaleString()} />
+                )}
+              </section>
+            )}
+          </div>
 
           {/* Cover note */}
           {quote.cover_note && (
             <section>
               <SectionTitle>Note</SectionTitle>
-              <p className="rounded-md bg-gray-100 px-4 py-3 text-sm italic text-gray-800 whitespace-pre-wrap leading-relaxed">
+              <p className="rounded-r-lg border-l-2 border-[#1a5632]/40 bg-[#1a5632]/[0.04] px-5 py-4 text-[15px] text-stone-700 whitespace-pre-wrap leading-relaxed">
                 {quote.cover_note}
               </p>
             </section>
@@ -269,31 +278,33 @@ export function QuotePage({ quote, colors }: QuotePageProps) {
           </section>
 
           {/* Summary — subtotal, chosen add-ons, total, deposit/balance */}
-          <section className="rounded-md bg-gray-100 px-4 py-3 text-sm">
+          <section className="rounded-lg border border-stone-200 bg-stone-50 px-5 py-4 text-sm">
             <div className="flex justify-between py-1">
-              <span className="text-gray-800">
+              <span className="text-stone-700">
                 Subtotal{isMultiPackage && selectedPackage ? ` (${selectedPackage.name})` : ""}
               </span>
-              <span className="font-bold tabular-nums text-gray-800">{fmtMoney(baseSubtotal)}</span>
+              <span className="font-semibold tabular-nums text-stone-800">{fmtMoney(baseSubtotal)}</span>
             </div>
             {selectedAddons.map((li) => (
               <div key={li.id} className="flex justify-between py-1">
-                <span className="text-gray-800">+ {li.name}</span>
-                <span className="font-bold tabular-nums text-gray-800">{fmtMoney(li.total_price)}</span>
+                <span className="text-stone-700">+ {li.name}</span>
+                <span className="font-semibold tabular-nums text-stone-800">{fmtMoney(li.total_price)}</span>
               </div>
             ))}
             {quote.discount_amount != null && quote.discount_amount > 0 && (
               <div className="flex justify-between py-1">
-                <span className="text-gray-800">Discount</span>
-                <span className="font-bold tabular-nums text-gray-800">-{fmtMoney(quote.discount_amount)}</span>
+                <span className="text-stone-700">Discount</span>
+                <span className="font-semibold tabular-nums text-stone-800">-{fmtMoney(quote.discount_amount)}</span>
               </div>
             )}
-            <div className="flex justify-between border-t border-gray-300 mt-1 pt-2">
-              <span className="text-lg font-bold text-gray-800">Total</span>
-              <span className="text-lg font-bold tabular-nums text-[#1a5632]">{fmtMoney(total)}</span>
+            <div className="flex items-baseline justify-between border-t border-stone-300 mt-1 pt-3">
+              <span className="text-lg font-bold text-stone-800">Total</span>
+              <span className="text-2xl font-bold tabular-nums text-[#1a5632]">
+                {fmtMoney(total)}
+              </span>
             </div>
             {!hasCustomSchedule && total > 0 && (
-              <p className="border-t border-gray-300 mt-2 pt-2 text-gray-800">
+              <p className="border-t border-stone-300 mt-3 pt-3 text-stone-700">
                 Deposit ({depositPct}%): {fmtMoney(depositAmount)} due at signing · Balance (
                 {balancePct}%): {fmtMoney(balanceAmount)} at completion
               </p>
@@ -316,13 +327,13 @@ export function QuotePage({ quote, colors }: QuotePageProps) {
           {hasCustomSchedule ? (
             <section>
               <SectionTitle>Payment Schedule</SectionTitle>
-              <div className="rounded-md bg-gray-100 px-4 py-3 space-y-1.5">
+              <div className="rounded-lg border border-stone-200 bg-stone-50 px-5 py-4 space-y-1.5">
                 {quote.payment_schedule!.map((m, i) => (
                   <div key={i} className="flex justify-between text-sm">
-                    <span className="text-gray-800">
+                    <span className="text-stone-700">
                       {i + 1}. {m.label}
                     </span>
-                    <span className="tabular-nums font-bold text-gray-800">{fmtMoney(m.amount)}</span>
+                    <span className="tabular-nums font-semibold text-stone-800">{fmtMoney(m.amount)}</span>
                   </div>
                 ))}
               </div>
@@ -332,64 +343,97 @@ export function QuotePage({ quote, colors }: QuotePageProps) {
               <section>
                 <SectionTitle>Payment Terms</SectionTitle>
                 <div className="grid grid-cols-2 gap-3">
-                  <div className="rounded-md bg-gray-100 px-4 py-3">
-                    <p className="text-2xl font-bold text-[#1a5632]">{depositPct}%</p>
-                    <p className="text-xs text-gray-500 mt-0.5">Deposit — due at contract execution</p>
+                  <div className="rounded-lg border border-stone-200 bg-stone-50 px-5 py-4">
+                    <p className="text-2xl font-bold text-[#1a5632]">
+                      {depositPct}%
+                    </p>
+                    <p className="text-xs text-stone-500 mt-0.5">Deposit — due at contract execution</p>
                   </div>
-                  <div className="rounded-md bg-gray-100 px-4 py-3">
-                    <p className="text-2xl font-bold text-[#1a5632]">{balancePct}%</p>
-                    <p className="text-xs text-gray-500 mt-0.5">Balance — due at substantial completion</p>
+                  <div className="rounded-lg border border-stone-200 bg-stone-50 px-5 py-4">
+                    <p className="text-2xl font-bold text-[#1a5632]">
+                      {balancePct}%
+                    </p>
+                    <p className="text-xs text-stone-500 mt-0.5">Balance — due at substantial completion</p>
                   </div>
                 </div>
               </section>
             )
           )}
 
-          {/* Substrate conditions / exclusions / warranty — same clauses as the PDF */}
-          {conditionGroups.map((g) => (
-            <section key={g.section}>
-              <h2 className="text-lg font-bold text-[#1a5632] mb-2">{g.section}</h2>
-              <div className="space-y-3">
-                {g.items.map((c, i) => (
-                  <div key={i}>
-                    {c.title !== g.section && (
-                      <h3 className="text-sm font-bold text-gray-800">{c.title}</h3>
-                    )}
-                    {c.body.split("\n").map((line, j) => (
-                      <p key={j} className="text-[13px] text-gray-500 leading-relaxed">
-                        {line}
-                      </p>
+          {/* Substrate conditions / exclusions / warranty — same clauses as the PDF,
+              set in their own tinted panel so the fine print reads as one block */}
+          {(conditionGroups.length > 0 || quote.terms_and_conditions) && (
+            <div className="rounded-xl bg-stone-50 border border-stone-200 px-5 sm:px-8 py-6 space-y-7">
+              {conditionGroups.map((g) => (
+                <section key={g.section}>
+                  <SectionTitle>{g.section}</SectionTitle>
+                  <div className="space-y-3">
+                    {g.items.map((c, i) => (
+                      <div key={i}>
+                        {c.title !== g.section && (
+                          <h3 className="text-sm font-semibold text-stone-800">{c.title}</h3>
+                        )}
+                        {c.body.split("\n").map((line, j) => (
+                          <p key={j} className="text-[13px] text-stone-500 leading-relaxed">
+                            {line}
+                          </p>
+                        ))}
+                      </div>
                     ))}
                   </div>
-                ))}
-              </div>
-            </section>
-          ))}
+                </section>
+              ))}
 
-          {/* Freeform terms (if any) */}
-          {quote.terms_and_conditions && (
-            <section>
-              <SectionTitle>Additional Terms</SectionTitle>
-              <p className="text-[13px] text-gray-500 whitespace-pre-wrap leading-relaxed">
-                {quote.terms_and_conditions}
-              </p>
-            </section>
+              {/* Freeform terms (if any) */}
+              {quote.terms_and_conditions && (
+                <section>
+                  <SectionTitle>Additional Terms</SectionTitle>
+                  <p className="text-[13px] text-stone-500 whitespace-pre-wrap leading-relaxed">
+                    {quote.terms_and_conditions}
+                  </p>
+                </section>
+              )}
+            </div>
           )}
 
           {/* Acceptance — online acceptance replaces the PDF signature lines */}
           {!isAccepted && (
-            <section className="border-t border-gray-200 pt-6">
+            <section className="rounded-xl border-2 border-[#1a5632] px-5 sm:px-8 py-6">
               <SectionTitle>Acceptance</SectionTitle>
-              <p className="text-sm text-gray-600 leading-relaxed">
-                Review the scope, conditions, and exclusions above. Clicking{" "}
-                <span className="font-semibold text-gray-800">Accept &amp; Pay Deposit</span>{" "}
-                records your acceptance of this estimate (your typed name serves as your
-                signature). Your {depositPct}% deposit invoice follows.
+              <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 mt-1">
+                <span className="text-sm text-stone-600">
+                  Total{selectedAddons.length > 0 ? " (with selected add-ons)" : ""}
+                </span>
+                <span className="text-xl font-bold tabular-nums text-stone-800">
+                  {fmtMoney(total)}
+                </span>
+              </div>
+              {!hasCustomSchedule && total > 0 && (
+                <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1">
+                  <span className="text-sm text-stone-600">Due today ({depositPct}% deposit)</span>
+                  <span className="text-xl font-bold tabular-nums text-[#1a5632]">
+                    {fmtMoney(depositAmount)}
+                  </span>
+                </div>
+              )}
+              <button
+                type="button"
+                disabled={!selectedPackageId}
+                onClick={() => setShowAcceptDialog(true)}
+                className="mt-5 w-full rounded-lg bg-[#1a5632] px-6 py-4 text-base font-semibold text-white shadow-sm transition-all hover:bg-[#143f26] active:scale-[0.99] disabled:bg-stone-200 disabled:text-stone-400"
+              >
+                {hasCustomSchedule
+                  ? "Accept Quote"
+                  : `Accept & Pay ${depositPct}% Deposit — ${fmtMoney(depositAmount)}`}
+              </button>
+              <p className="mt-3 text-xs text-stone-500 leading-relaxed">
+                By accepting you agree to the scope, conditions, and exclusions above. Your typed
+                name serves as your signature. Your deposit invoice follows by email.
               </p>
             </section>
           )}
 
-          <footer className="flex justify-between border-t border-gray-300 pt-2 text-xs text-gray-500">
+          <footer className="flex justify-between border-t border-stone-200 pt-2 text-xs text-stone-400">
             <span>Pro Court Surfaces — Austin, TX</span>
             <span>{quote.quote_number}</span>
           </footer>
