@@ -1,11 +1,15 @@
 "use server";
 
 import { createServerClient } from "@/lib/supabase/server";
-import { getStripe } from "@/lib/stripe";
 import { headers } from "next/headers";
 import { sendEmail } from "@/lib/email/send-email";
 import { QuoteAcceptedEmail } from "@/lib/email/templates/quote-accepted";
+import { getColors } from "@/lib/admin/queries/color-queries";
+import { computePackageTotal } from "./quote-calculator";
+import { paymentSplit } from "./quote-format";
+import { ensureDepositInvoice } from "./deposit-invoice";
 import type { LineItemToggle, ColorSelections } from "./quote-calculator";
+import type { QuotePackageRow } from "@/lib/admin/types/quote-types";
 
 type AcceptPayload = {
   quote_id: string;
@@ -14,22 +18,28 @@ type AcceptPayload = {
   customer_email: string;
   toggled_line_items: LineItemToggle[];
   color_selections: ColorSelections;
-  total_price: number;
 };
 
-export async function acceptQuote(payload: AcceptPayload) {
-  console.log("[acceptQuote] Starting with payload:", JSON.stringify(payload, null, 2));
+type AcceptResult =
+  | { success: true; alreadyAccepted?: boolean }
+  | { success: false; error: string };
+
+// Statuses a customer may accept from. Anything else (already accepted, paid,
+// declined, expired…) is refused, which is what makes Accept a one-time action.
+const ACCEPTABLE = ["draft", "sent", "viewed", "revised"];
+
+export async function acceptQuote(payload: AcceptPayload): Promise<AcceptResult> {
   const supabase = createServerClient();
 
-  // 1. Fetch quote with customer, lead, project joins
+  // 1. Load the quote + the chosen package from the database. Prices come from
+  //    here, never from the browser.
   const { data: quote, error: fetchError } = await supabase
     .from("quotes")
     .select(
       `*, customer:customers(*), lead:leads(*),
-       color_inside:color_palette!quotes_color_inside_id_fkey(name),
-       color_outside:color_palette!quotes_color_outside_id_fkey(name),
-       color_lines:color_palette!quotes_color_lines_id_fkey(name),
-       color_nvz:color_palette!quotes_color_nvz_id_fkey(name)`
+       quote_packages(id, tier, name, description, subtotal, is_recommended, sort_order,
+         quote_line_items(id, service_id, name, description, line_item_type, unit_of_measure,
+           quantity, unit_price, total_price, is_optional, is_included_by_default, sort_order))`
     )
     .eq("id", payload.quote_id)
     .single();
@@ -38,12 +48,59 @@ export async function acceptQuote(payload: AcceptPayload) {
     console.error("[acceptQuote] Quote fetch failed:", fetchError?.message);
     return { success: false, error: "Quote not found" };
   }
-  console.log("[acceptQuote] Quote fetched, status:", quote.status, "customer_id:", quote.customer_id, "lead_id:", quote.lead_id);
 
+  const pkg = (quote.quote_packages as QuotePackageRow[]).find((p) => p.id === payload.package_id);
+  if (!pkg) return { success: false, error: "Selected package not found on this quote" };
+
+  // 2. Server-side total: required lines + the optional lines the customer switched
+  //    on + premium color upcharges, minus the quote discount.
+  const colors = await getColors();
+  const toggles = new Map(
+    payload.toggled_line_items
+      .filter((t) => pkg.quote_line_items.some((li) => li.id === t.line_item_id && li.is_optional))
+      .map((t) => [t.line_item_id, t.is_enabled] as const)
+  );
+  const gross = computePackageTotal(pkg, toggles, payload.color_selections, colors);
+  const total = Math.max(0, Math.round((gross - (quote.discount_amount ?? 0)) * 100) / 100);
+
+  // 3. Claim the acceptance atomically. Only one request can move the quote out of
+  //    an acceptable status, so a double-click, a second tab, or a retry can't create
+  //    a second selection, customer, or invoice.
+  const acceptedAt = new Date().toISOString();
+  const { data: claimed, error: claimError } = await supabase
+    .from("quotes")
+    .update({
+      status: "accepted",
+      accepted_at: acceptedAt,
+      accepted_by_name: payload.customer_name,
+      accepted_by_email: payload.customer_email,
+    })
+    .eq("id", payload.quote_id)
+    .in("status", ACCEPTABLE)
+    .select("id");
+
+  if (claimError) {
+    console.error("[acceptQuote] Claim failed:", claimError.message);
+    return { success: false, error: "Could not accept the quote. Please try again." };
+  }
+  if (!claimed || claimed.length === 0) {
+    // Lost the race (or came back later): answer from the status as it is now, not
+    // as it was when this request first loaded the quote.
+    const { data: current } = await supabase
+      .from("quotes")
+      .select("status")
+      .eq("id", payload.quote_id)
+      .single();
+    if (["accepted", "deposit_paid", "completed"].includes(current?.status ?? "")) {
+      return { success: true, alreadyAccepted: true };
+    }
+    return { success: false, error: "This quote can no longer be accepted. Please contact us." };
+  }
+
+  // 4. If lead-based (no customer_id): create customer from lead data
   let customerId: string | null = quote.customer_id;
   let customerEmail = payload.customer_email;
 
-  // 2. If lead-based (no customer_id): create customer from lead data
   if (!customerId && quote.lead) {
     const lead = quote.lead;
 
@@ -65,184 +122,77 @@ export async function acceptQuote(payload: AcceptPayload) {
       .single();
 
     if (custError || !newCustomer) {
+      // The acceptance is recorded; Patrick can link the customer by hand.
       console.error("[acceptQuote] Customer creation failed:", custError?.message);
-      return { success: false, error: "Failed to create customer from lead: " + custError?.message };
+    } else {
+      customerId = newCustomer.id;
+
+      // Update lead: mark as converted
+      await supabase
+        .from("leads")
+        .update({
+          deal_stage: "converted",
+          customer_id: customerId,
+          converted_at: acceptedAt,
+        })
+        .eq("id", lead.id);
+
+      // Update quote with new customer_id
+      await supabase.from("quotes").update({ customer_id: customerId }).eq("id", payload.quote_id);
     }
-
-    customerId = newCustomer.id;
-
-    // Update lead: mark as converted
-    await supabase
-      .from("leads")
-      .update({
-        deal_stage: "converted",
-        customer_id: customerId,
-        converted_at: new Date().toISOString(),
-      })
-      .eq("id", lead.id);
-
-    // Update quote with new customer_id
-    await supabase
-      .from("quotes")
-      .update({ customer_id: customerId })
-      .eq("id", payload.quote_id);
 
     customerEmail = lead.email ?? payload.customer_email;
   }
 
-  // 3. Find/create Stripe Customer + Invoice
-  // Auto-invoicing is OFF by default while Stripe is on test keys — acceptance just
-  // records the quote + notifies Patrick, who invoices manually. Flip
-  // STRIPE_AUTO_INVOICE=true (with live keys) to resume automatic deposit invoices.
-  const autoInvoice = process.env.STRIPE_AUTO_INVOICE === "true";
-  let stripeInvoiceId: string | null = null;
-
-  if (autoInvoice) try {
-    let stripeCustomerId: string | undefined;
-    if (quote.customer?.stripe_customer_id) {
-      stripeCustomerId = quote.customer.stripe_customer_id;
-    } else {
-      const existing = await getStripe().customers.list({
-        email: customerEmail,
-        limit: 1,
-      });
-
-      if (existing.data.length > 0) {
-        stripeCustomerId = existing.data[0].id;
-      } else {
-        const stripeCustomer = await getStripe().customers.create({
-          name: payload.customer_name,
-          email: customerEmail,
-        });
-        stripeCustomerId = stripeCustomer.id;
-      }
-
-      // Store stripe_customer_id on customer record
-      if (customerId) {
-        await supabase
-          .from("customers")
-          .update({ stripe_customer_id: stripeCustomerId })
-          .eq("id", customerId);
-      }
-    }
-
-    // 4. Create Stripe Invoice: first milestone (custom) or 50% deposit (standard)
-    const hasCustomSchedule =
-      quote.payment_schedule &&
-      Array.isArray(quote.payment_schedule) &&
-      quote.payment_schedule.length > 0;
-
-    const firstMilestone = hasCustomSchedule
-      ? (quote.payment_schedule as { label: string; amount: number }[])[0]
-      : null;
-
-    const depositPct = Number(quote.deposit_percent ?? 30);
-
-    const depositAmount = firstMilestone
-      ? Math.round(firstMilestone.amount * 100) // custom milestone amount in cents
-      : Math.round(payload.total_price * depositPct); // deposit_percent% of total in cents
-
-    const depositDescription = firstMilestone
-      ? `${firstMilestone.label} — Quote ${quote.quote_number}`
-      : `${depositPct}% Deposit — Quote ${quote.quote_number}`;
-
-    const invoice = await getStripe().invoices.create({
-      customer: stripeCustomerId,
-      collection_method: "send_invoice",
-      days_until_due: quote.deposit_due_days ?? 7,
-      metadata: { quote_id: payload.quote_id },
-    });
-
-    await getStripe().invoiceItems.create({
-      customer: stripeCustomerId,
-      invoice: invoice.id,
-      amount: depositAmount,
-      currency: "usd",
-      description: depositDescription,
-    });
-
-    const finalizedInvoice = await getStripe().invoices.finalizeInvoice(invoice.id);
-    stripeInvoiceId = finalizedInvoice.id;
-
-    // 5. Store stripe_invoice_id on quote
-    await supabase
-      .from("quotes")
-      .update({ stripe_invoice_id: stripeInvoiceId })
-      .eq("id", payload.quote_id);
-  } catch (err) {
-    // Log but don't block acceptance — invoice can be created manually
-    console.error("[acceptQuote] Stripe error:", err instanceof Error ? err.message : err);
-  }
-
-  // 6. Resolve color names from IDs for the selection snapshot
-  const colorInsideName = quote.color_inside?.name ??
-    (payload.color_selections.inside_id ? "Custom" : null);
-  const colorOutsideName = quote.color_outside?.name ??
-    (payload.color_selections.outside_id ? "Custom" : null);
-  const colorLinesName = quote.color_lines?.name ??
-    (payload.color_selections.lines_id ? "Custom" : null);
-  const colorNvzName = (quote as Record<string, unknown>).color_nvz
-    ? ((quote as Record<string, unknown>).color_nvz as { name: string }).name
-    : (payload.color_selections.nvz_id ? "Custom" : null);
-
-  // If customer changed color selections, resolve the new ones
-  let finalInsideName = colorInsideName;
-  let finalOutsideName = colorOutsideName;
-  let finalLinesName = colorLinesName;
-  let finalNvzName = colorNvzName;
-
-  if (payload.color_selections.inside_id && payload.color_selections.inside_id !== quote.color_inside_id) {
-    const { data: c } = await supabase.from("color_palette").select("name").eq("id", payload.color_selections.inside_id).single();
-    if (c) finalInsideName = c.name;
-  }
-  if (payload.color_selections.outside_id && payload.color_selections.outside_id !== quote.color_outside_id) {
-    const { data: c } = await supabase.from("color_palette").select("name").eq("id", payload.color_selections.outside_id).single();
-    if (c) finalOutsideName = c.name;
-  }
-  if (payload.color_selections.lines_id && payload.color_selections.lines_id !== quote.color_lines_id) {
-    const { data: c } = await supabase.from("color_palette").select("name").eq("id", payload.color_selections.lines_id).single();
-    if (c) finalLinesName = c.name;
-  }
-  if (payload.color_selections.nvz_id && payload.color_selections.nvz_id !== (quote as Record<string, unknown>).color_nvz_id) {
-    const { data: c } = await supabase.from("color_palette").select("name").eq("id", payload.color_selections.nvz_id).single();
-    if (c) finalNvzName = c.name;
-  }
-
-  // Insert quote_selections with correct column names
-  const { error: selectionError } = await supabase
-    .from("quote_selections")
-    .insert({
-      quote_id: payload.quote_id,
-      selected_package_id: payload.package_id,
-      accepted_by_name: payload.customer_name,
-      accepted_by_email: payload.customer_email,
-      toggled_line_items: payload.toggled_line_items,
-      color_inside: finalInsideName,
-      color_outside: finalOutsideName,
-      color_lines: finalLinesName,
-      color_nvz: finalNvzName,
-      final_total: payload.total_price,
-    });
-
+  // 5. Snapshot what the customer chose
+  const colorName = (id: string | null) => (id ? colors.find((c) => c.id === id)?.name ?? null : null);
+  const { error: selectionError } = await supabase.from("quote_selections").insert({
+    quote_id: payload.quote_id,
+    selected_package_id: payload.package_id,
+    accepted_by_name: payload.customer_name,
+    accepted_by_email: payload.customer_email,
+    toggled_line_items: payload.toggled_line_items,
+    color_inside: colorName(payload.color_selections.inside_id),
+    color_outside: colorName(payload.color_selections.outside_id),
+    color_lines: colorName(payload.color_selections.lines_id),
+    color_nvz: colorName(payload.color_selections.nvz_id),
+    final_total: total,
+  });
   if (selectionError) {
     console.error("[acceptQuote] Selection insert failed:", selectionError.message);
-    return { success: false, error: "Selection save failed: " + selectionError.message };
   }
 
-  // 7. Update quote status to accepted
-  const { error: updateError } = await supabase
-    .from("quotes")
-    .update({
-      status: "accepted",
-      accepted_at: new Date().toISOString(),
-      accepted_by_name: payload.customer_name,
-      accepted_by_email: payload.customer_email,
-    })
-    .eq("id", payload.quote_id);
+  // 6. Deposit invoice: first custom milestone, or deposit_percent of the server total.
+  // Auto-invoicing is OFF until Stripe live keys are in place — acceptance just
+  // records the quote + notifies Patrick, who invoices manually. Flip
+  // STRIPE_AUTO_INVOICE=true (with live keys) to create deposit invoices.
+  const autoInvoice = process.env.STRIPE_AUTO_INVOICE === "true";
+  const schedule = Array.isArray(quote.payment_schedule) ? quote.payment_schedule : [];
+  const firstMilestone = schedule.length > 0 ? (schedule[0] as { label: string; amount: number }) : null;
+  const depositPct = Number(quote.deposit_percent ?? 30);
+  const depositAmount = firstMilestone ? firstMilestone.amount : paymentSplit(total, depositPct).depositAmount;
+  let stripeInvoiceId: string | null = quote.stripe_invoice_id ?? null;
 
-  if (updateError) {
-    console.error("[acceptQuote] Quote status update failed:", updateError.message);
-    return { success: false, error: "Status update failed: " + updateError.message };
+  if (autoInvoice) {
+    try {
+      stripeInvoiceId = await ensureDepositInvoice({
+        quoteId: payload.quote_id,
+        quoteNumber: quote.quote_number,
+        existingInvoiceId: quote.stripe_invoice_id ?? null,
+        customerId,
+        existingStripeCustomerId: quote.customer?.stripe_customer_id ?? null,
+        customerName: payload.customer_name,
+        customerEmail,
+        amount: depositAmount,
+        description: firstMilestone
+          ? `${firstMilestone.label} — Quote ${quote.quote_number}`
+          : `${depositPct}% Deposit — Quote ${quote.quote_number}`,
+        dueDays: quote.deposit_due_days ?? 7,
+      });
+    } catch (err) {
+      // Log but don't block acceptance — invoice can be created manually
+      console.error("[acceptQuote] Stripe error:", err instanceof Error ? err.message : err);
+    }
   }
 
   // Log acceptance activity (fire-and-forget)
@@ -250,6 +200,8 @@ export async function acceptQuote(payload: AcceptPayload) {
     package_id: payload.package_id,
     customer_name: payload.customer_name,
     customer_email: payload.customer_email,
+    total,
+    deposit_amount: depositAmount,
     stripe_invoice_id: stripeInvoiceId,
   });
 
@@ -262,10 +214,10 @@ export async function acceptQuote(payload: AcceptPayload) {
         quoteNumber: quote.quote_number,
         customerName: payload.customer_name,
         customerEmail: payload.customer_email,
-        packageTier: payload.package_id,
-        totalPrice: payload.total_price,
-        depositPercent: Number(quote.deposit_percent ?? 30),
-        autoInvoiced: autoInvoice,
+        packageTier: pkg.name,
+        totalPrice: total,
+        depositPercent: depositPct,
+        autoInvoiced: autoInvoice && !!stripeInvoiceId,
       }),
     });
   } catch (err) {

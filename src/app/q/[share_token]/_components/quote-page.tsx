@@ -153,16 +153,16 @@ export function QuotePage({ quote, colors }: QuotePageProps) {
         customer_email: email,
         toggled_line_items: toggledLineItems,
         color_selections: colorSelections,
-        total_price: total,
       });
 
+      // An already-accepted quote (second tab, retry) goes to the same payment screen.
       if (result.success) {
         router.push(`/q/${quote.share_token}/accepted`);
       } else {
         throw new Error(result.error ?? "Failed to accept quote");
       }
     },
-    [selectedPackageId, selectedPackage, toggles, colorSelections, total, quote, router]
+    [selectedPackageId, selectedPackage, toggles, colorSelections, quote, router]
   );
 
   // Base court = the largest sport present (tennis court is the base slab that

@@ -35,6 +35,7 @@ export function AcceptDialog({
 }: AcceptDialogProps) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState(defaultEmail ?? "");
+  const [agreed, setAgreed] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -48,8 +49,13 @@ export function AcceptDialog({
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (isSubmitting) return; // one request per click
     if (!name.trim() || !email.trim()) {
       setError("Please enter your name and email.");
+      return;
+    }
+    if (!agreed) {
+      setError("Please confirm you agree to the scope and terms.");
       return;
     }
 
@@ -137,6 +143,19 @@ export function AcceptDialog({
                 className="h-11"
               />
             </div>
+            <label className="flex items-start gap-2.5 text-sm text-stone-600 leading-snug cursor-pointer">
+              <input
+                type="checkbox"
+                checked={agreed}
+                onChange={(e) => setAgreed(e.target.checked)}
+                disabled={isSubmitting}
+                className="mt-0.5 h-4 w-4 shrink-0 accent-[#1a5632]"
+              />
+              <span>
+                I agree to the scope, conditions, and exclusions in this quote. My typed name
+                serves as my signature.
+              </span>
+            </label>
             {error && <p className="text-sm text-destructive">{error}</p>}
           </div>
 
@@ -151,15 +170,15 @@ export function AcceptDialog({
             </button>
             <button
               type="submit"
-              disabled={isSubmitting}
+              disabled={isSubmitting || !agreed}
               className={[
                 "px-6 py-2.5 rounded-lg text-sm font-semibold transition-all",
-                isSubmitting
+                isSubmitting || !agreed
                   ? "bg-stone-200 text-stone-400 cursor-not-allowed"
                   : "bg-[#1a5632] text-white hover:bg-[#143f26] active:scale-[0.98] shadow-sm",
               ].join(" ")}
             >
-              {isSubmitting ? "Submitting..." : `Accept & Pay $${depositAmount.toLocaleString("en-US", { minimumFractionDigits: 2 })}`}
+              {isSubmitting ? "Processing…" : `Accept & Pay $${depositAmount.toLocaleString("en-US", { minimumFractionDigits: 2 })}`}
             </button>
           </DialogFooter>
         </form>

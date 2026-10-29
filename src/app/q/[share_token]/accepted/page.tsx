@@ -1,4 +1,5 @@
 import { notFound, redirect } from "next/navigation";
+import { headers } from "next/headers";
 import { paymentSplit } from "@/lib/quotes/quote-format";
 import { getQuoteByShareToken } from "@/lib/quotes/public-queries";
 import { createServerClient } from "@/lib/supabase/server";
@@ -26,7 +27,7 @@ export default async function QuoteAcceptedPage({
     .from("quote_selections")
     .select(
       `*, selected_package:quote_packages(name, tier, quote_line_items(
-        name, total_price, is_optional
+        id, name, total_price, is_optional
       ))`
     )
     .eq("quote_id", quote.id)
@@ -38,14 +39,24 @@ export default async function QuoteAcceptedPage({
   let invoiceUrl: string | null = null;
   let invoiceStatus: string | null = null;
   let invoiceDueDate: string | null = null;
+  let clientSecret: string | null = null;
 
   if (quote.stripe_invoice_id) {
     try {
-      const invoice = await getStripe().invoices.retrieve(quote.stripe_invoice_id);
+      const invoice = await getStripe().invoices.retrieve(quote.stripe_invoice_id, {
+        expand: ["confirmation_secret"],
+      });
       invoiceUrl = invoice.hosted_invoice_url ?? null;
       invoiceStatus = invoice.status ?? null;
+      // Only an open invoice can still be paid on this page.
+      if (invoice.status === "open") clientSecret = invoice.confirmation_secret?.client_secret ?? null;
       if (invoice.due_date) {
-        invoiceDueDate = new Date(invoice.due_date * 1000).toLocaleDateString();
+        invoiceDueDate = new Date(invoice.due_date * 1000).toLocaleDateString("en-US", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+          timeZone: "America/Chicago",
+        });
       }
     } catch {
       // Stripe fetch failed — still show the page
@@ -63,6 +74,12 @@ export default async function QuoteAcceptedPage({
     ? (quote.payment_schedule as { label: string; amount: number }[])[0].amount
     : paymentSplit(selection?.final_total ?? quote.total ?? 0, depositPct).depositAmount;
 
+  // Where Stripe sends the customer back after a bank-verification redirect.
+  const h = await headers();
+  const host = h.get("host") ?? "www.procourtsurfaces.com";
+  const proto = h.get("x-forwarded-proto") ?? (host.startsWith("localhost") ? "http" : "https");
+  const origin = `${proto}://${host}`;
+
   return (
     <AcceptedPage
       quote={quote}
@@ -72,6 +89,9 @@ export default async function QuoteAcceptedPage({
       invoiceUrl={invoiceUrl}
       invoiceStatus={invoiceStatus}
       invoiceDueDate={invoiceDueDate}
+      clientSecret={clientSecret}
+      publishableKey={process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY ?? null}
+      returnUrl={`${origin}/q/${share_token}/accepted`}
     />
   );
 }
