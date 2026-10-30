@@ -172,6 +172,7 @@ export async function acceptQuote(payload: AcceptPayload): Promise<AcceptResult>
   const depositPct = Number(quote.deposit_percent ?? 30);
   const depositAmount = firstMilestone ? firstMilestone.amount : paymentSplit(total, depositPct).depositAmount;
   let stripeInvoiceId: string | null = quote.stripe_invoice_id ?? null;
+  let invoiceError: string | null = null;
 
   if (autoInvoice) {
     try {
@@ -191,7 +192,8 @@ export async function acceptQuote(payload: AcceptPayload): Promise<AcceptResult>
       });
     } catch (err) {
       // Log but don't block acceptance — invoice can be created manually
-      console.error("[acceptQuote] Stripe error:", err instanceof Error ? err.message : err);
+      invoiceError = err instanceof Error ? err.message : String(err);
+      console.error("[acceptQuote] Stripe error:", invoiceError);
     }
   }
 
@@ -218,6 +220,7 @@ export async function acceptQuote(payload: AcceptPayload): Promise<AcceptResult>
         totalPrice: total,
         depositPercent: depositPct,
         autoInvoiced: autoInvoice && !!stripeInvoiceId,
+        invoiceError,
       }),
     });
   } catch (err) {

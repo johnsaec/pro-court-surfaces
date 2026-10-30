@@ -83,5 +83,14 @@ export async function ensureDepositInvoice(input: DepositInvoiceInput): Promise<
     .update({ stripe_invoice_id: finalized.id })
     .eq("id", input.quoteId);
 
+  // Email it explicitly: finalizing alone only emails when the account's
+  // "email finalized invoices" setting is on, and live and test settings differ.
+  // A send failure is logged, not thrown — the invoice is still payable on the page.
+  try {
+    await stripe.invoices.sendInvoice(finalized.id!);
+  } catch (err) {
+    console.error("[ensureDepositInvoice] sendInvoice failed:", err instanceof Error ? err.message : err);
+  }
+
   return finalized.id!;
 }

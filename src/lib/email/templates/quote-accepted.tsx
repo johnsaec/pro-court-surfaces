@@ -17,6 +17,7 @@ type QuoteAcceptedEmailProps = {
   totalPrice: number;
   depositPercent?: number;
   autoInvoiced?: boolean;
+  invoiceError?: string | null;
 };
 
 export function QuoteAcceptedEmail({
@@ -27,6 +28,7 @@ export function QuoteAcceptedEmail({
   totalPrice,
   depositPercent = 30,
   autoInvoiced = false,
+  invoiceError = null,
 }: QuoteAcceptedEmailProps) {
   return (
     <Html>
@@ -59,7 +61,9 @@ export function QuoteAcceptedEmail({
             <Text style={paragraph}>
               {autoInvoiced
                 ? `A Stripe invoice for the ${depositPercent}% deposit has been created and sent to the customer. Log in to the admin dashboard to view details.`
-                : `ACTION NEEDED: Send the ${depositPercent}% deposit invoice to the customer manually. (Automatic invoicing is off.)`}
+                : invoiceError
+                  ? `ACTION NEEDED: Automatic invoicing failed — send the ${depositPercent}% deposit invoice manually. Stripe said: ${invoiceError}`
+                  : `ACTION NEEDED: Send the ${depositPercent}% deposit invoice to the customer manually. (Automatic invoicing is off.)`}
             </Text>
           </Section>
           <Hr style={hr} />

@@ -85,6 +85,26 @@ function PayForm({
   const router = useRouter();
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // Card fields failed to load (bad key, blocked script): offer Stripe's hosted
+  // invoice instead of a pay button that can never complete.
+  const [loadFailed, setLoadFailed] = useState(false);
+
+  if (loadFailed) {
+    return hostedInvoiceUrl ? (
+      <a
+        href={hostedInvoiceUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="block w-full rounded-lg bg-[#1a5632] px-6 py-4 text-center text-base font-semibold text-white shadow-sm transition-all hover:bg-[#143f26]"
+      >
+        Pay Deposit — {fmtMoney(amount)}
+      </a>
+    ) : (
+      <p className="text-sm text-stone-600 text-center">
+        We couldn&apos;t load the payment form. Your deposit invoice has been emailed to you.
+      </p>
+    );
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -113,6 +133,7 @@ function PayForm({
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <PaymentElement
+        onLoadError={() => setLoadFailed(true)}
         options={{
           layout: "tabs",
           paymentMethodOrder: ["us_bank_account", "card"],
