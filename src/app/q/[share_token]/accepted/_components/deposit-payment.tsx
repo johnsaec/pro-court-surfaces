@@ -154,7 +154,8 @@ function PayForm({
       </button>
       {hostedInvoiceUrl && (
         <p className="text-center text-xs text-stone-500">
-          We also emailed you this invoice if you&apos;d rather pay later.
+          Rather pay later? Look for an email invoice from Pro Court Surfaces, sent through
+          Stripe — you can pay it from there anytime before the due date.
         </p>
       )}
     </form>

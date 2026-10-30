@@ -13,17 +13,23 @@ type DepositPaidEmailProps = {
   customerName: string;
   quoteNumber: string;
   depositAmount: number;
+  // "processing": an ACH payment was submitted but hasn't cleared yet
+  status?: "paid" | "processing";
 };
 
 export function DepositPaidEmail({
   customerName,
   quoteNumber,
   depositAmount,
+  status = "paid",
 }: DepositPaidEmailProps) {
+  const processing = status === "processing";
   return (
     <Html>
       <Head />
-      <Preview>Payment received for quote {quoteNumber}</Preview>
+      <Preview>
+        {processing ? "Bank payment submitted" : "Payment received"} for quote {quoteNumber}
+      </Preview>
       <Body style={body}>
         <Container style={container}>
           <Text style={header}>Pro Court Surfaces</Text>
@@ -31,11 +37,14 @@ export function DepositPaidEmail({
           <Section>
             <Text style={greeting}>Hi {customerName},</Text>
             <Text style={paragraph}>
-              We&apos;ve received your deposit payment for quote{" "}
-              <strong>{quoteNumber}</strong>. Thank you!
+              {processing ? "Your bank payment for quote" : "We've received your deposit payment for quote"}{" "}
+              <strong>{quoteNumber}</strong>
+              {processing
+                ? " is on its way. Bank transfers take 3–5 business days to clear — we'll email you again once it does. There's nothing else you need to do."
+                : ". Thank you!"}
             </Text>
             <Section style={amountBox}>
-              <Text style={amountLabel}>Deposit Paid</Text>
+              <Text style={amountLabel}>{processing ? "Deposit Processing" : "Deposit Paid"}</Text>
               <Text style={amountValue}>
                 ${depositAmount.toLocaleString("en-US", { minimumFractionDigits: 2 })}
               </Text>

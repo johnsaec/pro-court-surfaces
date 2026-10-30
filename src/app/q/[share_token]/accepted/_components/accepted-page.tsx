@@ -149,7 +149,7 @@ export function AcceptedPage({
                 {isDepositPaid
                   ? " and your deposit has been received. We'll be in touch to schedule your project."
                   : canPayHere
-                    ? ". Pay your deposit below to lock in your spot on the schedule."
+                    ? ". Pay your deposit below to lock in your spot on the schedule — or pay later from the invoice we've emailed you (sent securely through Stripe)."
                     : invoiceUrl
                       ? " and your deposit invoice has been emailed to you."
                       : ". Your deposit invoice will follow by email shortly."}
