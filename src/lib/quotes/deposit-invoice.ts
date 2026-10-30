@@ -49,6 +49,15 @@ export async function ensureDepositInvoice(input: DepositInvoiceInput): Promise<
     }
   }
 
+  // A reused Stripe customer keeps whatever name it was created with, and the
+  // invoice prints that name. Match it to the person who just signed so the
+  // invoice, the quote page and our emails all say the same name.
+  try {
+    await stripe.customers.update(stripeCustomerId, { name: input.customerName });
+  } catch (err) {
+    console.error("[ensureDepositInvoice] customer name update failed:", err instanceof Error ? err.message : err);
+  }
+
   const invoice = await stripe.invoices.create(
     {
       customer: stripeCustomerId,

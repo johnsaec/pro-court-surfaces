@@ -77,9 +77,10 @@ export async function POST(req: NextRequest) {
         .single();
 
       if (quote) {
-        const recipientEmail = quote.customer?.email ?? quote.lead?.email;
+        // The signer first: that's who the Stripe invoice was addressed to.
+        const recipientEmail = quote.accepted_by_email ?? quote.customer?.email ?? quote.lead?.email;
         const recipientName =
-          quote.customer?.display_name ?? quote.lead?.display_name ?? "Customer";
+          quote.accepted_by_name ?? quote.customer?.display_name ?? quote.lead?.display_name ?? "Customer";
 
         if (recipientEmail) {
           await sendEmail({
@@ -125,7 +126,7 @@ const usd = (n: number) => `$${n.toLocaleString("en-US", { minimumFractionDigits
 async function findQuoteByInvoice(supabase: Supabase, invoiceId: string) {
   const { data } = await supabase
     .from("quotes")
-    .select("id, quote_number, customer:customers(email, display_name), lead:leads(email, display_name)")
+    .select("id, quote_number, accepted_by_name, accepted_by_email, customer:customers(email, display_name), lead:leads(email, display_name)")
     .or(`stripe_invoice_id.eq.${invoiceId},stripe_balance_invoice_id.eq.${invoiceId}`)
     .maybeSingle();
   if (!data) return null;
@@ -133,8 +134,9 @@ async function findQuoteByInvoice(supabase: Supabase, invoiceId: string) {
   return {
     id: data.id as string,
     quoteNumber: data.quote_number as string,
-    email: contact?.email ?? null,
-    name: contact?.display_name ?? "Customer",
+    // The signer first: that's who the Stripe invoice was addressed to.
+    email: (data.accepted_by_email as string | null) ?? contact?.email ?? null,
+    name: (data.accepted_by_name as string | null) ?? contact?.display_name ?? "Customer",
   };
 }
 

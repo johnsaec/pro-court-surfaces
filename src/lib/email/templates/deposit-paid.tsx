@@ -39,9 +39,14 @@ export function DepositPaidEmail({
             <Text style={paragraph}>
               {processing ? "Your bank payment for quote" : "We've received your deposit payment for quote"}{" "}
               <strong>{quoteNumber}</strong>
-              {processing
-                ? " is on its way. Bank transfers take 3–5 business days to clear — we'll email you again once it does. There's nothing else you need to do."
-                : ". Thank you!"}
+              {processing ? (
+                <>
+                  {" is on its way. Bank transfers take 3–5 business days to clear — we'll email you again once it does. "}
+                  <strong>There&apos;s nothing else you need to do.</strong>
+                </>
+              ) : (
+                ". Thank you!"
+              )}
             </Text>
             <Section style={amountBox}>
               <Text style={amountLabel}>{processing ? "Deposit Processing" : "Deposit Paid"}</Text>
@@ -49,6 +54,14 @@ export function DepositPaidEmail({
                 ${depositAmount.toLocaleString("en-US", { minimumFractionDigits: 2 })}
               </Text>
             </Section>
+            {processing && (
+              <Text style={paragraph}>
+                If you open the invoice, Stripe will show <strong>$0.00 due — Payment processing</strong>.
+                That just means your $
+                {depositAmount.toLocaleString("en-US", { minimumFractionDigits: 2 })} is on its way;
+                the invoice PDF still lists the original amount.
+              </Text>
+            )}
             <Text style={heading}>What&apos;s Next?</Text>
             <Text style={paragraph}>
               Our team will be in touch shortly to schedule your project. If you
