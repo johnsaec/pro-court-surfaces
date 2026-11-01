@@ -294,7 +294,7 @@ footer img{height:22px;opacity:.5}
         </select>
       </div>
       <div class="field"><label for="f-when">When do you need it done? <small>(optional)</small></label><input id="f-when" name="when" type="text" placeholder="Before the party, by summer, no rush&hellip;"></div>
-      <label style="display:flex;align-items:flex-start;gap:10px;margin-bottom:16px;font-size:.85rem;font-weight:400;letter-spacing:0;text-transform:none;line-height:1.4;cursor:pointer"><input type="checkbox" name="marketingOptIn" style="width:16px;height:16px;padding:0;flex:none;margin:2px 0 0"><span>Email me occasional court care tips and project news from Pro Court Surfaces. Optional. Unsubscribe anytime.</span></label>
+      <label style="display:flex;align-items:flex-start;gap:10px;margin-bottom:16px;font-size:.85rem;font-weight:400;letter-spacing:0;text-transform:none;line-height:1.4;cursor:pointer"><input type="checkbox" name="marketingOptIn" required style="width:16px;height:16px;padding:0;flex:none;margin:2px 0 0"><span>I agree to receive emails from Pro Court Surfaces. <a href="/privacy" target="_blank" rel="noopener" style="text-decoration:underline">Details</a></span></label>
       <p class="err" id="form-err" role="alert"></p>
       <button class="btn btn-green" type="submit" id="submit-btn">Get My Free Estimate</button>
       <p class="alt">Or call <a href="tel:+15128930466" data-phone>(512) 893-0466</a></p>
@@ -353,6 +353,7 @@ footer img{height:22px;opacity:.5}
     var name=form.name.value.trim(),phone=form.phone.value.trim(),email=form.email.value.trim(),when=form.when.value.trim();
     if(!name||!phone||!email){ err.textContent='Name, phone, and email are required so I can reach you.'; err.classList.add('show'); return; }
     if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ err.textContent='That email does not look right.'; err.classList.add('show'); return; }
+    if(!form.marketingOptIn.checked){ err.textContent='Please check the box to agree to emails.'; err.classList.add('show'); return; }
     var m=MAP[sel.value]||MAP.not_sure;
     btn.disabled=true; btn.textContent='Sending...';
     fetch('/api/leads',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({

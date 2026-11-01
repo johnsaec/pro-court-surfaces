@@ -293,11 +293,19 @@ export function Contact({
                   <input
                     type="checkbox"
                     name="marketingOptIn"
+                    required
                     className="mt-0.5 h-4 w-4 shrink-0 accent-brand-green"
                   />
                   <span>
-                    Email me occasional court care tips and project news from Pro Court Surfaces.
-                    Optional. Unsubscribe anytime.
+                    I agree to receive emails from Pro Court Surfaces.{" "}
+                    <a
+                      href="/privacy"
+                      target="_blank"
+                      rel="noopener"
+                      className="underline hover:text-white"
+                    >
+                      Details
+                    </a>
                   </span>
                 </label>
 
