@@ -8,6 +8,7 @@ import { getColors } from "@/lib/admin/queries/color-queries";
 import { computePackageTotal } from "./quote-calculator";
 import { paymentSplit } from "./quote-format";
 import { ensureDepositInvoice } from "./deposit-invoice";
+import { ensureJobForQuote } from "@/lib/jobs/jobs";
 import type { LineItemToggle, ColorSelections } from "./quote-calculator";
 import type { QuotePackageRow } from "@/lib/admin/types/quote-types";
 
@@ -161,6 +162,8 @@ export async function acceptQuote(payload: AcceptPayload): Promise<AcceptResult>
   if (selectionError) {
     console.error("[acceptQuote] Selection insert failed:", selectionError.message);
   }
+
+  await ensureJobForQuote(supabase, payload.quote_id);
 
   // 6. Deposit invoice: first custom milestone, or deposit_percent of the server total.
   // Auto-invoicing is OFF until Stripe live keys are in place — acceptance just

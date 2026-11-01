@@ -4,6 +4,7 @@ import { getStripe } from "@/lib/stripe";
 import { createServerClient } from "@/lib/supabase/server";
 import { sendEmail } from "@/lib/email/send-email";
 import { DepositPaidEmail } from "@/lib/email/templates/deposit-paid";
+import { recordStripePayment } from "@/lib/jobs/jobs";
 
 export async function POST(req: NextRequest) {
   const body = await req.text();
@@ -67,6 +68,8 @@ export async function POST(req: NextRequest) {
       event_type: transition.event,
       event_data: { amount: paidAmount, stripe_invoice_id: invoiceId, stripe_event_id: event.id },
     });
+
+    await recordStripePayment(supabase, transition.quoteId, invoiceId, paidAmount, transition.label);
 
     // Confirmation emails (fire-and-forget)
     try {
