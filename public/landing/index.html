@@ -429,6 +429,8 @@
             <input type="tel" id="phone" name="phone" placeholder="(512) 555-0000" class="w-full rounded-lg border border-white/15 bg-white/10 px-4 py-3.5 text-white placeholder:text-white/30 text-base focus:outline-none focus:border-brand-green/50 focus:ring-1 focus:ring-brand-green/30 transition-colors">
           </div>
 
+          <label class="flex items-start gap-3 text-sm text-white/60 cursor-pointer"><input type="checkbox" name="marketingOptIn" class="mt-0.5 h-4 w-4 shrink-0 accent-brand-green"><span>Email me occasional court care tips and project news from Pro Court Surfaces. Optional. Unsubscribe anytime.</span></label>
+
           <p id="form-error" class="text-red-400 text-sm hidden"></p>
 
           <button type="submit" id="submit-btn" class="group w-full inline-flex items-center justify-center gap-2 px-8 py-4 rounded-lg bg-brand-blue text-white font-semibold text-base hover:bg-brand-blue/90 transition-all shadow-lg shadow-brand-blue/20 disabled:opacity-60">
@@ -549,7 +551,9 @@
           email: fd.get('email'),
           phone: fd.get('phone'),
           message: 'Landing page lead',
-          attribution: attribution
+          attribution: attribution,
+          marketingOptIn: fd.get('marketingOptIn') === 'on',
+          marketingSource: 'landing_contact'
         })
       })
         .then(function (res) {

@@ -16,8 +16,21 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Invalid request" }, { status: 400 });
   }
 
-  const { name, email, phone, city, projectType, sports, message, attribution } =
+  const {
+    name,
+    email,
+    phone,
+    city,
+    projectType,
+    sports,
+    message,
+    attribution,
+    marketingOptIn,
+    marketingSource,
+  } =
     body as {
+      marketingOptIn?: unknown;
+      marketingSource?: unknown;
       name?: string;
       email?: string;
       phone?: string;
@@ -38,6 +51,17 @@ export async function POST(req: NextRequest) {
   const nameParts = name.trim().split(/\s+/);
   const firstName = nameParts[0];
   const lastName = nameParts.length > 1 ? nameParts.slice(1).join(" ") : "";
+
+  // Only a real tick records consent. An unticked resubmit never clears earlier consent.
+  const optedIn = marketingOptIn === true;
+  const consentFields = optedIn
+    ? {
+        marketing_opt_in: true,
+        marketing_opt_in_at: new Date().toISOString(),
+        marketing_opt_in_source:
+          typeof marketingSource === "string" ? marketingSource.slice(0, 100) : "website_form",
+      }
+    : {};
 
   // ── Step 1: Save to Supabase (best-effort) ──────────────────────────
   // A failure here must NOT lose the lead — we fall through to the email
@@ -62,6 +86,7 @@ export async function POST(req: NextRequest) {
           notes: message && message !== ""
             ? `Website form (updated): ${message}`
             : undefined,
+          ...consentFields,
         })
         .eq("id", existing.id);
 
@@ -117,6 +142,7 @@ export async function POST(req: NextRequest) {
           form_type: "step1",
           notes: message && message !== "" ? `Website form: ${message}` : null,
           ...attrFields,
+          ...consentFields,
         })
         .select("id")
         .single();
@@ -168,6 +194,7 @@ DB error: ${dbErrorMsg}
 - Project Type: ${projectLabel}
 - Sports: ${sportsLabel}
 - Notes: ${message || "None"}
+- Marketing email opt-in: ${optedIn ? "Yes" : "No"}
 - Channel: ${attr?.lt_channel || "direct"}
 - Source: ${attr?.lt_source || "none"}
 - Medium: ${attr?.lt_medium || "none"}

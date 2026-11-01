@@ -86,6 +86,8 @@ export function Contact({
           sports: selectedSports,
           message: formData.get("message"),
           attribution: getAttribution(),
+          marketingOptIn: formData.get("marketingOptIn") === "on",
+          marketingSource: formName,
         }),
       });
 
@@ -286,6 +288,18 @@ export function Contact({
                     placeholder="Anything else we should know..."
                   />
                 </div>
+
+                <label className="flex items-start gap-3 text-sm text-white/60 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    name="marketingOptIn"
+                    className="mt-0.5 h-4 w-4 shrink-0 accent-brand-green"
+                  />
+                  <span>
+                    Email me occasional court care tips and project news from Pro Court Surfaces.
+                    Optional. Unsubscribe anytime.
+                  </span>
+                </label>
 
                 {error && (
                   <p className="text-red-400 text-sm">{error}</p>
